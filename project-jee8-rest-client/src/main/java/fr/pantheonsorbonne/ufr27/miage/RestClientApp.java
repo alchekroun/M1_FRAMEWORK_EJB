@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
+import org.eclipse.persistence.sessions.server.Server;
+
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Address;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Ccinfo;
@@ -30,8 +32,10 @@ public class RestClientApp
 
 {
 	private static Train getTrain() {
-		Train train=new Train();
-		Arret arretParis= new Arret();
+		ObjectFactory factory = new ObjectFactory();
+		Train train = factory.createTrain();
+		Arret arretParis = factory.createArret();
+		
 		train.setIdTrain(1);
 		train.setNomTrain("Perigueux-Bordeaux");
 		train.setDirection(arretParis);
@@ -50,9 +54,9 @@ public class RestClientApp
 		
 	}
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException {		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8888");
+		WebTarget target = client.target("http://localhost:8082");
 		
 		Response resp = target.path("train").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(getTrain()));

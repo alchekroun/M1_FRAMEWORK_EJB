@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
-@Path("train/")
+@Path("/train/")
 public class TrainEndPoint {
 	
 	@Inject
@@ -29,4 +29,6 @@ public class TrainEndPoint {
 		return Response.created(new URI("/train/" + trainId)).build();
 
 	}
+	
+	
 }
