@@ -36,7 +36,7 @@ public class RestClientApp
 		Train train = factory.createTrain();
 		Arret arretParis = factory.createArret();
 		
-		train.setIdTrain(1);
+		
 		train.setNomTrain("Perigueux-Bordeaux");
 		train.setDirection(arretParis);
 		train.setDirectionType("forward");
@@ -56,7 +56,7 @@ public class RestClientApp
 	
 	public static void main(String[] args) throws InterruptedException {		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8082");
+		WebTarget target = client.target("http://localhost:8080");
 		
 		Response resp = target.path("train").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(getTrain()));
@@ -68,7 +68,10 @@ public class RestClientApp
 		URI userLocation = null;
 		userLocation = resp.getLocation();
 
-		Response response = client.target(userLocation).request().get(Response.class);
+		Response response = client.target(userLocation).request().accept(MediaType.APPLICATION_JSON).get(Response.class);
+		Train train = response.readEntity(Train.class);
+		
+		System.out.println(train.toString());
 		
 	}
 /*

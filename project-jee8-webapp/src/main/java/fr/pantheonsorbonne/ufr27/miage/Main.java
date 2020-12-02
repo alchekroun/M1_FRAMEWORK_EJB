@@ -23,6 +23,7 @@ import fr.pantheonsorbonne.ufr27.miage.conf.EMFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
@@ -49,7 +50,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.UserServiceImpl;
  */
 public class Main {
 
-	public static final String BASE_URI = "http://localhost:8082/";
+	public static final String BASE_URI = "http://localhost:8080/";
 
 	public static HttpServer startServer() {
 
@@ -61,6 +62,9 @@ public class Main {
 
 					@Override
 					protected void configure() {
+
+						// déclarer que la classe peut être injectée
+						bind(TrainDAO.class).to(TrainDAO.class);
 
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
