@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
@@ -11,12 +12,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
+import org.eclipse.persistence.sessions.server.Server;
+
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Address;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Ccinfo;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.FreeTrialPlan;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Invoice;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.InvoiceWrapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.User;
 
 /**
@@ -26,8 +31,51 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.User;
 public class RestClientApp
 
 {
+	private static Train getTrain() {
+		ObjectFactory factory = new ObjectFactory();
+		Train train = factory.createTrain();
+		Arret arretParis = factory.createArret();
+		
+		
+		train.setNomTrain("Perigueux-Bordeaux");
+		train.setDirection(arretParis);
+		train.setDirectionType("forward");
+		train.setNumeroTrain(8541);
+		train.setReseau("SNCF");
+		train.setStatut("en marche");
+		
+		
+		train.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
+		train.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
+		train.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
+		train.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
+		
+		return train;
+		
+	}
+	
+	public static void main(String[] args) throws InterruptedException {		
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target("http://localhost:8080");
+		
+		Response resp = target.path("train").request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.json(getTrain()));
+	
+		System.out.println(resp + " ****************************");
+		
+		System.out.println("Creating a train");
+		
+		URI userLocation = null;
+		userLocation = resp.getLocation();
 
-	private static FreeTrialPlan getPlan() {
+		Response response = client.target(userLocation).request().accept(MediaType.APPLICATION_JSON).get(Response.class);
+		Train train = response.readEntity(Train.class);
+		
+		System.out.println(train.toString());
+		
+	}
+/*
+ * private static FreeTrialPlan getPlan() {
 		ObjectFactory factory = new ObjectFactory();
 		FreeTrialPlan trial = factory.createFreeTrialPlan();
 		User user = factory.createUser();
@@ -154,4 +202,6 @@ public class RestClientApp
 		}
 
 	}
+ */
+	
 }

@@ -7,6 +7,11 @@
 	<xsd:element name="ccinfo" type="ccinfo"></xsd:element>
 	<xsd:element name="invoice" type="invoice"></xsd:element>
 	<xsd:element name="invoiceWrapper" type="invoiceWrapper"></xsd:element>
+	<xsd:element name="arret" type="arret"></xsd:element>
+	<xsd:element name="train" type="train"></xsd:element>
+	<xsd:element name="trainAvecResa" type="trainAvecResa"></xsd:element>
+	<xsd:element name="trainSansResa" type="trainSansResa"></xsd:element>
+	<xsd:element name="passager" type="passager"></xsd:element>
 
 	<xsd:simpleType name="SimpleDate">
 		<xsd:annotation>
@@ -23,7 +28,6 @@
 	</xsd:simpleType>
 
 
-
 	<xsd:complexType name="user">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
@@ -34,11 +38,6 @@
 		</xsd:sequence>
 	</xsd:complexType>
 
-
-
-
-
-
 	<xsd:complexType name="address">
 		<xsd:sequence>
 			<xsd:element name="streetName" type="xsd:string"></xsd:element>
@@ -46,11 +45,7 @@
 			<xsd:element name="zipCode" type="xsd:string"></xsd:element>
 			<xsd:element name="Country" type="xsd:string"></xsd:element>
 		</xsd:sequence>
-
 	</xsd:complexType>
-
-
-
 
 	<xsd:element name="freeTrialPlan">
 		<xsd:complexType>
@@ -58,10 +53,7 @@
 				<xsd:element name="user" type="user"></xsd:element>
 				<xsd:element name="address" type="address"></xsd:element>
 			</xsd:sequence>
-
 		</xsd:complexType>
-
-
 	</xsd:element>
 
 	<xsd:complexType name="ccinfo">
@@ -78,21 +70,72 @@
 			<xsd:element name="invoices" type="invoice"
 				maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
-
 	</xsd:complexType>
+	
 	<xsd:complexType name="invoice">
 		<xsd:sequence>
-
 			<xsd:element name="date" type="SimpleDate">
 			</xsd:element>
 			<xsd:element name="contractId" type="xsd:int"></xsd:element>
 			<xsd:element name="paid" type="xsd:boolean"></xsd:element>
 		</xsd:sequence>
-
 	</xsd:complexType>
-
-
-
-
+	
+	
+	<xsd:complexType name="arret">
+		<xsd:sequence>
+			<xsd:element name="idArret" type="xsd:int"></xsd:element>
+			<xsd:element name="nomArret" type="xsd:string"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="train">
+		<xsd:sequence>
+			<xsd:element name="idTrain" type="xsd:int"></xsd:element>
+			<xsd:element name="nomTrain" type="xsd:string"></xsd:element>
+			<xsd:element name="direction" type="arret"></xsd:element>
+			<xsd:element name="direction_type" type="xsd:string"></xsd:element>
+			<xsd:element name="numeroTrain" type="xsd:int"></xsd:element>
+			<xsd:element name="reseau" type="xsd:string"></xsd:element>
+			<xsd:element name="statut" type="xsd:string"></xsd:element>
+			<xsd:element name="base_depart_temps" type="SimpleDate"></xsd:element>
+			<xsd:element name="base_arrivee_temps" type="SimpleDate"></xsd:element>
+			<xsd:element name="reel_depart_temps" type="SimpleDate"></xsd:element>
+			<xsd:element name="reel_arrivee_temps" type="SimpleDate"></xsd:element>
+			<xsd:element name="listeArrets" type="arret" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="listePassager" type="passager" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="trainAvecResa">
+  		<xsd:complexContent>
+    		<xsd:extension base="train">
+     			 <xsd:sequence>
+       				 <xsd:element name="type" type="xsd:string" />
+     			 </xsd:sequence>
+   			 </xsd:extension>
+  		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="trainSansResa">
+  		<xsd:complexContent>
+    		<xsd:extension base="train">
+     			 <xsd:sequence>
+       				 <xsd:element name="type" type="xsd:string" />
+     			 </xsd:sequence>
+   			 </xsd:extension>
+  		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="passager">
+		<xsd:sequence>
+			<xsd:element name="idPassager" type="xsd:int"></xsd:element>
+			<xsd:element name="nomPassager" type="xsd:string"></xsd:element>
+			<xsd:element name="depart" type="arret"></xsd:element>
+			<xsd:element name="arrive" type="arret"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
 
 </xsd:schema>
