@@ -50,7 +50,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.UserServiceImpl;
  */
 public class Main {
 
-	public static final String BASE_URI = "http://localhost:8080/";
+	public static final String BASE_URI = "http://localhost:8082/";
 
 	public static HttpServer startServer() {
 

@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 
 @Entity
 public class Train {
@@ -50,7 +44,6 @@ public class Train {
 	public void setReelArriveeTemps(Date reelArriveeTemps) {
 		this.reelArriveeTemps = reelArriveeTemps;
 	}
-
 
 	public String getNomTrain() {
 		return nomTrain;
@@ -92,7 +85,6 @@ public class Train {
 		this.statut = statut;
 	}
 
-
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -105,11 +97,9 @@ public class Train {
 		return id;
 	}
 
-	
-
 	protected String nomTrain;
 
-	// protected Arret direction;
+	protected Arret direction;
 
 	protected String directionType;
 	protected int numeroTrain;
@@ -130,8 +120,8 @@ public class Train {
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date reelArriveeTemps;
 
-	// protected List<Arret> listeArrets;
+	protected List<Arret> listeArrets;
 
-	// protected List<Passager> listePassagers;
+	protected List<Passager> listePassagers;
 
 }

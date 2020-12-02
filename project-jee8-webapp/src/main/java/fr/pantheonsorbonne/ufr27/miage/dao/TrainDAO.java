@@ -2,7 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 

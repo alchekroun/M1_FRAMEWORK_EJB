@@ -56,7 +56,7 @@ public class RestClientApp
 	
 	public static void main(String[] args) throws InterruptedException {		
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080");
+		WebTarget target = client.target("http://localhost:8082");
 		
 		Response resp = target.path("train").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(getTrain()));
