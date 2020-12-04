@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
@@ -16,4 +18,18 @@ public class ArretDAO {
 		Arret arretDTO = ArretMapper.arretDTOMapper(arret);
 		return arretDTO;
 	}
+
+	public List<Arret> getAllArret() {
+		return em.createNamedQuery("getAllArret").getResultList();
+	}
+
+	public void deleteArret(int arretId) {
+		em.createNamedQuery("deleteArret").setParameter("id", arretId).executeUpdate();
+	}
+
+	public List<Arret> getAllTrainByArret(int arretId) {
+		// TODO Faire la NAMED QUERY
+		return em.createNamedQuery("getAllTrainByArret").setParameter("id", arretId).getResultList();
+	}
+
 }

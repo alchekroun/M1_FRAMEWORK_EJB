@@ -4,8 +4,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
+
+@NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a"),
+		@NamedQuery(name = "deleteArret", query = "DELETE FROM Arret a WHERE a.id = :id") })
 public class Arret {
 
 	@Id

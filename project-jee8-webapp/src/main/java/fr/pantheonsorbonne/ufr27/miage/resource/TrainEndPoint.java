@@ -2,12 +2,16 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -44,6 +48,34 @@ public class TrainEndPoint {
 
 		return Response.ok(trainDTO).build();
 
+	}
+
+	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@GET
+	@Path("all")
+	public Response getAllTrain() {
+		List<Train> allTrainDTO = new ArrayList<>();
+		for (Train t : dao.getAllTrain()) {
+			allTrainDTO.add(t);
+		}
+
+		return Response.ok(allTrainDTO).build();
+
+	}
+
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@DELETE
+	@Path("delete/{trainId}")
+	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
+		dao.deleteTrain(trainId);
+		return Response.created(new URI("/train/")).build();
+	}
+
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PUT
+	@Path("update/{trainId}")
+	public Response update() throws URISyntaxException {
+		return Response.created(new URI("/train/")).build();
 	}
 
 }

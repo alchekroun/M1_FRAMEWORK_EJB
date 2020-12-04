@@ -7,10 +7,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+
+@NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
+		@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id") })
 public class Train {
 
 	public Date getBaseDepartTemps() {

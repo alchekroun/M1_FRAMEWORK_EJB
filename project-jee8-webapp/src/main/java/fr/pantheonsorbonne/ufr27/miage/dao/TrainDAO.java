@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
@@ -16,6 +18,14 @@ public class TrainDAO {
 
 		Train trainDTO = TrainMapper.trainDTOMapper(train);
 		return trainDTO;
+	}
+
+	public List<Train> getAllTrain() {
+		return em.createNamedQuery("getAllTrain").getResultList();
+	}
+
+	public void deleteTrain(int trainId) {
+		em.createNamedQuery("deleteTrain").setParameter("id", trainId).executeUpdate();
 	}
 
 }
