@@ -16,13 +16,12 @@ public class TrainMapper {
 
 	public static Train trainDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		Train trainDTO = new ObjectFactory().createTrain();
-		Arret Direction = new ObjectFactory().createArret();
 		trainDTO.setIdTrain(train.getId());
 		trainDTO.setNomTrain(train.getNomTrain());
 		trainDTO.setDirectionType(train.getDirectionType());
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());
-		trainDTO.setDirection(Direction);
+		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
 		for (Arret arret : ArretMapper.arretAllDTOMapper(train.getListeArrets())) {
 			trainDTO.addArret(arret);
 		}

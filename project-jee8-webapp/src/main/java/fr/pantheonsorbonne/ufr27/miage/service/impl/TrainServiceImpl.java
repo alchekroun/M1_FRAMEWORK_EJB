@@ -7,6 +7,8 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -42,6 +44,19 @@ public class TrainServiceImpl implements TrainService {
 		em.getTransaction().commit();
 
 		return train.getId();
+	}
+
+	@Override
+	public void addArret(Train trainDTO, Arret arretDTO) {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Train.class,
+				trainDTO.getIdTrain());
+
+		train.getListeArrets().add(em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, 
+				arretDTO.getIdArret()));
+
+		em.persist(train);
+		em.getTransaction().commit();
 	}
 
 }
