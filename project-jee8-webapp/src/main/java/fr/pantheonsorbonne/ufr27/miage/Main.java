@@ -21,7 +21,9 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import fr.pantheonsorbonne.ufr27.miage.conf.EMFFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.EMFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
+import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
@@ -65,6 +67,8 @@ public class Main {
 
 						// déclarer que la classe peut être injectée
 						bind(TrainDAO.class).to(TrainDAO.class);
+						bind(PassagerDAO.class).to(PassagerDAO.class);
+						bind(ArretDAO.class).to(ArretDAO.class);
 
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(GymServiceImpl.class).to(GymService.class);

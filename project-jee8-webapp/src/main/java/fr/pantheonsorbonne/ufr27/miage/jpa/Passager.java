@@ -1,23 +1,30 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class Passager {
 
-	protected int idPassager;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	int id;
 
 	protected String nomPassager;
-
+	@ManyToOne
 	protected Arret depart;
-
+	@ManyToOne
 	protected Arret arrive;
 
-	public int getIdPassager() {
-		return idPassager;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdPassager(int idPassager) {
-		this.idPassager = idPassager;
+	public void setid(int id) {
+		this.id = id;
 	}
 
 	public String getNomPassager() {

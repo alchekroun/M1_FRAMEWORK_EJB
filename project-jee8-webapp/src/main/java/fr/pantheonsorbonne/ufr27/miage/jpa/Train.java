@@ -7,16 +7,47 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-
-@NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
-		@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id") })
 public class Train {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	int id;
+
+	protected String nomTrain;
+	@ManyToOne
+	protected Arret direction;
+
+	protected String directionType;
+	protected int numeroTrain;
+
+	protected String reseau;
+
+	protected String statut;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date baseDepartTemps;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date baseArriveeTemps;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date reelDepartTemps;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	protected Date reelArriveeTemps;
+
+	@ManyToMany
+	protected List<Arret> listeArrets;
+
+	@OneToMany
+	protected List<Passager> listePassagers;
 
 	public Date getBaseDepartTemps() {
 		return baseDepartTemps;
@@ -94,39 +125,24 @@ public class Train {
 		this.id = id;
 	}
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	int id;
-
 	public int getId() {
 		return id;
 	}
 
-	protected String nomTrain;
+	public Arret getDirection() {
+		return direction;
+	}
 
-	protected Arret direction;
+	public void setDirection(Arret direction) {
+		this.direction = direction;
+	}
 
-	protected String directionType;
-	protected int numeroTrain;
+	public List<Arret> getListeArrets() {
+		return listeArrets;
+	}
 
-	protected String reseau;
-
-	protected String statut;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date baseDepartTemps;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date baseArriveeTemps;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date reelDepartTemps;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date reelArriveeTemps;
-
-	protected List<Arret> listeArrets;
-
-	protected List<Passager> listePassagers;
+	public List<Passager> getListePassagers() {
+		return listePassagers;
+	}
 
 }
