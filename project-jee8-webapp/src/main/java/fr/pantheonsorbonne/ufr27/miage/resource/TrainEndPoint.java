@@ -36,10 +36,11 @@ public class TrainEndPoint {
 
 	@GET
 	@Path("{trainId}")
-	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getTrain(@PathParam("trainId") int trainId) {
 		try {
-			return Response.ok(service.getTrainFromId(trainId)).build();
+			Train train = service.getTrainFromId(trainId);
+			return Response.ok(train).build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException(404);
 		}

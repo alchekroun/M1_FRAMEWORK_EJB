@@ -33,12 +33,14 @@ import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
+import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
 import fr.pantheonsorbonne.ufr27.miage.service.MailingService;
 import fr.pantheonsorbonne.ufr27.miage.service.PaymentService;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.service.UserService;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.MailingServiceImpl;
@@ -52,7 +54,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.UserServiceImpl;
  */
 public class Main {
 
-	public static final String BASE_URI = "http://localhost:8082/";
+	public static final String BASE_URI = "http://localhost:8080/";
 
 	public static HttpServer startServer() {
 
@@ -69,6 +71,7 @@ public class Main {
 						bind(TrainDAO.class).to(TrainDAO.class);
 						bind(PassagerDAO.class).to(PassagerDAO.class);
 						bind(ArretDAO.class).to(ArretDAO.class);
+						bind(ArretServiceImpl.class).to(ArretService.class);
 
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
