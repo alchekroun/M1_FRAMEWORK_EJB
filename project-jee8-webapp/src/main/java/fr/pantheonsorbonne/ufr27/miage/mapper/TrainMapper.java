@@ -27,7 +27,7 @@ public class TrainMapper {
 
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
 
-		List<Arret> listeArretTransition = new ArrayList<Arret>();
+		/*List<Arret> listeArretTransition = new ArrayList<Arret>();
 		for (Arret arret : ArretMapper.arretAllDTOMapper(train.getListeArrets())) {
 			listeArretTransition.add(arret);
 		}
@@ -38,7 +38,7 @@ public class TrainMapper {
 			listePassagerTransition.add(passager);
 		}
 		trainDTO.setListePassagers(listePassagerTransition);
-
+		*/
 		trainDTO.setReelArriveeTemps(
 				LocalDateTime.ofInstant(train.getReelArriveeTemps().toInstant(), ZoneId.systemDefault()));
 		trainDTO.setReelDepartTemps(

@@ -44,7 +44,7 @@ public class RestClientApp
 		train.setNumeroTrain(8541);
 		train.setReseau("SNCF");
 		train.setStatut("en marche");
-		train.setListeArrets(lA);
+		//train.setListeArrets(lA);
 		train.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
 		train.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		train.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
