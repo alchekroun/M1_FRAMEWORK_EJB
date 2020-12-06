@@ -72,6 +72,7 @@ public class RestClientApp
 
 		System.out.println(trainLocation);
 
+		// Erreur
 		Response response = client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON)
 				.get(Response.class);
 		Train train = response.readEntity(Train.class);

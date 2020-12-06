@@ -32,6 +32,7 @@ public class TrainMapper {
 			listeArretTransition.add(arret);
 		}
 		trainDTO.setListeArrets(listeArretTransition);
+		
 		List<Passager> listePassagerTransition = new ArrayList<Passager>();
 		for (Passager passager : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
 			listePassagerTransition.add(passager);
