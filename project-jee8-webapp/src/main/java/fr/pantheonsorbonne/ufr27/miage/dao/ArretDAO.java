@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
-import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
+
+import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 
 public class ArretDAO {
 	@Inject
@@ -14,9 +14,7 @@ public class ArretDAO {
 	public Arret getArretFromId(int arretId) {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class,
 				arretId);
-
-		Arret arretDTO = ArretMapper.arretDTOMapper(arret);
-		return arretDTO;
+		return arret;
 	}
 
 	public List<Arret> getAllArret() {

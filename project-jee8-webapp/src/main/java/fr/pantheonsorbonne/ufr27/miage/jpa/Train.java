@@ -145,4 +145,12 @@ public class Train {
 		return listePassagers;
 	}
 
+	public void setListeArrets(List<Arret> listeArrets) {
+		this.listeArrets = listeArrets;
+	}
+
+	public void setListePassagers(List<Passager> listePassagers) {
+		this.listePassagers = listePassagers;
+	}
+
 }

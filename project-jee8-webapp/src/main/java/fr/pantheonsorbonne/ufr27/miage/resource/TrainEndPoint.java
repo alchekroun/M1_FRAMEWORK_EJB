@@ -15,9 +15,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
@@ -27,11 +29,8 @@ public class TrainEndPoint {
 	@Inject
 	TrainService service;
 
-	@Inject
-	TrainDAO dao;
-
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@POST
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createTrain(Train train) throws URISyntaxException {
 		int trainId = service.createTrain(train);
 
@@ -39,36 +38,54 @@ public class TrainEndPoint {
 
 	}
 
-	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@GET
-	@Path("{trainId}")
-	public Response getTrain(@PathParam("trainId") int trainId) {
-
-		Train trainDTO = dao.getTrainFromId(trainId);
-
-		return Response.ok(trainDTO).build();
-
-	}
-
-	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@GET
-	@Path("all")
-	public Response getAllTrain() {
-		List<Train> allTrainDTO = new ArrayList<>();
-		for (Train t : dao.getAllTrain()) {
-			allTrainDTO.add(t);
+	@PUT
+	@Path("{trainId}/addArret/{arretId}")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response createTrain(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
+			throws URISyntaxException {
+		try {
+			service.addArret(trainId, arretId);
+			return Response.noContent().build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
 		}
 
-		return Response.ok(allTrainDTO).build();
+	}
+
+	@GET
+	@Path("{trainId}")
+	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getTrain(@PathParam("trainId") int trainId) {
+		try {
+			return Response.ok(service.getTrainFromId(trainId)).build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
 
 	}
 
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@GET
+	@Path("all")
+	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getAllTrain() {
+		try {
+			return Response.ok(service.getAllTrain()).build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
+
+	}
+
 	@DELETE
 	@Path("delete/{trainId}")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
-		dao.deleteTrain(trainId);
-		return Response.created(new URI("/train/")).build();
+		try {
+			service.deleteTrain(trainId);
+			return Response.ok().build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

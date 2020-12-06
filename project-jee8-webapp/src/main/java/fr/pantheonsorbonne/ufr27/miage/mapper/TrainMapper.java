@@ -9,25 +9,34 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
-import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
-import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 
 public class TrainMapper {
 
 	public static Train trainDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		Train trainDTO = new ObjectFactory().createTrain();
+
 		trainDTO.setIdTrain(train.getId());
+
 		trainDTO.setNomTrain(train.getNomTrain());
+
 		trainDTO.setDirectionType(train.getDirectionType());
+
 		trainDTO.setReseau(train.getReseau());
+
 		trainDTO.setStatut(train.getStatut());
+
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
+
+		List<Arret> listeArretTransition = new ArrayList<Arret>();
 		for (Arret arret : ArretMapper.arretAllDTOMapper(train.getListeArrets())) {
-			trainDTO.addArret(arret);
+			listeArretTransition.add(arret);
 		}
+		trainDTO.setListeArrets(listeArretTransition);
+		List<Passager> listePassagerTransition = new ArrayList<Passager>();
 		for (Passager passager : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
-			trainDTO.addPassager(passager);
+			listePassagerTransition.add(passager);
 		}
+		trainDTO.setListePassagers(listePassagerTransition);
 
 		trainDTO.setReelArriveeTemps(
 				LocalDateTime.ofInstant(train.getReelArriveeTemps().toInstant(), ZoneId.systemDefault()));
@@ -39,6 +48,14 @@ public class TrainMapper {
 				LocalDateTime.ofInstant(train.getBaseArriveeTemps().toInstant(), ZoneId.systemDefault()));
 
 		return trainDTO;
+	}
+
+	public static List<Train> trainAllDTOMapper(List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listeTrains) {
+		List<Train> ListeTrains = new ArrayList<Train>();
+		for (fr.pantheonsorbonne.ufr27.miage.jpa.Train train : listeTrains) {
+			ListeTrains.add(trainDTOMapper(train));
+		}
+		return ListeTrains;
 	}
 
 }
