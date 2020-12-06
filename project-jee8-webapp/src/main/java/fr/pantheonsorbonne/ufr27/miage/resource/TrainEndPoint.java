@@ -2,9 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import javax.ws.rs.Consumes;
@@ -18,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -38,26 +34,50 @@ public class TrainEndPoint {
 
 	}
 
-	@PUT
-	@Path("{trainId}/addArret/{arretId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response createTrain(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
-			throws URISyntaxException {
-		try {
-			service.addArret(trainId, arretId);
-			return Response.noContent().build();
-		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
-		}
-
-	}
-
 	@GET
 	@Path("{trainId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
 	public Response getTrain(@PathParam("trainId") int trainId) {
 		try {
 			return Response.ok(service.getTrainFromId(trainId)).build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
+
+	}
+
+	@DELETE
+	@Path("delete/{trainId}")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
+		try {
+			service.deleteTrain(trainId);
+			return Response.noContent().build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
+	}
+
+	@PUT
+	@Path("update/{trainId}")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response update(Train train) throws URISyntaxException {
+		try {
+			service.updateTrain(train);
+			return Response.noContent().build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException(404);
+		}
+	}
+
+	@PUT
+	@Path("{trainId}/addArret/{arretId}")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
+			throws URISyntaxException {
+		try {
+			service.addArret(trainId, arretId);
+			return Response.noContent().build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException(404);
 		}
@@ -75,24 +95,4 @@ public class TrainEndPoint {
 		}
 
 	}
-
-	@DELETE
-	@Path("delete/{trainId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
-		try {
-			service.deleteTrain(trainId);
-			return Response.ok().build();
-		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
-		}
-	}
-
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@PUT
-	@Path("update/{trainId}")
-	public Response update() throws URISyntaxException {
-		return Response.created(new URI("/train/")).build();
-	}
-
 }

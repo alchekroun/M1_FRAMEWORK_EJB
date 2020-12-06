@@ -93,4 +93,24 @@ public class TrainServiceImpl implements TrainService {
 		dao.deleteTrain(train.getId());
 	}
 
+	@Override
+	public void updateTrain(Train trainUpdate) throws NoSuchTrainException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getIdTrain());
+		if (trainOriginal == null) {
+			throw new NoSuchTrainException();
+		}
+		trainOriginal.setNomTrain(trainUpdate.getNomTrain());
+		// trainOriginal.setDirection(trainUpdate.getDirection());
+		// trainOriginal.setDirectionType(trainUpdate.getDirectionType());
+		trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
+		trainOriginal.setReseau(trainUpdate.getReseau());
+		trainOriginal.setReelDepartTemps(getDate(trainUpdate.getReelDepartTemps()));
+		trainOriginal.setReelArriveeTemps(getDate(trainUpdate.getReelArriveeTemps()));
+
+		em.merge(trainOriginal);
+		em.getTransaction().commit();
+
+	}
+
 }

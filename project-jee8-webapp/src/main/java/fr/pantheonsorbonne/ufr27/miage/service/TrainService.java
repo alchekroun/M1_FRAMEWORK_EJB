@@ -15,4 +15,6 @@ public interface TrainService {
 	public List<Train> getAllTrain() throws NoSuchTrainException;
 
 	public void deleteTrain(int trainId) throws NoSuchTrainException;
+	
+	public void updateTrain(Train train) throws NoSuchTrainException;
 }
