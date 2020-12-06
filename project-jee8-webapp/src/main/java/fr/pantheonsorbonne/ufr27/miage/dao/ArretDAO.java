@@ -25,9 +25,8 @@ public class ArretDAO {
 		em.createNamedQuery("deleteArret").setParameter("id", arretId).executeUpdate();
 	}
 
-	public List<Arret> getAllTrainByArret(int arretId) {
-		// TODO Faire la NAMED QUERY
-		return em.createNamedQuery("getAllTrainByArret").setParameter("id", arretId).getResultList();
+	public List<Arret> getAllArretByTrain(int trainId) {
+		return em.createNamedQuery("findAllArretByTrain").setParameter("id", trainId).getResultList();
 	}
 
 }

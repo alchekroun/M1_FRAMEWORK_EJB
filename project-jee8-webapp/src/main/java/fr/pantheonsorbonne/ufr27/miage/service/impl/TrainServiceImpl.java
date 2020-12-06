@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
+import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -75,10 +76,10 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public List<Train> getAllTrain() throws NoSuchTrainException {
+	public List<Train> getAllTrain() throws EmptyListException {
 		List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listeTrains = dao.getAllTrain();
 		if (listeTrains == null) {
-			throw new NoSuchTrainException();
+			throw new EmptyListException();
 		}
 		return TrainMapper.trainAllDTOMapper(listeTrains);
 	}
@@ -100,7 +101,7 @@ public class TrainServiceImpl implements TrainService {
 	@Override
 	public void updateTrain(Train trainUpdate) throws NoSuchTrainException {
 		em.getTransaction().begin();
-		
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getIdTrain());
 		if (trainOriginal == null) {
 			throw new NoSuchTrainException();
