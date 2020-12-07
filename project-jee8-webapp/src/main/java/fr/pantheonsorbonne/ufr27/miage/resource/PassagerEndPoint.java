@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,66 +17,71 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
-import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
-import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
+import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
 
-@Path("/arret/")
-public class ArretEndPoint {
+@Path("/passager/")
+public class PassagerEndPoint {
 
 	@Inject
-	ArretService service;
+	PassagerService service;
 
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response createArret(Arret arret) throws URISyntaxException {
-		int arretId = service.createArret(arret);
+	public Response createPassager(Passager passager) throws URISyntaxException {
+		int passagerId = service.createPassager(passager);
 
-		return Response.created(new URI("/arret/" + arretId)).build();
+		return Response.created(new URI("/passager/" + passagerId)).build();
 
 	}
 
 	@GET
-	@Path("{arretId}")
-	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getArret(@PathParam("arretId") int arretId) {
+	@Path("{passagerId}")
+	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
+	public Response getPassager(@PathParam("passagerId") int passagerId) {
 		try {
-			return Response.ok(service.getArretFromId(arretId)).build();
-		} catch (NoSuchArretException e) {
+			return Response.ok(service.getPassagerFromId(passagerId)).build();
+		} catch (NoSuchPassagerException e) {
 			throw new WebApplicationException(404);
 		}
+
 	}
 
 	@DELETE
-	@Path("delete/{arretId}")
+	@Path("delete/{passagerId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response delete(@PathParam("arretId") int arretId) throws URISyntaxException {
+	public Response delete(@PathParam("passagerId") int passagerId) throws URISyntaxException {
 		try {
-			service.deleteArret(arretId);
-			return Response.ok().build();
-		} catch (NoSuchArretException e) {
+			service.deletePassager(passagerId);
+			return Response.noContent().build();
+		} catch (NoSuchPassagerException e) {
 			throw new WebApplicationException(404);
 		}
 	}
 
 	@PUT
-	@Path("update/{arretId}")
+	@Path("update/{passagerId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response update() throws URISyntaxException {
-		return Response.created(new URI("/arret/")).build();
+	public Response update(Passager passager) throws URISyntaxException {
+		try {
+			service.updatePassager(passager);
+			return Response.noContent().build();
+		} catch (NoSuchPassagerException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@GET
 	@Path("all")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getAllArret() {
+	public Response getAllPassager() {
 		try {
-			return Response.ok(service.getAllArret()).build();
+			return Response.ok(service.getAllPassager()).build();
 		} catch (EmptyListException e) {
 			throw new WebApplicationException(404);
 		}
-
 	}
 
 	@GET
@@ -83,7 +89,7 @@ public class ArretEndPoint {
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAllArretByTrain(@PathParam("trainId") int trainId) {
 		try {
-			return Response.ok(service.getAllArretByTrain(trainId)).build();
+			return Response.ok(service.getAllPassagerByTrain(trainId)).build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException(404);
 		}

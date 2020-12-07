@@ -15,6 +15,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -91,9 +93,10 @@ public class TrainEndPoint {
 	public Response getAllTrain() {
 		try {
 			return Response.ok(service.getAllTrain()).build();
-		} catch (NoSuchTrainException e) {
+		} catch (EmptyListException e) {
 			throw new WebApplicationException(404);
 		}
 
 	}
+
 }
