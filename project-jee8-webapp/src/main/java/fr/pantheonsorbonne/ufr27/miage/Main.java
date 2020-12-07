@@ -37,6 +37,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
 import fr.pantheonsorbonne.ufr27.miage.service.MailingService;
+import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
 import fr.pantheonsorbonne.ufr27.miage.service.PaymentService;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.service.UserService;
@@ -44,6 +45,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.MailingServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.PassagerServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.PaymentServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.TrainServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.UserServiceImpl;
@@ -67,21 +69,29 @@ public class Main {
 					@Override
 					protected void configure() {
 
-						// déclarer que la classe peut être injectée
+						// Déclarer les classes pouvant être injectée
+
+						// DAO
+
 						bind(TrainDAO.class).to(TrainDAO.class);
 						bind(PassagerDAO.class).to(PassagerDAO.class);
 						bind(ArretDAO.class).to(ArretDAO.class);
+						bind(PaymentDAO.class).to(PaymentDAO.class);
+						bind(InvoiceDAO.class).to(InvoiceDAO.class);
+
+						// SERVICE
+
 						bind(ArretServiceImpl.class).to(ArretService.class);
-
 						bind(TrainServiceImpl.class).to(TrainService.class);
+						bind(PassagerServiceImpl.class).to(PassagerService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
-
 						bind(PaymentServiceImpl.class).to(PaymentService.class);
 						bind(InvoicingServiceImpl.class).to(InvoicingService.class);
-						bind(InvoiceDAO.class).to(InvoiceDAO.class);
 						bind(UserServiceImpl.class).to(UserService.class);
 						bind(MailingServiceImpl.class).to(MailingService.class);
-						bind(PaymentDAO.class).to(PaymentDAO.class);
+
+						// AUTRE
+
 						bindFactory(EMFFactory.class).to(EntityManagerFactory.class).in(Singleton.class);
 						bindFactory(EMFactory.class).to(EntityManager.class).in(RequestScoped.class);
 						bindFactory(ConnectionFactorySupplier.class).to(ConnectionFactory.class).in(Singleton.class);

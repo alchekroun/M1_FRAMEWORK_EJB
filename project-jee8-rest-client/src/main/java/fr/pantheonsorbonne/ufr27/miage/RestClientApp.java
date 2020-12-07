@@ -24,14 +24,14 @@ public class RestClientApp
 
 {
 
-	private static Arret getArret() {
+	private static Arret getArret(String nom) {
 		ObjectFactory factory = new ObjectFactory();
 		Arret arretLille = factory.createArret();
-		arretLille.setNomArret("Lille");
+		arretLille.setNomArret(nom);
 		return arretLille;
 	}
 
-	private static Train getTrain() {
+	private static Train getTrain(Arret direction) {
 		ObjectFactory factory = new ObjectFactory();
 		Train train = factory.createTrainAvecResa();
 		Arret arretParis = factory.createArret();
@@ -40,12 +40,12 @@ public class RestClientApp
 		lA.add(arretParis);
 
 		train.setNomTrain("Perigueux-Bordeaux");
-		train.setDirection(getArret());
+		train.setDirection(direction);
 		train.setDirectionType("forward");
 		train.setNumeroTrain(8541);
 		train.setReseau("SNCF");
 		train.setStatut("en marche");
-		//train.setListeArrets(lA);
+		// train.setListeArrets(lA);
 		train.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
 		train.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		train.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
@@ -59,66 +59,61 @@ public class RestClientApp
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8080");
 
+		// Création de l'arrêt départ
+
+		System.out.println("Creating arret destination pour le train\n#");
+
+		Response respArretDirection = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.json(getArret("Bordeaux")));
+
+		Arret arretDirection = client.target(respArretDirection.getLocation()).request()
+				.accept(MediaType.APPLICATION_JSON).get(Response.class).readEntity(Arret.class);
+
 		// Création du train
 
+		System.out.println("Creating a train\n#");
+
 		Response respTrain = target.path("train").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(getTrain()));
+				.post(Entity.json(getTrain(arretDirection)));
 
-		System.out.println(respTrain + " ****************************");
-
-		System.out.println("Creating a train");
+		System.out.println(respTrain + "\n#");
 
 		URI trainLocation = null;
 		trainLocation = respTrain.getLocation();
 
-		System.out.println(trainLocation);
+		System.out.println("URI du train : " + trainLocation + "\n#");
 
-		// Erreur
 		Response response = client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON)
 				.get(Response.class);
 		Train train = response.readEntity(TrainAvecResa.class);
 
-		System.out.println(train);
-		System.out.println(train.toString());
+		System.out.println("Objet train : " + train.toString() + "\n#");
 
 		// Création de l'arret
 
+		System.out.println("Creating an arret\n#");
+
 		Response respArret = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(getArret()));
+				.post(Entity.json(getArret("Poitier")));
 
-		System.out.println(respArret + " ****************************");
-
-		System.out.println("Creating an arret");
+		System.out.println(respArret + "\n#");
 
 		Arret arret = client.target(respArret.getLocation()).request().accept(MediaType.APPLICATION_JSON)
 				.get(Response.class).readEntity(Arret.class);
 
+		System.out.println("Objet Arret : " + arret.toString() + "\n#");
+
 		// Ajout de l'arret dans la liste du train
+
+		System.out.println("Adding an arret to train\n#");
 
 		Response respAjout = client.target(train.getIdTrain() + "/addArret/" + arret.getIdArret()).request()
 				.accept(MediaType.APPLICATION_JSON).put(Entity.json(train));
 
-		System.out.println(respAjout + "******************");
-
-		System.out.println("Adding an arret to train");
+		System.out.println(respAjout + "\n#");
 
 		System.out.println(client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON).get(Response.class)
 				.readEntity(Train.class).toString());
-
-		/*
-		 * Response resp1 = target.path(train.getIdTrain() + "/addArret/" +
-		 * getArret().getIdArret()).request()
-		 * .accept(MediaType.APPLICATION_JSON).put(Entity.json(train));
-		 * 
-		 * System.out.println(resp1 + "******************************");
-		 * 
-		 * URI trainUpdateLocation = resp1.getLocation(); Response response1 =
-		 * client.target(trainUpdateLocation).request().accept(MediaType.
-		 * APPLICATION_JSON) .get(Response.class); Train trainUpdate =
-		 * response1.readEntity(Train.class);
-		 * 
-		 * System.out.println(trainUpdate.toString());
-		 */
 
 	}
 	/*
