@@ -31,7 +31,7 @@ public class ArretServiceImpl implements ArretService {
 
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = new fr.pantheonsorbonne.ufr27.miage.jpa.Arret();
 
-		arret.setNom(arretDTO.getNomArret());
+		arret.setNom(arretDTO.getNom());
 
 		em.persist(arret);
 		em.getTransaction().commit();

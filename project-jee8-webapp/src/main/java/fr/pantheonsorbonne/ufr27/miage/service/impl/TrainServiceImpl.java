@@ -36,7 +36,7 @@ public class TrainServiceImpl implements TrainService {
 
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
 
-		train.setNomTrain(trainDTO.getNomTrain());
+		train.setNomTrain(trainDTO.getNom());
 		// train.setDirection(trainDTO.getDirection());
 		// train.setDirectionType(trainDTO.getDirectionType());
 		train.setNumeroTrain(trainDTO.getNumeroTrain());
@@ -102,11 +102,11 @@ public class TrainServiceImpl implements TrainService {
 	public void updateTrain(Train trainUpdate) throws NoSuchTrainException {
 		em.getTransaction().begin();
 
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getIdTrain());
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
 		if (trainOriginal == null) {
 			throw new NoSuchTrainException();
 		}
-		trainOriginal.setNomTrain(trainUpdate.getNomTrain());
+		trainOriginal.setNomTrain(trainUpdate.getNom());
 		// trainOriginal.setDirection(trainUpdate.getDirection());
 		// trainOriginal.setDirectionType(trainUpdate.getDirectionType());
 		trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());

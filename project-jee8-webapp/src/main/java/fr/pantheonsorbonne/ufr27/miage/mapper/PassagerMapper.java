@@ -14,8 +14,8 @@ public class PassagerMapper {
 		Passager passagerDTO = new ObjectFactory().createPassager();
 		Arret arretDepart = ArretMapper.arretDTOMapper(passager.getDepart());
 		Arret arretArrive = ArretMapper.arretDTOMapper(passager.getArrive());
-		passagerDTO.setIdPassager(passager.getId());
-		passagerDTO.setNomPassager(passager.getNomPassager());
+		passagerDTO.setId(passager.getId());
+		passagerDTO.setNom(passager.getNomPassager());
 		passagerDTO.setDepart(arretDepart);
 		passagerDTO.setArrive(arretArrive);
 

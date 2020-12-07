@@ -27,7 +27,7 @@ public class RestClientApp
 	private static Arret getArret(String nom) {
 		ObjectFactory factory = new ObjectFactory();
 		Arret arretLille = factory.createArret();
-		arretLille.setNomArret(nom);
+		arretLille.setNom(nom);
 		return arretLille;
 	}
 
@@ -35,11 +35,11 @@ public class RestClientApp
 		ObjectFactory factory = new ObjectFactory();
 		Train train = factory.createTrainAvecResa();
 		Arret arretParis = factory.createArret();
-		arretParis.setNomArret("Paris");
+		arretParis.setNom("Paris");
 		List<Arret> lA = new ArrayList<Arret>();
 		lA.add(arretParis);
 
-		train.setNomTrain("Perigueux-Bordeaux");
+		train.setNom("Perigueux-Bordeaux");
 		train.setDirection(direction);
 		train.setDirectionType("forward");
 		train.setNumeroTrain(8541);
@@ -107,7 +107,7 @@ public class RestClientApp
 
 		System.out.println("Adding an arret to train\n#");
 
-		Response respAjout = client.target(train.getIdTrain() + "/addArret/" + arret.getIdArret()).request()
+		Response respAjout = client.target(train.getId() + "/addArret/" + arret.getId()).request()
 				.accept(MediaType.APPLICATION_JSON).put(Entity.json(train));
 
 		System.out.println(respAjout + "\n#");

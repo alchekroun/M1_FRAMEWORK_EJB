@@ -15,9 +15,9 @@ public class TrainMapper {
 	public static Train trainDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		Train trainDTO = new ObjectFactory().createTrain();
 
-		trainDTO.setIdTrain(train.getId());
+		trainDTO.setId(train.getId());
 
-		trainDTO.setNomTrain(train.getNomTrain());
+		trainDTO.setNom(train.getNomTrain());
 
 		trainDTO.setDirectionType(train.getDirectionType());
 
