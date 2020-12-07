@@ -12,6 +12,10 @@
 	<xsd:element name="trainAvecResa" type="trainAvecResa"></xsd:element>
 	<xsd:element name="trainSansResa" type="trainSansResa"></xsd:element>
 	<xsd:element name="passager" type="passager"></xsd:element>
+	<xsd:element name="perturbation" type="perturbation"></xsd:element>
+	<xsd:element name="infoCentre" type="infoCentre"></xsd:element>
+	<xsd:element name="infoGare" type="infoGare"></xsd:element>
+	<xsd:element name="heureDePassage" type="heureDePassage"></xsd:element>
 
 	<xsd:simpleType name="SimpleDate">
 		<xsd:annotation>
@@ -71,7 +75,7 @@
 				maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="invoice">
 		<xsd:sequence>
 			<xsd:element name="date" type="SimpleDate">
@@ -80,10 +84,10 @@
 			<xsd:element name="paid" type="xsd:boolean"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
-	
-	
-	
+
+
+
+
 	<xsd:complexType name="train">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
@@ -97,31 +101,33 @@
 			<xsd:element name="base_arrivee_temps" type="SimpleDate"></xsd:element>
 			<xsd:element name="reel_depart_temps" type="SimpleDate"></xsd:element>
 			<xsd:element name="reel_arrivee_temps" type="SimpleDate"></xsd:element>
-			<xsd:element name="listeArrets" type="arret" maxOccurs="unbounded"></xsd:element>
-			<xsd:element name="listePassager" type="passager" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="listeArrets" type="arret"
+				maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="listePassager" type="passager"
+				maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="trainAvecResa">
-  		<xsd:complexContent>
-    		<xsd:extension base="train">
-     			 <xsd:sequence>
-       				 <xsd:element name="type" type="xsd:string" />
-     			 </xsd:sequence>
-   			 </xsd:extension>
-  		</xsd:complexContent>
+		<xsd:complexContent>
+			<xsd:extension base="train">
+				<xsd:sequence>
+					<xsd:element name="type" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="trainSansResa">
-  		<xsd:complexContent>
-    		<xsd:extension base="train">
-     			 <xsd:sequence>
-       				 <xsd:element name="type" type="xsd:string" />
-     			 </xsd:sequence>
-   			 </xsd:extension>
-  		</xsd:complexContent>
+		<xsd:complexContent>
+			<xsd:extension base="train">
+				<xsd:sequence>
+					<xsd:element name="type" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="passager">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
@@ -130,28 +136,31 @@
 			<xsd:element name="arrive" type="arret"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
-	
+
+
 	<xsd:complexType name="infoGare">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
 			<xsd:element name="localisation" type="arret"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="infoCentre">
 		<xsd:sequence>
+			<xsd:element name="id" type="xsd:int"></xsd:element>
+			<xsd:element name="nom" type="xsd:string"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="arret">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
 			<xsd:element name="nom" type="xsd:string"></xsd:element>
-			<xsd:element name="listeHeureDePassage" type="heureDePassage" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="listeHeureDePassage"
+				type="heureDePassage" maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="perturbation">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
@@ -159,13 +168,13 @@
 			<xsd:element name="perturbation_temps" type="SimpleDate"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 	<xsd:complexType name="heureDePassage">
 		<xsd:sequence>
 			<xsd:element name="idTrain" type="xsd:int"></xsd:element>
 			<xsd:element name="passage" type="SimpleDate"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-	
+
 
 </xsd:schema>
