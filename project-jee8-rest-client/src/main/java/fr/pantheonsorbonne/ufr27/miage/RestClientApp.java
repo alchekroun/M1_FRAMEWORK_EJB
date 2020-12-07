@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainAvecResa;
 
 /**
  * Hello world!
@@ -32,7 +33,7 @@ public class RestClientApp
 
 	private static Train getTrain() {
 		ObjectFactory factory = new ObjectFactory();
-		Train train = factory.createTrain();
+		Train train = factory.createTrainAvecResa();
 		Arret arretParis = factory.createArret();
 		arretParis.setNomArret("Paris");
 		List<Arret> lA = new ArrayList<Arret>();
@@ -56,7 +57,7 @@ public class RestClientApp
 
 	public static void main(String[] args) throws InterruptedException {
 		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8082");
+		WebTarget target = client.target("http://localhost:8080");
 
 		// Création du train
 
@@ -75,7 +76,7 @@ public class RestClientApp
 		// Erreur
 		Response response = client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON)
 				.get(Response.class);
-		Train train = response.readEntity(Train.class);
+		Train train = response.readEntity(TrainAvecResa.class);
 
 		System.out.println(train);
 		System.out.println(train.toString());
