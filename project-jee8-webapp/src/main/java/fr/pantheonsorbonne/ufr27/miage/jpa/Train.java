@@ -9,23 +9,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
+	@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id") })
 public class Train {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
 
-	protected String nomTrain;
+	protected String nom;
+	
 	@ManyToOne
 	protected Arret direction;
 
 	protected String directionType;
-	protected int numeroTrain;
+	
+	protected int numero;
 
 	protected String reseau;
 
@@ -82,11 +88,11 @@ public class Train {
 	}
 
 	public String getNomTrain() {
-		return nomTrain;
+		return nom;
 	}
 
-	public void setNomTrain(String nomTrain) {
-		this.nomTrain = nomTrain;
+	public void setNomTrain(String nom) {
+		this.nom = nom;
 	}
 
 	public String getDirectionType() {
@@ -98,11 +104,11 @@ public class Train {
 	}
 
 	public int getNumeroTrain() {
-		return numeroTrain;
+		return numero;
 	}
 
-	public void setNumeroTrain(int numeroTrain) {
-		this.numeroTrain = numeroTrain;
+	public void setNumeroTrain(int numero) {
+		this.numero = numero;
 	}
 
 	public String getReseau() {

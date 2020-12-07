@@ -1,27 +1,22 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 
 @Entity
-
-@NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a"),
-		@NamedQuery(name = "deleteArret", query = "DELETE FROM Arret a WHERE a.id = :id") })
-public class Arret {
-
+@NamedQueries({ @NamedQuery(name = "getAllInfoCentre", query = "SELECT i FROM InfoCentre i"),
+	@NamedQuery(name = "deleteInfoCentre", query = "DELETE FROM InfoCentre i WHERE i.id = :id") })
+public class InfoCentre {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected int id;
-	protected String nom;
-	@OneToMany
-	protected List<HeureDePassage> listeHeureDePassage;
+   
+    protected String nom;
 
 	public int getId() {
 		return id;
@@ -38,4 +33,5 @@ public class Arret {
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
+
 }
