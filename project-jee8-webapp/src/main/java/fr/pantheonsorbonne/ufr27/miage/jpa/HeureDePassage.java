@@ -6,22 +6,25 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
+	@NamedQuery(name = "deleteHeureDePassage", query = "DELETE FROM HeureDePassage h WHERE h.id = :id") })
 public class HeureDePassage {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	protected int idTrain;
+	protected int id;
 	   
 	protected LocalDateTime passage;
 
-	public int getIdTrain() {
-		return idTrain;
+	public int getId() {
+		return id;
 	}
 
-	public void setIdTrain(int idTrain) {
-		this.idTrain = idTrain;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public LocalDateTime getPassage() {

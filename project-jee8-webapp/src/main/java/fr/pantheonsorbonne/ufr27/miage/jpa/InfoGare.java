@@ -4,10 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i"),
+	@NamedQuery(name = "deleteInfoGare", query = "DELETE FROM InfoGare i WHERE i.id = :id") })
 public class InfoGare {
 	
 		@Id

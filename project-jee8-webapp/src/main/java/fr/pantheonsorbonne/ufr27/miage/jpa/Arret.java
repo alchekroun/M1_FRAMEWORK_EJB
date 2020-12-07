@@ -1,11 +1,14 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 @Entity
 
@@ -17,6 +20,8 @@ public class Arret {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected int id;
 	protected String nom;
+	@OneToMany
+	protected List<HeureDePassage> listeHeureDePassage;
 
 	public int getId() {
 		return id;

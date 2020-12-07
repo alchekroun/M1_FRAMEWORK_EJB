@@ -5,15 +5,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p"),
+	@NamedQuery(name = "deletePassager", query = "DELETE FROM Passager p WHERE p.id = :id") })
 public class Passager {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
 
-	protected String nomPassager;
+	protected String nom;
 	@ManyToOne
 	protected Arret depart;
 	@ManyToOne
@@ -27,12 +31,12 @@ public class Passager {
 		this.id = id;
 	}
 
-	public String getNomPassager() {
-		return nomPassager;
+	public String getNom() {
+		return nom;
 	}
 
-	public void setNomPassager(String nomPassager) {
-		this.nomPassager = nomPassager;
+	public void setNom(String nom) {
+		this.nom = nom;
 	}
 
 	public Arret getDepart() {
