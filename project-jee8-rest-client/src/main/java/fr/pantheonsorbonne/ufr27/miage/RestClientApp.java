@@ -2,9 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -12,9 +9,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainAvecResa;
 
 /**
  * Hello world!
@@ -31,27 +28,43 @@ public class RestClientApp
 		return arretLille;
 	}
 
-	private static Train getTrain(Arret direction) {
+	private static Response initializeTest(WebTarget target) {
 		ObjectFactory factory = new ObjectFactory();
-		Train train = factory.createTrainAvecResa();
-		Arret arretParis = factory.createArret();
-		arretParis.setNom("Paris");
-		List<Arret> lA = new ArrayList<Arret>();
-		lA.add(arretParis);
 
-		train.setNom("Perigueux-Bordeaux");
-		train.setDirection(direction);
-		train.setDirectionType("forward");
-		train.setNumeroTrain(8541);
-		train.setReseau("SNCF");
-		train.setStatut("en marche");
-		// train.setListeArrets(lA);
-		train.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
+		// Creation arret
+		System.out.println("############ Creation Arret ###########");
+		Arret arret1Paris = factory.createArret();
+		arret1Paris.setId(1);
+		arret1Paris.setNom("Paris");
+		Response responseCreationArret1Paris = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.json(arret1Paris));
 
-		return train;
+		// Creation infoGare associé
+		System.out.println("############ Creation InfoGare ###########");
+		InfoGare infoGare1Paris = factory.createInfoGare();
+		infoGare1Paris.setId(1);
+		infoGare1Paris.setLocalisation(arret1Paris);
+		Response responseCreationInfoGare1Paris = target.path("infoGare").request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.json(infoGare1Paris));
+
+		// Creation train
+		System.out.println("############ Creation Train ###########");
+		Train train1 = factory.createTrainAvecResa();
+		train1.setNom("Bordeaux - Paris");
+		train1.setDirection(arret1Paris);
+		train1.setDirectionType("forward");
+		train1.setNumeroTrain(8541);
+		train1.setReseau("SNCF");
+		train1.setStatut("en marche");
+		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
+		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
+		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
+		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
+
+		Response responseCreationTrain1 = target.path("train").request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.json(train1));
+
+		return responseCreationTrain1;
 
 	}
 
@@ -59,61 +72,47 @@ public class RestClientApp
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8080");
 
-		// Création de l'arrêt départ
+		// Lll
+		URI trainLocation = initializeTest(target).getLocation();
 
-		System.out.println("Creating arret destination pour le train\n#");
-
-		Response respArretDirection = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(getArret("Bordeaux")));
-
-		Arret arretDirection = client.target(respArretDirection.getLocation()).request()
-				.accept(MediaType.APPLICATION_JSON).get(Response.class).readEntity(Arret.class);
-
-		// Création du train
-
-		System.out.println("Creating a train\n#");
-
-		Response respTrain = target.path("train").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(getTrain(arretDirection)));
-
-		System.out.println(respTrain + "\n#");
-
-		URI trainLocation = null;
-		trainLocation = respTrain.getLocation();
-
-		System.out.println("URI du train : " + trainLocation + "\n#");
-
-		Response response = client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON)
-				.get(Response.class);
-		Train train = response.readEntity(TrainAvecResa.class);
-
-		System.out.println("Objet train : " + train.toString() + "\n#");
-
-		// Création de l'arret
-
-		System.out.println("Creating an arret\n#");
-
-		Response respArret = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(getArret("Poitier")));
-
-		System.out.println(respArret + "\n#");
-
-		Arret arret = client.target(respArret.getLocation()).request().accept(MediaType.APPLICATION_JSON)
-				.get(Response.class).readEntity(Arret.class);
-
-		System.out.println("Objet Arret : " + arret.toString() + "\n#");
-
-		// Ajout de l'arret dans la liste du train
-
-		System.out.println("Adding an arret to train\n#");
-
-		Response respAjout = client.target(train.getId() + "/addArret/" + arret.getId()).request()
-				.accept(MediaType.APPLICATION_JSON).put(Entity.json(train));
-
-		System.out.println(respAjout + "\n#");
-
-		System.out.println(client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON).get(Response.class)
-				.readEntity(Train.class).toString());
+		/*
+		 * System.out.println("URI du train : " + trainLocation + "\n#");
+		 * 
+		 * Response response =
+		 * client.target(trainLocation).request().accept(MediaType.APPLICATION_JSON)
+		 * .get(Response.class); Train train = response.readEntity(TrainAvecResa.class);
+		 * 
+		 * System.out.println("Objet train : " + train.toString() + "\n#");
+		 * 
+		 * // Création de l'arret
+		 * 
+		 * System.out.println("Creating an arret\n#");
+		 * 
+		 * Response respArret =
+		 * target.path("arret").request().accept(MediaType.APPLICATION_JSON)
+		 * .post(Entity.json(getArret("Poitier")));
+		 * 
+		 * System.out.println(respArret + "\n#");
+		 * 
+		 * Arret arret =
+		 * client.target(respArret.getLocation()).request().accept(MediaType.
+		 * APPLICATION_JSON) .get(Response.class).readEntity(Arret.class);
+		 * 
+		 * System.out.println("Objet Arret : " + arret.toString() + "\n#");
+		 * 
+		 * // Ajout de l'arret dans la liste du train
+		 * 
+		 * System.out.println("Adding an arret to train\n#");
+		 * 
+		 * Response respAjout = client.target(train.getId() + "/addArret/" +
+		 * arret.getId()).request()
+		 * .accept(MediaType.APPLICATION_JSON).put(Entity.json(train));
+		 * 
+		 * System.out.println(respAjout + "\n#");
+		 * 
+		 * System.out.println(client.target(trainLocation).request().accept(MediaType.
+		 * APPLICATION_JSON).get(Response.class) .readEntity(Train.class).toString());
+		 */
 
 	}
 	/*

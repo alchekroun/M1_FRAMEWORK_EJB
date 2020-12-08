@@ -28,7 +28,7 @@ public class TrainDAO {
 	}
 
 	public void addArret(Train train, int arretId) {
-		train.getListeArrets().add(arretDAO.getArretFromId(arretId));
+		// TODO
 	}
 
 }

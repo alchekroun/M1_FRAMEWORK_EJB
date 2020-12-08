@@ -8,11 +8,16 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class HeureDePassageKey implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1672615368672146835L;
+
 	@Column(name = "train_id")
 	int trainId;
 
 	@Column(name = "arret_id")
-	int courseId;
+	int arretId;
 
 	public int getTrainId() {
 		return trainId;
@@ -23,11 +28,32 @@ public class HeureDePassageKey implements Serializable {
 	}
 
 	public int getCourseId() {
-		return courseId;
+		return arretId;
 	}
 
-	public void setCourseId(int courseId) {
-		this.courseId = courseId;
+	public void setCourseId(int arretId) {
+		this.arretId = arretId;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof HeureDePassageKey) {
+			HeureDePassageKey h = (HeureDePassageKey) obj;
+			if (this.arretId == h.arretId && this.trainId == h.trainId) {
+				return true;
+			}
+			return false;
+
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 1;
+		hash = hash * 17 + trainId;
+		hash = hash * 31 + arretId;
+		return hash;
 	}
 
 }

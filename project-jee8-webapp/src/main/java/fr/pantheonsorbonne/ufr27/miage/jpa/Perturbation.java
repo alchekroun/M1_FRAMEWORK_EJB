@@ -11,17 +11,17 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p"),
-	@NamedQuery(name = "deletePerturbation", query = "DELETE FROM Perturbation p WHERE p.id = :id") })
+		@NamedQuery(name = "deletePerturbation", query = "DELETE FROM Perturbation p WHERE p.id = :id") })
 public class Perturbation {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected int id;
-   
-    protected String type;
-   
-    protected LocalDateTime perturbationTemps;
-    
+
+	protected String type;
+
+	protected LocalDateTime perturbationTemps;
+
 	public int getId() {
 		return id;
 	}

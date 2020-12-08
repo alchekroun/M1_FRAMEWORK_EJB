@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -30,9 +31,12 @@ public class TrainEndPoint {
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createTrain(Train train) throws URISyntaxException {
-		int trainId = service.createTrain(train);
-
-		return Response.created(new URI("/train/" + trainId)).build();
+		try {
+			int trainId = service.createTrain(train);
+			return Response.created(new URI("/train/" + trainId)).build();
+		} catch (CantCreateException e) {
+			throw new WebApplicationException(404);
+		}
 
 	}
 

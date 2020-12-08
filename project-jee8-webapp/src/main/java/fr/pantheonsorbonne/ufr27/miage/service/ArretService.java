@@ -12,13 +12,14 @@ public interface ArretService {
 	// C
 	public int createArret(Arret arretDTO);
 
+	// R
+	public Arret getArretFromId(int arretId) throws NoSuchArretException;
+
 	// U
 	public void updateArret(Arret arret) throws NoSuchArretException;
 
 	// D
 	public void deleteArret(int arretId) throws NoSuchArretException;
-
-	public Arret getArretFromId(int arretId) throws NoSuchArretException;
 
 	public List<Arret> getAllArret() throws EmptyListException;
 

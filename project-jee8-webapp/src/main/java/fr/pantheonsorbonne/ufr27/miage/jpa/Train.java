@@ -9,12 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -29,7 +28,8 @@ public class Train {
 
 	protected String nom;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "direction_arret_id", nullable = false)
 	protected Arret direction;
 
 	protected String directionType;
@@ -52,8 +52,8 @@ public class Train {
 	@Temporal(TemporalType.TIMESTAMP)
 	protected Date reelArriveeTemps;
 
-	@ManyToMany
-	protected List<Arret> listeArrets;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
+	protected List<HeureDePassage> listeHeureDePassage;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<Passager> listePassagers;
@@ -146,20 +146,36 @@ public class Train {
 		this.direction = direction;
 	}
 
-	public List<Arret> getListeArrets() {
-		return listeArrets;
-	}
-
 	public List<Passager> getListePassagers() {
 		return listePassagers;
 	}
 
-	public void setListeArrets(List<Arret> listeArrets) {
-		this.listeArrets = listeArrets;
-	}
-
 	public void setListePassagers(List<Passager> listePassagers) {
 		this.listePassagers = listePassagers;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
+
+	public int getNumero() {
+		return numero;
+	}
+
+	public void setNumero(int numero) {
+		this.numero = numero;
+	}
+
+	public List<HeureDePassage> getListeHeureDePassage() {
+		return listeHeureDePassage;
+	}
+
+	public void setListeHeureDePassage(List<HeureDePassage> listeHeureDePassage) {
+		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
 }
