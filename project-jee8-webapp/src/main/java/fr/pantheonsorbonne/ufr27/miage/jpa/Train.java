@@ -3,7 +3,9 @@ package fr.pantheonsorbonne.ufr27.miage.jpa;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,12 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
-	@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id") })
+		@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id") })
 public class Train {
 
 	@Id
@@ -25,12 +28,12 @@ public class Train {
 	int id;
 
 	protected String nom;
-	
+
 	@ManyToOne
 	protected Arret direction;
 
 	protected String directionType;
-	
+
 	protected int numero;
 
 	protected String reseau;
@@ -52,7 +55,7 @@ public class Train {
 	@ManyToMany
 	protected List<Arret> listeArrets;
 
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<Passager> listePassagers;
 
 	public Date getBaseDepartTemps() {
