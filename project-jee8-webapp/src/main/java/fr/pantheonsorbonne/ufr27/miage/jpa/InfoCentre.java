@@ -9,14 +9,14 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllInfoCentre", query = "SELECT i FROM InfoCentre i"),
-	@NamedQuery(name = "deleteInfoCentre", query = "DELETE FROM InfoCentre i WHERE i.id = :id") })
+		@NamedQuery(name = "deleteInfoCentre", query = "DELETE FROM InfoCentre i WHERE i.id = :id") })
 public class InfoCentre {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	protected int id;
-   
-    protected String nom;
+
+	protected String nom;
 
 	public int getId() {
 		return id;

@@ -59,12 +59,14 @@ public class ArretServiceImpl implements ArretService {
 
 	@Override
 	public void deleteArret(int arretId) throws NoSuchArretException {
+		em.getTransaction().begin();
 		// Redondance pour vérifier que le arret existe bien
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = dao.getArretFromId(arretId);
 		if (arret == null) {
 			throw new NoSuchArretException();
 		}
 		dao.deleteArret(arret.getId());
+		em.getTransaction().commit();
 
 	}
 

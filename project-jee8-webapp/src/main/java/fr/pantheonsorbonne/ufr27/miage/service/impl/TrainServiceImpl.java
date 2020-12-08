@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
@@ -31,25 +32,30 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public int createTrain(Train trainDTO) {
-		em.getTransaction().begin();
+	public int createTrain(Train trainDTO) throws CantCreateException{
+		try {
+			em.getTransaction().begin();
 
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
 
-		train.setNomTrain(trainDTO.getNom());
-		// train.setDirection(trainDTO.getDirection());
-		// train.setDirectionType(trainDTO.getDirectionType());
-		train.setNumeroTrain(trainDTO.getNumeroTrain());
-		train.setReseau(trainDTO.getReseau());
-		train.setBaseDepartTemps(getDate(trainDTO.getBaseDepartTemps()));
-		train.setBaseArriveeTemps(getDate(trainDTO.getBaseArriveeTemps()));
-		train.setReelDepartTemps(getDate(trainDTO.getReelDepartTemps()));
-		train.setReelArriveeTemps(getDate(trainDTO.getReelArriveeTemps()));
+			train.setNomTrain(trainDTO.getNom());
+			train.setDirection(
+					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainDTO.getDirection().getId()));
+			// train.setDirectionType(trainDTO.getDirectionType());
+			train.setNumeroTrain(trainDTO.getNumeroTrain());
+			train.setReseau(trainDTO.getReseau());
+			train.setBaseDepartTemps(getDate(trainDTO.getBaseDepartTemps()));
+			train.setBaseArriveeTemps(getDate(trainDTO.getBaseArriveeTemps()));
+			train.setReelDepartTemps(getDate(trainDTO.getReelDepartTemps()));
+			train.setReelArriveeTemps(getDate(trainDTO.getReelArriveeTemps()));
 
-		em.persist(train);
-		em.getTransaction().commit();
+			em.persist(train);
+			em.getTransaction().commit();
 
-		return train.getId();
+			return train.getId();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			throw new CantCreateException();
+		}
 	}
 
 	@Override

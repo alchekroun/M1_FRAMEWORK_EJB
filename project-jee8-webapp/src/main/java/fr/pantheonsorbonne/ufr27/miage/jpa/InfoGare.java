@@ -1,38 +1,49 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
+import javax.persistence.OneToOne;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i"),
-	@NamedQuery(name = "deleteInfoGare", query = "DELETE FROM InfoGare i WHERE i.id = :id") })
-public class InfoGare {
-	
-		@Id
-		@GeneratedValue(strategy = GenerationType.AUTO)
-		protected int id;
-	   
-	    protected Arret localisation;
+		@NamedQuery(name = "deleteInfoGare", query = "DELETE FROM InfoGare i WHERE i.id = :id") })
+public class InfoGare implements Serializable {
 
-		public int getId() {
-			return id;
-		}
+	/**
+	* 
+	*/
+	private static final long serialVersionUID = -5825103100885399293L;
 
-		public void setId(int id) {
-			this.id = id;
-		}
+	@Id
+	protected int id;
 
-		public Arret getLocalisation() {
-			return localisation;
-		}
+	@OneToOne
+	@MapsId
+	@JoinColumn(name = "localisation_arret_id")
+	protected Arret localisation;
 
-		public void setLocalisation(Arret localisation) {
-			this.localisation = localisation;
-		}
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Arret getLocalisation() {
+		return localisation;
+	}
+
+	public void setLocalisation(Arret localisation) {
+		this.localisation = localisation;
+	}
 }

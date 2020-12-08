@@ -2,27 +2,56 @@ package fr.pantheonsorbonne.ufr27.miage.jpa;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
-	@NamedQuery(name = "deleteHeureDePassage", query = "DELETE FROM HeureDePassage h WHERE h.id = :id") })
+		@NamedQuery(name = "deleteHeureDePassage", query = "DELETE FROM HeureDePassage h WHERE h.id = :id") })
 public class HeureDePassage {
 
-	@Id
-	protected int id;
-	   
+	@EmbeddedId
+	HeureDePassageKey id;
+
+	@ManyToOne
+	@MapsId("trainId")
+	@JoinColumn(name = "train_id")
+	Train train;
+
+	@ManyToOne
+	@MapsId("arretId")
+	@JoinColumn(name = "arret_id")
+	Arret arret;
+
 	protected LocalDateTime passage;
 
-	public int getId() {
+	public HeureDePassageKey getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(HeureDePassageKey id) {
 		this.id = id;
+	}
+
+	public Train getTrain() {
+		return train;
+	}
+
+	public void setTrain(Train train) {
+		this.train = train;
+	}
+
+	public Arret getArret() {
+		return arret;
+	}
+
+	public void setArret(Arret arret) {
+		this.arret = arret;
 	}
 
 	public LocalDateTime getPassage() {
@@ -32,5 +61,5 @@ public class HeureDePassage {
 	public void setPassage(LocalDateTime passage) {
 		this.passage = passage;
 	}
-	  
+
 }
