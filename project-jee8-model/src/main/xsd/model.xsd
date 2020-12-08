@@ -140,8 +140,7 @@
 
 	<xsd:complexType name="infoGare">
 		<xsd:sequence>
-			<xsd:element name="id" type="xsd:int"></xsd:element>
-			<xsd:element name="localisation" type="arret"></xsd:element>
+			<xsd:element name="localisation_arret_id" type="xsd:int"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -156,6 +155,8 @@
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
 			<xsd:element name="nom" type="xsd:string"></xsd:element>
+			<xsd:element name="trainsArrivants"
+				type="train" maxOccurs="unbounded"></xsd:element>
 			<xsd:element name="listeHeureDePassage"
 				type="heureDePassage" maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
@@ -171,7 +172,8 @@
 
 	<xsd:complexType name="heureDePassage">
 		<xsd:sequence>
-			<xsd:element name="idTrain" type="xsd:int"></xsd:element>
+			<xsd:element name="arret_id" type="xsd:int"></xsd:element>
+			<xsd:element name="train_id" type="xsd:int"></xsd:element>
 			<xsd:element name="passage" type="SimpleDate"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
