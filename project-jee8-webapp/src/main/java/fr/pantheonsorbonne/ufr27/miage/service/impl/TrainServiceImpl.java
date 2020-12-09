@@ -65,7 +65,7 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-
+		
 		dao.addArret(train, arretId);
 
 		em.persist(train);
