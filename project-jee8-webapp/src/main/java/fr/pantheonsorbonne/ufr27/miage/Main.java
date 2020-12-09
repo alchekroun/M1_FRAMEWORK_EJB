@@ -21,8 +21,13 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import fr.pantheonsorbonne.ufr27.miage.conf.EMFFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.EMFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
+import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.InfoGareDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
@@ -30,15 +35,23 @@ import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
+import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
+import fr.pantheonsorbonne.ufr27.miage.service.InfoGareService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
 import fr.pantheonsorbonne.ufr27.miage.service.MailingService;
+import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
 import fr.pantheonsorbonne.ufr27.miage.service.PaymentService;
+import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.service.UserService;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoGareServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.MailingServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.PassagerServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.PaymentServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.TrainServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.UserServiceImpl;
 
 /**
@@ -60,14 +73,32 @@ public class Main {
 					@Override
 					protected void configure() {
 
-						bind(GymServiceImpl.class).to(GymService.class);
+						// Déclarer les classes pouvant être injectée
 
+						// DAO
+
+						bind(TrainDAO.class).to(TrainDAO.class);
+						bind(PassagerDAO.class).to(PassagerDAO.class);
+						bind(ArretDAO.class).to(ArretDAO.class);
+						bind(HeureDePassageDAO.class).to(HeureDePassageDAO.class);
+						bind(InfoGareDAO.class).to(InfoGareDAO.class);
+						bind(PaymentDAO.class).to(PaymentDAO.class);
+						bind(InvoiceDAO.class).to(InvoiceDAO.class);
+
+						// SERVICE
+
+						bind(ArretServiceImpl.class).to(ArretService.class);
+						bind(TrainServiceImpl.class).to(TrainService.class);
+						bind(PassagerServiceImpl.class).to(PassagerService.class);
+						bind(InfoGareServiceImpl.class).to(InfoGareService.class);
+						bind(GymServiceImpl.class).to(GymService.class);
 						bind(PaymentServiceImpl.class).to(PaymentService.class);
 						bind(InvoicingServiceImpl.class).to(InvoicingService.class);
-						bind(InvoiceDAO.class).to(InvoiceDAO.class);
 						bind(UserServiceImpl.class).to(UserService.class);
 						bind(MailingServiceImpl.class).to(MailingService.class);
-						bind(PaymentDAO.class).to(PaymentDAO.class);
+
+						// AUTRE
+
 						bindFactory(EMFFactory.class).to(EntityManagerFactory.class).in(Singleton.class);
 						bindFactory(EMFactory.class).to(EntityManager.class).in(RequestScoped.class);
 						bindFactory(ConnectionFactorySupplier.class).to(ConnectionFactory.class).in(Singleton.class);

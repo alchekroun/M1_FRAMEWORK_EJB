@@ -5,7 +5,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Set;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
