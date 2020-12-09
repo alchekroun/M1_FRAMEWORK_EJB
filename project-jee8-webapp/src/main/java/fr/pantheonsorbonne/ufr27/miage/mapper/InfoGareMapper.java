@@ -11,8 +11,7 @@ public class InfoGareMapper {
 	public static InfoGare infoGareDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare) {
 		InfoGare infoGareDTO = new ObjectFactory().createInfoGare();
 
-		infoGareDTO.setId(infoGare.getId());
-		infoGareDTO.setLocalisation(ArretMapper.arretDTOMapper(infoGare.getLocalisation()));
+		infoGareDTO.setLocalisationArretId(infoGare.getId());
 
 		return infoGareDTO;
 	}

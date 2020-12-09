@@ -15,6 +15,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -30,10 +31,13 @@ public class ArretEndPoint {
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createArret(Arret arret) throws URISyntaxException {
-		int arretId = service.createArret(arret);
+		try {
+			int arretId = service.createArret(arret);
 
-		return Response.created(new URI("/arret/" + arretId)).build();
-
+			return Response.created(new URI("/arret/" + arretId)).build();
+		} catch (CantCreateException e) {
+			throw new WebApplicationException(404);
+		}
 	}
 
 	@GET

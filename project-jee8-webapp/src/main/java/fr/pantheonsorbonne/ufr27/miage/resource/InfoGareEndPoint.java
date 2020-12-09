@@ -15,6 +15,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchInfoGareException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.InfoGare;
@@ -29,9 +30,13 @@ public class InfoGareEndPoint {
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createInfoGare(InfoGare infoGare) throws URISyntaxException {
-		int infoGareId = service.createInfoGare(infoGare);
+		try {
+			int infoGareId = service.createInfoGare(infoGare);
 
-		return Response.created(new URI("/infoGare/" + infoGareId)).build();
+			return Response.created(new URI("/infoGare/" + infoGareId)).build();
+		} catch (CantCreateException e) {
+			throw new WebApplicationException(404);
+		}
 
 	}
 

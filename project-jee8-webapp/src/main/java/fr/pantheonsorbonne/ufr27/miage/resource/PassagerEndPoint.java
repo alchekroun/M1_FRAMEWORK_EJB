@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -31,9 +32,12 @@ public class PassagerEndPoint {
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createPassager(Passager passager) throws URISyntaxException {
-		int passagerId = service.createPassager(passager);
-
-		return Response.created(new URI("/passager/" + passagerId)).build();
+		try {
+			int passagerId = service.createPassager(passager);
+			return Response.created(new URI("/passager/" + passagerId)).build();
+		} catch (CantCreateException e) {
+			throw new WebApplicationException(404);
+		}
 
 	}
 

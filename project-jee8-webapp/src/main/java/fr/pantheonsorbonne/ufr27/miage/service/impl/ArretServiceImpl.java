@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -26,17 +27,21 @@ public class ArretServiceImpl implements ArretService {
 	TrainDAO daoTrain;
 
 	@Override
-	public int createArret(Arret arretDTO) {
-		em.getTransaction().begin();
+	public int createArret(Arret arretDTO) throws CantCreateException {
+		try {
+			em.getTransaction().begin();
 
-		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = new fr.pantheonsorbonne.ufr27.miage.jpa.Arret();
+			fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = new fr.pantheonsorbonne.ufr27.miage.jpa.Arret();
 
-		arret.setNom(arretDTO.getNom());
+			arret.setNom(arretDTO.getNom());
 
-		em.persist(arret);
-		em.getTransaction().commit();
+			em.persist(arret);
+			em.getTransaction().commit();
 
-		return arret.getId();
+			return arret.getId();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			throw new CantCreateException();
+		}
 	}
 
 	@Override

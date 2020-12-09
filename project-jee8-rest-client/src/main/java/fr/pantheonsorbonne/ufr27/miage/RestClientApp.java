@@ -42,8 +42,7 @@ public class RestClientApp
 		// Creation infoGare associé
 		System.out.println("############ Creation InfoGare ###########");
 		InfoGare infoGare1Paris = factory.createInfoGare();
-		infoGare1Paris.setId(1);
-		infoGare1Paris.setLocalisation(arret1Paris);
+		infoGare1Paris.setLocalisationArretId(arret1Paris.getId());
 		Response responseCreationInfoGare1Paris = target.path("infoGare").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(infoGare1Paris));
 

@@ -12,13 +12,14 @@ public interface TrainService {
 	// C
 	public int createTrain(Train trainDTO) throws CantCreateException;
 
+	// R
+	public Train getTrainFromId(int trainId) throws NoSuchTrainException;
+
 	// U
 	public void deleteTrain(int trainId) throws NoSuchTrainException;
 
 	// D
 	public void updateTrain(Train train) throws NoSuchTrainException;
-
-	public Train getTrainFromId(int trainId) throws NoSuchTrainException;
 
 	public List<Train> getAllTrain() throws EmptyListException;
 

@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.InfoGareDAO;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchInfoGareException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.InfoGareMapper;
@@ -21,18 +22,23 @@ public class InfoGareServiceImpl implements InfoGareService {
 	InfoGareDAO dao;
 
 	@Override
-	public int createInfoGare(InfoGare infoGareDTO) {
-		em.getTransaction().begin();
+	public int createInfoGare(InfoGare infoGareDTO) throws CantCreateException {
+		try {
+			em.getTransaction().begin();
 
-		fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = new fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare();
+			fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = new fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare();
 
-		infoGare.setLocalisation(
-				em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, infoGareDTO.getLocalisation().getId()));
+			infoGare.setLocalisation(
+					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, infoGareDTO.getLocalisationArretId()));
 
-		em.persist(infoGare);
-		em.getTransaction().commit();
+			em.persist(infoGare);
+			em.getTransaction().commit();
 
-		return infoGare.getId();
+			return infoGare.getId();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			throw new CantCreateException();
+		}
+
 	}
 
 	@Override
