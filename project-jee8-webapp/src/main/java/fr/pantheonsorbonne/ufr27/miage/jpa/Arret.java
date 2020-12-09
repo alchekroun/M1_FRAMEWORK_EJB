@@ -29,9 +29,11 @@ public class Arret {
 
 	protected String nom;
 
+	//liste des trains qui ont pour terminus cet arret
 	@OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Train> trainsArrivants;
 
+	//ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
 	protected List<HeureDePassage> listeHeureDePassage;
 

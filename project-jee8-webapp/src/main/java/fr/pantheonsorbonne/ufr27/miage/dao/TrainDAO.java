@@ -15,6 +15,10 @@ public class TrainDAO {
 	@Inject
 	ArretDAO arretDAO;
 
+	@Inject
+	HeureDePassageDAO heureDAO;
+
+
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
 	}
@@ -28,7 +32,18 @@ public class TrainDAO {
 	}
 
 	public void addArret(Train train, int arretId) {
-		// TODO
+		
+		heureDAO.insertArretAndTrain(train.getId(), arretId);
+		//arretDAO.getArretFromId(arretId)
+		train.getListeHeureDePassage().add(heureDAO.findHeureByTrainIdAndArretId(train.getId(), arretId ).get(0));
+		//ajouter train arrivant aussi sur larret???
 	}
-
+	
+//	public void addNewDirection(Train train, int arretId) {
+//		train.setDirection()
+//	}
+//	
+//	public findTrainByArret(Train train, int arretId) {
+//		train.getListeHeureDePassage
+//	}
 }
