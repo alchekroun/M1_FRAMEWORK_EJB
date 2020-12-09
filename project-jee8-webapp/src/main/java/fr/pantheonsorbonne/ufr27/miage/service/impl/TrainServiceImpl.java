@@ -8,9 +8,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -25,6 +27,9 @@ public class TrainServiceImpl implements TrainService {
 	@Inject
 	TrainDAO dao;
 
+	@Inject
+	ArretDAO arretDAO;
+
 	private static Date getDate(LocalDateTime adate) {
 
 		Date out = Date.from(adate.atZone(ZoneId.systemDefault()).toInstant());
@@ -32,7 +37,7 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public int createTrain(Train trainDTO) throws CantCreateException{
+	public int createTrain(Train trainDTO) throws CantCreateException {
 		try {
 			em.getTransaction().begin();
 
@@ -41,9 +46,10 @@ public class TrainServiceImpl implements TrainService {
 			train.setNomTrain(trainDTO.getNom());
 			train.setDirection(
 					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainDTO.getDirection().getId()));
-			// train.setDirectionType(trainDTO.getDirectionType());
+			train.setDirectionType(trainDTO.getDirectionType());
 			train.setNumeroTrain(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
+			train.setStatut(trainDTO.getStatut());
 			train.setBaseDepartTemps(getDate(trainDTO.getBaseDepartTemps()));
 			train.setBaseArriveeTemps(getDate(trainDTO.getBaseArriveeTemps()));
 			train.setReelDepartTemps(getDate(trainDTO.getReelDepartTemps()));
@@ -59,35 +65,12 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void addArret(int trainId, int arretId) throws NoSuchTrainException {
-		em.getTransaction().begin();
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
-		if (train == null) {
-			throw new NoSuchTrainException();
-		}
-		
-		dao.addArret(train, arretId);
-
-		em.persist(train);
-		em.getTransaction().commit();
-	}
-
-	@Override
 	public Train getTrainFromId(int trainId) throws NoSuchTrainException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
 		return TrainMapper.trainDTOMapper(train);
-	}
-
-	@Override
-	public List<Train> getAllTrain() throws EmptyListException {
-		List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listeTrains = dao.getAllTrain();
-		if (listeTrains == null) {
-			throw new EmptyListException();
-		}
-		return TrainMapper.trainAllDTOMapper(listeTrains);
 	}
 
 	@Override
@@ -123,6 +106,33 @@ public class TrainServiceImpl implements TrainService {
 		em.merge(trainOriginal);
 		em.getTransaction().commit();
 
+	}
+
+	@Override
+	public List<Train> getAllTrain() throws EmptyListException {
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listeTrains = dao.getAllTrain();
+		if (listeTrains == null) {
+			throw new EmptyListException();
+		}
+		return TrainMapper.trainAllDTOMapper(listeTrains);
+	}
+
+	@Override
+	public void addArret(int trainId, int arretId, LocalDateTime passage)
+			throws NoSuchTrainException, NoSuchArretException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
+		if (train == null) {
+			throw new NoSuchTrainException();
+		}
+		if (arretDAO.getArretFromId(arretId) == null) {
+			throw new NoSuchArretException();
+		}
+
+		dao.addArret(train, arretId, passage);
+
+		em.persist(train);
+		em.getTransaction().commit();
 	}
 
 }

@@ -7,8 +7,6 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 import java.util.Date;
 
 import javax.annotation.ManagedBean;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 

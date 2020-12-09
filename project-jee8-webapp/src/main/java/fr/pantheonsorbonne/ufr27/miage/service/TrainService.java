@@ -1,9 +1,11 @@
 package fr.pantheonsorbonne.ufr27.miage.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
@@ -23,5 +25,6 @@ public interface TrainService {
 
 	public List<Train> getAllTrain() throws EmptyListException;
 
-	public void addArret(int trainId, int arretId) throws NoSuchTrainException;
+	public void addArret(int trainId, int arretId, LocalDateTime passage)
+			throws NoSuchTrainException, NoSuchArretException;
 }
