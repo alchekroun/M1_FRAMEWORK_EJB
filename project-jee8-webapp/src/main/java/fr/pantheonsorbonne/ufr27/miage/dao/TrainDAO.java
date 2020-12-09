@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,8 +17,7 @@ public class TrainDAO {
 	ArretDAO arretDAO;
 
 	@Inject
-	HeureDePassageDAO heureDAO;
-
+	HeureDePassageDAO hdpDAO;
 
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
@@ -31,14 +31,16 @@ public class TrainDAO {
 		em.createNamedQuery("deleteTrain").setParameter("id", trainId).executeUpdate();
 	}
 
-	public void addArret(Train train, int arretId) {
-		
-		heureDAO.insertArretAndTrain(train.getId(), arretId);
-		//arretDAO.getArretFromId(arretId)
-		train.getListeHeureDePassage().add(heureDAO.findHeureByTrainIdAndArretId(train.getId(), arretId ).get(0));
-		//ajouter train arrivant aussi sur larret???
+	public void addArret(Train train, int arretId, LocalDateTime passage) {
+		train.addArretHeureDePassage(hdpDAO.createHeureDePassage(train.getId(), arretId, passage));
+
+		// heureDAO.insertArretAndTrain(train.getId(), arretId);
+		// arretDAO.getArretFromId(arretId)
+		// train.getListeHeureDePassage().add(heureDAO.findHeureByTrainIdAndArretId(train.getId(),
+		// arretId ).get(0));
+		// ajouter train arrivant aussi sur larret???
 	}
-	
+
 //	public void addNewDirection(Train train, int arretId) {
 //		train.setDirection()
 //	}

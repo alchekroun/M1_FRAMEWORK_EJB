@@ -178,4 +178,8 @@ public class Train {
 		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
+	public void addArretHeureDePassage(HeureDePassage hdp) {
+		this.listeHeureDePassage.add(hdp);
+	}
+
 }

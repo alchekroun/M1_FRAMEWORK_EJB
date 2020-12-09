@@ -2,6 +2,8 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
+
 import javax.inject.Inject;
 
 import javax.ws.rs.Consumes;
@@ -18,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -78,14 +81,15 @@ public class TrainEndPoint {
 	}
 
 	@PUT
-	@Path("{trainId}/addArret/{arretId}")
+	@Path("{trainId}/addarret/{arretId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
+	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId, String passage)
 			throws URISyntaxException {
 		try {
-			service.addArret(trainId, arretId);
+			service.addArret(trainId, arretId, LocalDateTime.parse(passage));
 			return Response.noContent().build();
-		} catch (NoSuchTrainException e) {
+		} catch (NoSuchTrainException | NoSuchArretException e) {
+			e.printStackTrace();
 			throw new WebApplicationException(404);
 		}
 

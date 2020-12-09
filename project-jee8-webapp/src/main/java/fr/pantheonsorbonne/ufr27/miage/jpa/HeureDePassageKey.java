@@ -27,11 +27,11 @@ public class HeureDePassageKey implements Serializable {
 		this.trainId = trainId;
 	}
 
-	public int getCourseId() {
+	public int getArretId() {
 		return arretId;
 	}
 
-	public void setCourseId(int arretId) {
+	public void setArretId(int arretId) {
 		this.arretId = arretId;
 	}
 

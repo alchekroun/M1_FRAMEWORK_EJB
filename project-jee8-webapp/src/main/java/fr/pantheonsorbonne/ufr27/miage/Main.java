@@ -22,6 +22,7 @@ import fr.pantheonsorbonne.ufr27.miage.conf.EMFFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.EMFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InfoGareDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
@@ -79,6 +80,7 @@ public class Main {
 						bind(TrainDAO.class).to(TrainDAO.class);
 						bind(PassagerDAO.class).to(PassagerDAO.class);
 						bind(ArretDAO.class).to(ArretDAO.class);
+						bind(HeureDePassageDAO.class).to(HeureDePassageDAO.class);
 						bind(InfoGareDAO.class).to(InfoGareDAO.class);
 						bind(PaymentDAO.class).to(PaymentDAO.class);
 						bind(InvoiceDAO.class).to(InvoiceDAO.class);
