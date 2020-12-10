@@ -41,6 +41,18 @@ public class TrainDAO {
 		// ajouter train arrivant aussi sur larret???
 	}
 
+	public List<Train> findTrainByDirection(int arretId) {
+		return em.createNamedQuery("findTrainByDirection").setParameter("arretId", arretId).getResultList();
+	}
+
+	public List<Train> findTrainByArret(int arretId) {
+		return em.createNamedQuery("findTrainByArret").setParameter("arredId", arretId).getResultList();
+	}
+
+	public void removeArret(Train train, int arretId, LocalDateTime passage) {
+		train.removeArretHeureDePassage(hdpDAO.getHeureDePassageRemoved(train.getId(), arretId, passage));
+	}
+
 //	public void addNewDirection(Train train, int arretId) {
 //		train.setDirection()
 //	}
