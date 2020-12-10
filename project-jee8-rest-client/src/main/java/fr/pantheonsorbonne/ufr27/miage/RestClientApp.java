@@ -2,8 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -96,14 +94,13 @@ public class RestClientApp
 
 		URI train1Location = null;
 		if (responseCreationTrain1.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("\nTrain Created Successfully");
+			System.out.println("Train Created Successfully");
 			train1Location = responseCreationTrain1.getLocation();
 		} else {
 			throw new RuntimeException("failed to create train : " + responseCreationTrain1.getStatusInfo().toString());
 		}
 
 		Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
-		DateTimeFormatter formatTransfer = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
 		Arret arretLille = getArret("Lille", target);
 		Response responseAddArret = target.path("train/" + train.getId() + "/addarret/" + arretLille.getId()).request()
 				.accept(MediaType.APPLICATION_JSON).put(Entity.json(LocalDateTime.now().plusMinutes(20).toString()));
@@ -116,18 +113,8 @@ public class RestClientApp
 		}
 
 	}
+
 	/*
-	 * private static FreeTrialPlan getPlan() { ObjectFactory factory = new
-	 * ObjectFactory(); FreeTrialPlan trial = factory.createFreeTrialPlan(); User
-	 * user = factory.createUser(); user.setFname("Nicolas");
-	 * user.setLname("Herbaut"); user.setMembershipId(1234);
-	 * 
-	 * Address addresse = factory.createAddress(); addresse.setCountry("France");
-	 * addresse.setStreetName("rue de Tolbiac"); addresse.setStreetNumber(90);
-	 * addresse.setZipCode("75014");
-	 * 
-	 * trial.setUser(user); trial.setAddress(addresse); return trial; }
-	 * 
 	 * public static void main(String[] args) throws InterruptedException { Client
 	 * client = ClientBuilder.newClient(); WebTarget target =
 	 * client.target("http://localhost:8080");

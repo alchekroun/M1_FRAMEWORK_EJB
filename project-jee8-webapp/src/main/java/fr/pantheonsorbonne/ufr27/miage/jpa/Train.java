@@ -23,7 +23,7 @@ import javax.persistence.TemporalType;
 public class Train {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
 	protected String nom;

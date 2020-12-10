@@ -38,8 +38,8 @@ public class TrainServiceImpl implements TrainService {
 
 	@Override
 	public int createTrain(Train trainDTO) throws CantCreateException {
+		em.getTransaction().begin();
 		try {
-			em.getTransaction().begin();
 
 			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
 
@@ -60,6 +60,7 @@ public class TrainServiceImpl implements TrainService {
 
 			return train.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
 			throw new CantCreateException();
 		}
 	}

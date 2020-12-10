@@ -38,7 +38,7 @@ public class TrainEndPoint {
 			int trainId = service.createTrain(train);
 			return Response.created(new URI("/train/" + trainId)).build();
 		} catch (CantCreateException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("Can\'t create train", 404);
 		}
 
 	}
@@ -51,23 +51,31 @@ public class TrainEndPoint {
 			Train train = service.getTrainFromId(trainId);
 			return Response.ok(train).build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 
 	}
-
+	
+	/*
+	 * TODO Revoir la suppresion  : Pour supprimer un train il faut vérifier qu'il
+	 * ne soit pas inclu dans les listes suivantes Arret.trainsArrivants et Arret.listeHeureDePassage
+	 * 
+	 * De plus s'il possède des passagers il faut les supprimer avec.
+	 */
 	@DELETE
 	@Path("delete/{trainId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
 		try {
 			service.deleteTrain(trainId);
-			return Response.noContent().build();
+			return Response.status(200, "train deleted").build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 	}
 
+	/* TODO Agrémenter l'update d'un train
+	 * 
+	 */
 	@PUT
 	@Path("update/{trainId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -76,7 +84,7 @@ public class TrainEndPoint {
 			service.updateTrain(train);
 			return Response.noContent().build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 	}
 
@@ -88,9 +96,10 @@ public class TrainEndPoint {
 		try {
 			service.addArret(trainId, arretId, LocalDateTime.parse(passage));
 			return Response.noContent().build();
-		} catch (NoSuchTrainException | NoSuchArretException e) {
-			e.printStackTrace();
-			throw new WebApplicationException(404);
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
 		}
 
 	}
@@ -102,7 +111,7 @@ public class TrainEndPoint {
 		try {
 			return Response.ok(service.getAllTrain()).build();
 		} catch (EmptyListException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No train yet", 404);
 		}
 
 	}
