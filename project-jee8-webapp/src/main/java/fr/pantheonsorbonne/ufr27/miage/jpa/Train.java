@@ -19,9 +19,8 @@ import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
-		@NamedQuery(name = "deleteTrain", query = "DELETE FROM Train t WHERE t.id = :id"),
 		@NamedQuery(name = "findTrainByDirection", query = "SELECT t FROM Train t WHERE t.direction.id = :arretId"),
-		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId")})
+		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId") })
 public class Train {
 
 	@Id
@@ -183,7 +182,7 @@ public class Train {
 	public void addArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.add(hdp);
 	}
-	
+
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}

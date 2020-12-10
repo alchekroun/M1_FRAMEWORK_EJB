@@ -10,12 +10,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p"),
-		@NamedQuery(name = "deletePerturbation", query = "DELETE FROM Perturbation p WHERE p.id = :id") })
+@NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p") })
 public class Perturbation {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected int id;
 
 	protected String type;

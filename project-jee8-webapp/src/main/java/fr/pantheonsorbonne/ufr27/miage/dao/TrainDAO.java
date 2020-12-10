@@ -6,6 +6,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
+import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class TrainDAO {
@@ -28,11 +30,13 @@ public class TrainDAO {
 	}
 
 	public void deleteTrain(int trainId) {
-		em.createNamedQuery("deleteTrain").setParameter("id", trainId).executeUpdate();
+		em.remove(em.find(Train.class, trainId));
 	}
 
 	public void addArret(Train train, int arretId, LocalDateTime passage) {
-		train.addArretHeureDePassage(hdpDAO.createHeureDePassage(train.getId(), arretId, passage));
+		HeureDePassage hdp = hdpDAO.createHeureDePassage(train.getId(), arretId, passage);
+		train.addArretHeureDePassage(hdp);
+		em.find(Arret.class, arretId).addArretHeureDePassage(hdp);
 
 		// heureDAO.insertArretAndTrain(train.getId(), arretId);
 		// arretDAO.getArretFromId(arretId)
@@ -49,8 +53,11 @@ public class TrainDAO {
 		return em.createNamedQuery("findTrainByArret").setParameter("arredId", arretId).getResultList();
 	}
 
-	public void removeArret(Train train, int arretId, LocalDateTime passage) {
-		train.removeArretHeureDePassage(hdpDAO.getHeureDePassageRemoved(train.getId(), arretId, passage));
+	public void removeArret(Train train, int arretId) {
+		HeureDePassage hdp = hdpDAO.getHdpFromTrainIdAndArretId(train.getId(), arretId);
+		train.removeArretHeureDePassage(hdp);
+		em.find(Arret.class, arretId).removeArretHeureDePassage(hdp);
+		em.remove(hdp);
 	}
 
 //	public void addNewDirection(Train train, int arretId) {

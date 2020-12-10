@@ -27,30 +27,37 @@ public class HeureDePassageDAO {
 		return hdp;
 	}
 
-	public HeureDePassage getHeureFromId(int heureId) {
-		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage = em
-				.find(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage.class, heureId);
-		return heureDePassage;
+	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
+		return (HeureDePassage) em.createNamedQuery("findHeureByTrainIdAndArretId").setParameter("trainId", trainId)
+				.setParameter("arretId", arretId).getSingleResult();
 	}
 
-	public void insertArretAndTrain(int trainId, int arretId) {
-		em.createNamedQuery("INSERT INTO HeureDePassage (train_id, arret_id) VALUES (:trainId, :arretId)")
-				.setParameter("trainId", trainId).setParameter("arretId", arretId);
+	// alex to julien : j'ai pas compris ce code
+
+	// public void insertArretAndTrain(int trainId, int arretId) {
+	// em.createNamedQuery("INSERT INTO HeureDePassage (train_id, arret_id) VALUES
+	// (:trainId, :arretId)")
+	// .setParameter("trainId", trainId).setParameter("arretId", arretId);
+	// }
+
+	// alex to julien : j'ai pas compris ce code
+
+	// public HeureDePassage findHeureByTrainIdAndArretId(int trainId, int arretId)
+	// {
+	// TODO peut etre ameliorer avec getHeureFromId au lieu de return une List
+	// return (HeureDePassage)
+	// em.createNamedQuery("findHeureByTrainIdAndArretId").getSingleResult();
+
+	// }
+
+	public void deleteHeureDePassage(int trainId, int arretId) {
+		em.remove(getHdpFromTrainIdAndArretId(trainId, arretId));
 	}
 
-	public HeureDePassage findHeureByTrainIdAndArretId(int trainId, int arretId) {
-		// TODO peut etre ameliorer avec getHeureFromId au lieu de return une List
-		return (HeureDePassage) em.createNamedQuery("findHeureByTrainIdAndArretId").getSingleResult();
-
-	}
-
-	public void deleteHeureDePassage(HeureDePassageKey hdpId) {
-		em.createNamedQuery("deleteHeureDePassage").setParameter("id", hdpId);
-	}
-
-	public HeureDePassage getHeureDePassageRemoved(int trainId, int arretId, LocalDateTime passage) {
-		HeureDePassage h = findHeureByTrainIdAndArretId(trainId, arretId);
-		deleteHeureDePassage(h.getId());
-		return h;
-	}
+	// public HeureDePassage getHeureDePassageRemoved(int trainId, int arretId,
+	// LocalDateTime passage) {
+	// HeureDePassage h = findHeureByTrainIdAndArretId(trainId, arretId);
+	// deleteHeureDePassage(h.getId());
+	// return h;
+	// }
 }

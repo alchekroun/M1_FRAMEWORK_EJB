@@ -136,4 +136,21 @@ public class TrainServiceImpl implements TrainService {
 		em.getTransaction().commit();
 	}
 
+	@Override
+	public void removeArret(int trainId, int arretId) throws NoSuchTrainException, NoSuchArretException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
+		if (train == null) {
+			throw new NoSuchTrainException();
+		}
+		if (arretDAO.getArretFromId(arretId) == null) {
+			throw new NoSuchArretException();
+		}
+
+		dao.removeArret(train, arretId);
+
+		em.getTransaction().commit();
+
+	}
+
 }

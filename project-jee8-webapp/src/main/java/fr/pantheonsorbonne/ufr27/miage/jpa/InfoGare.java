@@ -11,8 +11,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i"),
-		@NamedQuery(name = "deleteInfoGare", query = "DELETE FROM InfoGare i WHERE i.id = :id") })
+@NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i") })
 public class InfoGare implements Serializable {
 
 	/**

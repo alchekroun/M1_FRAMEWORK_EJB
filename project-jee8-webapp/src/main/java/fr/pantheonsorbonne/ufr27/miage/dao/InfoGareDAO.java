@@ -23,7 +23,7 @@ public class InfoGareDAO {
 	}
 
 	public void deleteInfoGare(int infoGareId) {
-		em.createNamedQuery("deleteInfoGare").setParameter("id", infoGareId).executeUpdate();
+		em.remove(em.find(InfoGare.class, infoGareId));
 	}
 
 }

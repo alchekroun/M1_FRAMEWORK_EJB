@@ -11,10 +11,14 @@ public class PassagerDAO {
 	EntityManager em;
 
 	public Passager getPassagerFromId(int passagerId) {
-		fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager = em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class,
-				passagerId);
+		fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager = em
+				.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, passagerId);
 
 		Passager passagerDTO = PassagerMapper.passagerDTOMapper(passager);
 		return passagerDTO;
+	}
+
+	public void deletePassager(int passagerId) {
+		em.remove(em.find(Passager.class, passagerId));
 	}
 }
