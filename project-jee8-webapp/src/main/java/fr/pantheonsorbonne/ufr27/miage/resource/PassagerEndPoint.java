@@ -36,7 +36,7 @@ public class PassagerEndPoint {
 			int passagerId = service.createPassager(passager);
 			return Response.created(new URI("/passager/" + passagerId)).build();
 		} catch (CantCreateException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("Can\'t create passager", 404);
 		}
 
 	}
@@ -48,23 +48,30 @@ public class PassagerEndPoint {
 		try {
 			return Response.ok(service.getPassagerFromId(passagerId)).build();
 		} catch (NoSuchPassagerException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such passager", 404);
 		}
 
 	}
 
+	/*
+	 * TODO Revoir la suppresion Pour supprimer un passager il faut vérifier qu'il
+	 * ne soit pas inclu dans un train, si oui le retirer de la liste
+	 */
 	@DELETE
 	@Path("delete/{passagerId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response delete(@PathParam("passagerId") int passagerId) throws URISyntaxException {
 		try {
 			service.deletePassager(passagerId);
-			return Response.noContent().build();
+			return Response.status(200, "passager deleted").build();
 		} catch (NoSuchPassagerException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such passager", 404);
 		}
 	}
 
+	/*
+	 * TODO Agrémenter l'update d'un passager
+	 * 
+	 */
 	@PUT
 	@Path("update/{passagerId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -73,7 +80,7 @@ public class PassagerEndPoint {
 			service.updatePassager(passager);
 			return Response.noContent().build();
 		} catch (NoSuchPassagerException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such passager", 404);
 		}
 	}
 
@@ -84,7 +91,7 @@ public class PassagerEndPoint {
 		try {
 			return Response.ok(service.getAllPassager()).build();
 		} catch (EmptyListException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No passager yet", 404);
 		}
 	}
 
@@ -95,7 +102,7 @@ public class PassagerEndPoint {
 		try {
 			return Response.ok(service.getAllPassagerByTrain(trainId)).build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 	}
 

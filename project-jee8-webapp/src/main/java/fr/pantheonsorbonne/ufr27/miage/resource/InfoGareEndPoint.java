@@ -35,7 +35,7 @@ public class InfoGareEndPoint {
 
 			return Response.created(new URI("/infoGare/" + infoGareId)).build();
 		} catch (CantCreateException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("Can\'t create train", 404);
 		}
 
 	}
@@ -47,22 +47,29 @@ public class InfoGareEndPoint {
 		try {
 			return Response.ok(service.getInfoGareFromId(infoGareId)).build();
 		} catch (NoSuchInfoGareException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such infoGare", 404);
 		}
 	}
 
+	/*
+	 * TODO Revoir la suppresion Pour supprimer un infoGare il faut vérifier qu'il
+	 * ne soit pas rattaché à un arret, si oui supprimer l'arret avec. VOIR
+	 * SUPPRESSION ARRET
+	 */
 	@DELETE
 	@Path("delete/{infoGareId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response delete(@PathParam("infoGareId") int infoGareId) throws URISyntaxException {
 		try {
 			service.deleteInfoGare(infoGareId);
-			return Response.ok().build();
+			return Response.status(200, "infoGare deleted").build();
 		} catch (NoSuchInfoGareException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such infoGare", 404);
 		}
 	}
 
+	/* TODO Agrémenter l'update d'un infogare
+	 * 
+	 */
 	@PUT
 	@Path("update/{infoGareId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -77,7 +84,7 @@ public class InfoGareEndPoint {
 		try {
 			return Response.ok(service.getAllInfoGare()).build();
 		} catch (EmptyListException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No infoGare yet", 404);
 		}
 
 	}
