@@ -38,8 +38,19 @@ public class HeureDePassageDAO {
 				.setParameter("trainId", trainId).setParameter("arretId", arretId);
 	}
 
-	public List<HeureDePassage> findHeureByTrainIdAndArretId(int trainId, int arretId) {
+	public HeureDePassage findHeureByTrainIdAndArretId(int trainId, int arretId) {
 		// TODO peut etre ameliorer avec getHeureFromId au lieu de return une List
-		return em.createNamedQuery("findHeureByTrainIdAndArretId").getResultList();
+		return (HeureDePassage) em.createNamedQuery("findHeureByTrainIdAndArretId").getSingleResult();
+
+	}
+
+	public void deleteHeureDePassage(HeureDePassageKey hdpId) {
+		em.createNamedQuery("deleteHeureDePassage").setParameter("id", hdpId);
+	}
+
+	public HeureDePassage getHeureDePassageRemoved(int trainId, int arretId, LocalDateTime passage) {
+		HeureDePassage h = findHeureByTrainIdAndArretId(trainId, arretId);
+		deleteHeureDePassage(h.getId());
+		return h;
 	}
 }
