@@ -11,12 +11,11 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p"),
-		@NamedQuery(name = "deletePassager", query = "DELETE FROM Passager p WHERE p.id = :id") })
+@NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p") })
 public class Passager {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
 	protected String nom;

@@ -11,8 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
-		@NamedQuery(name = "deleteHeureDePassage", query = "DELETE FROM HeureDePassage h WHERE h.id = :id"),
+@NamedQueries({
+		@NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
 		@NamedQuery(name = "findHeureByTrainIdAndArretId", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId") })
 public class HeureDePassage {
 

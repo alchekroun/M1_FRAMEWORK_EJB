@@ -22,7 +22,7 @@ public class ArretDAO {
 	}
 
 	public void deleteArret(int arretId) {
-		em.createNamedQuery("deleteArret").setParameter("id", arretId).executeUpdate();
+		em.remove(em.find(Arret.class, arretId));
 	}
 
 	public List<Arret> getAllArretByTrain(int trainId) {

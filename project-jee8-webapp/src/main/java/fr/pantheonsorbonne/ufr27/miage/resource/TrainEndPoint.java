@@ -55,10 +55,11 @@ public class TrainEndPoint {
 		}
 
 	}
-	
+
 	/*
-	 * TODO Revoir la suppresion  : Pour supprimer un train il faut vérifier qu'il
-	 * ne soit pas inclu dans les listes suivantes Arret.trainsArrivants et Arret.listeHeureDePassage
+	 * TODO Revoir la suppresion : Pour supprimer un train il faut vérifier qu'il ne
+	 * soit pas inclu dans les listes suivantes Arret.trainsArrivants et
+	 * Arret.listeHeureDePassage
 	 * 
 	 * De plus s'il possède des passagers il faut les supprimer avec.
 	 */
@@ -73,7 +74,8 @@ public class TrainEndPoint {
 		}
 	}
 
-	/* TODO Agrémenter l'update d'un train
+	/*
+	 * TODO Agrémenter l'update d'un train
 	 * 
 	 */
 	@PUT
@@ -95,13 +97,27 @@ public class TrainEndPoint {
 			throws URISyntaxException {
 		try {
 			service.addArret(trainId, arretId, LocalDateTime.parse(passage));
-			return Response.noContent().build();
+			return Response.status(200, "arret added to train").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
 		} catch (NoSuchArretException e) {
 			throw new WebApplicationException("No such arret", 404);
 		}
 
+	}
+
+	@DELETE
+	@Path("{trainId}/removearret/{arretId}")
+	public Response removeArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
+			throws URISyntaxException {
+		try {
+			service.removeArret(trainId, arretId);
+			return Response.status(200, "arret removed from train").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
+		}
 	}
 
 	@GET

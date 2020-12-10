@@ -18,8 +18,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 
-@NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a"),
-		@NamedQuery(name = "deleteArret", query = "DELETE FROM Arret a WHERE a.id = :id") })
+@NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a") })
 public class Arret {
 
 	@Id
@@ -29,11 +28,11 @@ public class Arret {
 
 	protected String nom;
 
-	//liste des trains qui ont pour terminus cet arret
+	// liste des trains qui ont pour terminus cet arret
 	@OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Train> trainsArrivants;
 
-	//ce sont les heures de passages des trains qui ont cet arret sur leur parcours
+	// ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
 	protected List<HeureDePassage> listeHeureDePassage;
 
@@ -63,6 +62,14 @@ public class Arret {
 
 	public void setListeHeureDePassage(List<HeureDePassage> listeHeureDePassage) {
 		this.listeHeureDePassage = listeHeureDePassage;
+	}
+
+	public void addArretHeureDePassage(HeureDePassage hdp) {
+		this.listeHeureDePassage.add(hdp);
+	}
+
+	public void removeArretHeureDePassage(HeureDePassage hdp) {
+		this.listeHeureDePassage.remove(hdp);
 	}
 
 }
