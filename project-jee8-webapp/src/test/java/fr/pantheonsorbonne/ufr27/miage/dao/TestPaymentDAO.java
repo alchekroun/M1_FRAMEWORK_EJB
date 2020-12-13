@@ -16,13 +16,11 @@ import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Address;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Contract;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Customer;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Invoice;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Payment;
-import fr.pantheonsorbonne.ufr27.miage.service.PaymentService;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -97,7 +95,7 @@ public class TestPaymentDAO {
 		em.getTransaction().commit();
 
 		assertTrue(dao.isPaymentValidated(payment.getId()));
-
+        
 	}
 
 	@Test
