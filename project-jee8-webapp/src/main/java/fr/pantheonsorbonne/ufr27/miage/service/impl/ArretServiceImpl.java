@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -40,6 +41,7 @@ public class ArretServiceImpl implements ArretService {
 
 			return arret.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
 			throw new CantCreateException();
 		}
 	}
@@ -63,6 +65,21 @@ public class ArretServiceImpl implements ArretService {
 	}
 
 	@Override
+	public void updateArret(Arret arretUpdate) throws NoSuchArretException, CantUpdateException {
+		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Arret arretOriginal = dao.getArretFromId(arretUpdate.getId());
+			arretOriginal.setNom(arretUpdate.getNom());
+
+			em.merge(arretOriginal);
+			em.getTransaction().commit();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
+		}
+	}
+
+	@Override
 	public void deleteArret(int arretId) throws NoSuchArretException {
 		em.getTransaction().begin();
 		// Redondance pour vérifier que le arret existe bien
@@ -82,12 +99,6 @@ public class ArretServiceImpl implements ArretService {
 			throw new NoSuchTrainException();
 		}
 		return ArretMapper.arretAllDTOMapper(dao.getAllArretByTrain(trainId));
-	}
-
-	@Override
-	public void updateArret(Arret arret) throws NoSuchArretException {
-		// TODO Auto-generated method stub
-
 	}
 
 }

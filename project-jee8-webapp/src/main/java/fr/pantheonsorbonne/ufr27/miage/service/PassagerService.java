@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.ufr27.miage.service;
 import java.util.List;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -17,7 +18,7 @@ public interface PassagerService {
 	public Passager getPassagerFromId(int passagerId) throws NoSuchPassagerException;
 
 	// U
-	public void updatePassager(Passager passager) throws NoSuchPassagerException;
+	public void updatePassager(Passager passagerUpdate) throws NoSuchPassagerException, CantUpdateException;
 
 	// D
 	public void deletePassager(int passagerId) throws NoSuchPassagerException;

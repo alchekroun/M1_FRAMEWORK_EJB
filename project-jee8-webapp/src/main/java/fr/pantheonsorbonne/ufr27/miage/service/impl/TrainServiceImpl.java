@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -89,24 +90,28 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void updateTrain(Train trainUpdate) throws NoSuchTrainException {
+	public void updateTrain(Train trainUpdate) throws NoSuchTrainException, CantUpdateException {
 		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
+			if (trainOriginal == null) {
+				throw new NoSuchTrainException();
+			}
+			trainOriginal.setNomTrain(trainUpdate.getNom());
+			trainOriginal.setDirection(
+					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainUpdate.getDirection().getId()));
+			trainOriginal.setDirectionType(trainUpdate.getDirectionType());
+			trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
+			trainOriginal.setReseau(trainUpdate.getReseau());
+			trainOriginal.setReelDepartTemps(getDate(trainUpdate.getReelDepartTemps()));
+			trainOriginal.setReelArriveeTemps(getDate(trainUpdate.getReelArriveeTemps()));
 
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
-		if (trainOriginal == null) {
-			throw new NoSuchTrainException();
+			em.merge(trainOriginal);
+			em.getTransaction().commit();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
 		}
-		trainOriginal.setNomTrain(trainUpdate.getNom());
-		// trainOriginal.setDirection(trainUpdate.getDirection());
-		// trainOriginal.setDirectionType(trainUpdate.getDirectionType());
-		trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
-		trainOriginal.setReseau(trainUpdate.getReseau());
-		trainOriginal.setReelDepartTemps(getDate(trainUpdate.getReelDepartTemps()));
-		trainOriginal.setReelArriveeTemps(getDate(trainUpdate.getReelArriveeTemps()));
-
-		em.merge(trainOriginal);
-		em.getTransaction().commit();
-
 	}
 
 	@Override

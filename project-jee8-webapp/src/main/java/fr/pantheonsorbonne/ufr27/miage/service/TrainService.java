@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -21,7 +22,7 @@ public interface TrainService {
 	public void deleteTrain(int trainId) throws NoSuchTrainException;
 
 	// D
-	public void updateTrain(Train train) throws NoSuchTrainException;
+	public void updateTrain(Train train) throws NoSuchTrainException, CantUpdateException;
 
 	public List<Train> getAllTrain() throws EmptyListException;
 
