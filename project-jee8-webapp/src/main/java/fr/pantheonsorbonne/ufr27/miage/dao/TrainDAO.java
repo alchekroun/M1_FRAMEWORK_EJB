@@ -16,7 +16,8 @@ public class TrainDAO {
 	@Inject
 	EntityManager em;
 
-	HeureDePassageDAO hdpDAO;
+	// TODO A revoir avec le professeur !!!!
+	HeureDePassageDAO hdpDAO = new HeureDePassageDAO();
 
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
@@ -30,10 +31,10 @@ public class TrainDAO {
 		em.remove(em.find(Train.class, trainId));
 	}
 
-	public void addArret(Train train, int arretId, LocalDateTime passage) {
-		HeureDePassage hdp = hdpDAO.createHeureDePassage(train.getId(), arretId, passage);
+	public void addArret(Train train, Arret arret, LocalDateTime passage) {
+		HeureDePassage hdp = hdpDAO.createHeureDePassage(train, arret, passage);
 		train.addArretHeureDePassage(hdp);
-		em.find(Arret.class, arretId).addArretHeureDePassage(hdp);
+		em.find(Arret.class, arret.getId()).addArretHeureDePassage(hdp);
 
 		// heureDAO.insertArretAndTrain(train.getId(), arretId);
 		// arretDAO.getArretFromId(arretId)
