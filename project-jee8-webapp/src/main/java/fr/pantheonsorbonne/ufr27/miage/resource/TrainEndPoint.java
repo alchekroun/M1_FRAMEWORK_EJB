@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -38,7 +39,7 @@ public class TrainEndPoint {
 			int trainId = service.createTrain(train);
 			return Response.created(new URI("/train/" + trainId)).build();
 		} catch (CantCreateException e) {
-			throw new WebApplicationException("Can\'t create train", 404);
+			throw new WebApplicationException("Can\'t create train", 400);
 		}
 
 	}
@@ -74,19 +75,17 @@ public class TrainEndPoint {
 		}
 	}
 
-	/*
-	 * TODO Agrémenter l'update d'un train
-	 * 
-	 */
 	@PUT
 	@Path("update/{trainId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response update(Train train) throws URISyntaxException {
 		try {
 			service.updateTrain(train);
-			return Response.noContent().build();
+			return Response.status(200, "train updated").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
+		} catch (CantUpdateException e) {
+			throw new WebApplicationException("Can\'t update train", 400);
 		}
 	}
 

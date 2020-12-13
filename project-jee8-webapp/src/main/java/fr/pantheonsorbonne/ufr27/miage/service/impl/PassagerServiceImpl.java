@@ -8,11 +8,10 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
-import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
-import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
@@ -92,9 +91,20 @@ public class PassagerServiceImpl implements PassagerService {
 	}
 
 	@Override
-	public void updatePassager(Passager passager) throws NoSuchPassagerException {
-		// TODO Auto-generated method stub
-
+	public void updatePassager(Passager passagerUpdate) throws NoSuchPassagerException, CantUpdateException {
+		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager passagerOriginal = dao
+					.getPassagerFromId(passagerUpdate.getId());
+			passagerOriginal.setArrive(
+					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, passagerUpdate.getArrive().getId()));
+			passagerOriginal.setDepart(
+					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, passagerUpdate.getDepart().getId()));
+			passagerOriginal.setNom(passagerUpdate.getNom());
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
+		}
 	}
 
 }

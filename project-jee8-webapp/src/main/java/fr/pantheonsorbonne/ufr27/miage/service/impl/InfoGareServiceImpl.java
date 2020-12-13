@@ -50,11 +50,13 @@ public class InfoGareServiceImpl implements InfoGareService {
 		return InfoGareMapper.infoGareDTOMapper(infoGare);
 	}
 
-	@Override
-	public void updateInfoGare(InfoGare infoGare) throws NoSuchInfoGareException {
-		// TODO Auto-generated method stub
-
-	}
+	/*
+	 * @Override public void updateInfoGare(InfoGare infoGare) throws
+	 * NoSuchInfoGareException {
+	 * 
+	 * 
+	 * }
+	 */
 
 	@Override
 	public void deleteInfoGare(int infoGareId) throws NoSuchInfoGareException {

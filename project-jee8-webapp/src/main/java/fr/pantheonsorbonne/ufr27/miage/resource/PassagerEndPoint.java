@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -78,9 +79,11 @@ public class PassagerEndPoint {
 	public Response update(Passager passager) throws URISyntaxException {
 		try {
 			service.updatePassager(passager);
-			return Response.noContent().build();
+			return Response.status(200, "passager updated").build();
 		} catch (NoSuchPassagerException e) {
 			throw new WebApplicationException("No such passager", 404);
+		} catch (CantUpdateException e) {
+			throw new WebApplicationException("Can\'t update passager", 400);
 		}
 	}
 

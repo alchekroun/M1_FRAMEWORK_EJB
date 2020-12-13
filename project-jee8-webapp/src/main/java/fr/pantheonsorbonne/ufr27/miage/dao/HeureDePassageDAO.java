@@ -44,7 +44,7 @@ public class HeureDePassageDAO {
 
 	// public HeureDePassage findHeureByTrainIdAndArretId(int trainId, int arretId)
 	// {
-	// TODO peut etre ameliorer avec getHeureFromId au lieu de return une List
+	// peut etre ameliorer avec getHeureFromId au lieu de return une List
 	// return (HeureDePassage)
 	// em.createNamedQuery("findHeureByTrainIdAndArretId").getSingleResult();
 

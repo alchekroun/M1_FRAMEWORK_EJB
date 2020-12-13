@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -68,14 +69,18 @@ public class ArretEndPoint {
 		}
 	}
 
-	/* TODO Agrémenter l'update d'un arret
-	 * 
-	 */
 	@PUT
 	@Path("update/{arretId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response update() throws URISyntaxException {
-		return Response.created(new URI("/arret/")).build();
+	public Response update(Arret arret) throws URISyntaxException {
+		try {
+			service.updateArret(arret);
+			return Response.status(200, "arret updated").build();
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
+		} catch (CantUpdateException e) {
+			throw new WebApplicationException("Can\'t udpate arret", 400);
+		}
 	}
 
 	@GET

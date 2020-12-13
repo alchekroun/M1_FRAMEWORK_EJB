@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.ufr27.miage.service;
 import java.util.List;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
@@ -17,7 +18,7 @@ public interface ArretService {
 	public Arret getArretFromId(int arretId) throws NoSuchArretException;
 
 	// U
-	public void updateArret(Arret arret) throws NoSuchArretException;
+	public void updateArret(Arret arretUpdate) throws NoSuchArretException, CantUpdateException;
 
 	// D
 	public void deleteArret(int arretId) throws NoSuchArretException;

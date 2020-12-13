@@ -15,8 +15,9 @@ public interface InfoGareService {
 	// R
 	public InfoGare getInfoGareFromId(int infoGareId) throws NoSuchInfoGareException;
 
-	// U
-	public void updateInfoGare(InfoGare infoGare) throws NoSuchInfoGareException;
+	// U (inutile pour l'instant)
+	// public void updateInfoGare(InfoGare infoGare) throws NoSuchInfoGareException,
+	// CantUpdateException;
 
 	// D
 	public void deleteInfoGare(int infoGareId) throws NoSuchInfoGareException;
