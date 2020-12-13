@@ -101,8 +101,8 @@
 			<xsd:element name="base_arrivee_temps" type="SimpleDate"></xsd:element>
 			<xsd:element name="reel_depart_temps" type="SimpleDate"></xsd:element>
 			<xsd:element name="reel_arrivee_temps" type="SimpleDate"></xsd:element>
-			<xsd:element name="listeArrets" type="arret"
-				maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="listeHeureDePassage"
+				type="heureDePassage" maxOccurs="unbounded"></xsd:element>
 			<xsd:element name="listePassager" type="passager"
 				maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>
@@ -155,8 +155,8 @@
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
 			<xsd:element name="nom" type="xsd:string"></xsd:element>
-			<xsd:element name="trainsArrivants"
-				type="train" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="trainsArrivants" type="train"
+				maxOccurs="unbounded"></xsd:element>
 			<xsd:element name="listeHeureDePassage"
 				type="heureDePassage" maxOccurs="unbounded"></xsd:element>
 		</xsd:sequence>

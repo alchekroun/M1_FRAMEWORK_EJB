@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.ufr27.miage.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
@@ -17,6 +18,13 @@ public class TrainMapper {
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
+		for (HeureDePassage hdp : HeureDePassageMapper.heureDePassageAllDTOMapper(train.getListeHeureDePassage())) {
+			trainDTO.getListeHeureDePassages().add(hdp);
+		}
+
+		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
+			trainDTO.getListePassagers().add(p);
+		}
 		trainDTO.setReelArriveeTemps(train.getReelArriveeTemps());
 		trainDTO.setReelDepartTemps(train.getReelDepartTemps());
 		trainDTO.setBaseDepartTemps(train.getBaseDepartTemps());
