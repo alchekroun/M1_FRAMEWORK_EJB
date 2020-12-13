@@ -31,7 +31,6 @@ public class TestTrainDAO {
 	@Inject
 	TrainDAO dao;
 
-	Arret arret1Paris;
 	Train train1;
 
 	@BeforeEach
@@ -40,15 +39,12 @@ public class TestTrainDAO {
 		System.out.println("****************** " + dao.toString());
 
 		em.getTransaction().begin();
-
-		arret1Paris = new Arret();
-
+		
+		Arret arret1Paris = new Arret();
 		arret1Paris.setNom("Paris");
-
 		em.persist(arret1Paris);
 
 		train1 = new Train();
-
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirection(arret1Paris);
 		train1.setDirectionType("forward");
@@ -60,7 +56,6 @@ public class TestTrainDAO {
 		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
 		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
-
 		em.persist(train1);
 
 		em.getTransaction().commit();

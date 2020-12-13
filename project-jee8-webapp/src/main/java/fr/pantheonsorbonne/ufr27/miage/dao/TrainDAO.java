@@ -16,10 +16,6 @@ public class TrainDAO {
 	@Inject
 	EntityManager em;
 
-	@Inject
-	ArretDAO arretDAO;
-
-	@Inject
 	HeureDePassageDAO hdpDAO;
 
 	public Train getTrainFromId(int trainId) {
@@ -61,7 +57,6 @@ public class TrainDAO {
 		em.remove(hdp);
 	}
 
-	
 	public boolean isTrainCreated(int trainId) {
 
 		Train t = em.find(Train.class, trainId);
@@ -71,7 +66,7 @@ public class TrainDAO {
 		return t.isCreated();
 
 	}
-	
+
 //	public void addNewDirection(Train train, int arretId) {
 //		train.setDirection()
 //	}
