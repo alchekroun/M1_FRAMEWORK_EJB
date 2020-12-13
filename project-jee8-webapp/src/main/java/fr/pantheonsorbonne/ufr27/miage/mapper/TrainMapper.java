@@ -16,17 +16,11 @@ public class TrainMapper {
 		Train trainDTO = new ObjectFactory().createTrain();
 
 		trainDTO.setId(train.getId());
-
 		trainDTO.setNom(train.getNomTrain());
-
 		trainDTO.setDirectionType(train.getDirectionType());
-
 		trainDTO.setReseau(train.getReseau());
-
 		trainDTO.setStatut(train.getStatut());
-
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
-
 		for (HeureDePassage hdp : HeureDePassageMapper.heureDePassageAllDTOMapper(train.getListeHeureDePassage())) {
 			trainDTO.getListeHeureDePassages().add(hdp);
 		}
@@ -34,15 +28,10 @@ public class TrainMapper {
 		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
 			trainDTO.getListePassagers().add(p);
 		}
-
-		trainDTO.setReelArriveeTemps(
-				LocalDateTime.ofInstant(train.getReelArriveeTemps().toInstant(), ZoneId.systemDefault()));
-		trainDTO.setReelDepartTemps(
-				LocalDateTime.ofInstant(train.getReelDepartTemps().toInstant(), ZoneId.systemDefault()));
-		trainDTO.setBaseDepartTemps(
-				LocalDateTime.ofInstant(train.getBaseDepartTemps().toInstant(), ZoneId.systemDefault()));
-		trainDTO.setBaseArriveeTemps(
-				LocalDateTime.ofInstant(train.getBaseArriveeTemps().toInstant(), ZoneId.systemDefault()));
+		trainDTO.setReelArriveeTemps(train.getReelArriveeTemps());
+		trainDTO.setReelDepartTemps(train.getReelDepartTemps());
+		trainDTO.setBaseDepartTemps(train.getBaseDepartTemps());
+		trainDTO.setBaseArriveeTemps(train.getBaseArriveeTemps());
 
 		return trainDTO;
 	}
