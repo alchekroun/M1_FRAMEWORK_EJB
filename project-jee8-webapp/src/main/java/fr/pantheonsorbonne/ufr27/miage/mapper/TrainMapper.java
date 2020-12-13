@@ -5,7 +5,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -27,18 +27,14 @@ public class TrainMapper {
 
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
 
-		/*List<Arret> listeArretTransition = new ArrayList<Arret>();
-		for (Arret arret : ArretMapper.arretAllDTOMapper(train.getListeArrets())) {
-			listeArretTransition.add(arret);
+		for (HeureDePassage hdp : HeureDePassageMapper.heureDePassageAllDTOMapper(train.getListeHeureDePassage())) {
+			trainDTO.getListeHeureDePassages().add(hdp);
 		}
-		trainDTO.setListeArrets(listeArretTransition);
-		
-		List<Passager> listePassagerTransition = new ArrayList<Passager>();
-		for (Passager passager : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
-			listePassagerTransition.add(passager);
+
+		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
+			trainDTO.getListePassagers().add(p);
 		}
-		trainDTO.setListePassagers(listePassagerTransition);
-		*/
+
 		trainDTO.setReelArriveeTemps(
 				LocalDateTime.ofInstant(train.getReelArriveeTemps().toInstant(), ZoneId.systemDefault()));
 		trainDTO.setReelDepartTemps(
