@@ -1,8 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,12 +29,6 @@ public class TrainServiceImpl implements TrainService {
 	@Inject
 	ArretDAO arretDAO;
 
-	private static Date getDate(LocalDateTime adate) {
-
-		Date out = Date.from(adate.atZone(ZoneId.systemDefault()).toInstant());
-		return out;
-	}
-
 	@Override
 	public int createTrain(Train trainDTO) throws CantCreateException {
 		em.getTransaction().begin();
@@ -51,10 +43,10 @@ public class TrainServiceImpl implements TrainService {
 			train.setNumeroTrain(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
-			train.setBaseDepartTemps(getDate(trainDTO.getBaseDepartTemps()));
-			train.setBaseArriveeTemps(getDate(trainDTO.getBaseArriveeTemps()));
-			train.setReelDepartTemps(getDate(trainDTO.getReelDepartTemps()));
-			train.setReelArriveeTemps(getDate(trainDTO.getReelArriveeTemps()));
+			train.setBaseDepartTemps(trainDTO.getBaseDepartTemps());
+			train.setBaseArriveeTemps(trainDTO.getBaseArriveeTemps());
+			train.setReelDepartTemps(trainDTO.getReelDepartTemps());
+			train.setReelArriveeTemps(trainDTO.getReelArriveeTemps());
 
 			em.persist(train);
 			em.getTransaction().commit();
@@ -103,8 +95,8 @@ public class TrainServiceImpl implements TrainService {
 			trainOriginal.setDirectionType(trainUpdate.getDirectionType());
 			trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
 			trainOriginal.setReseau(trainUpdate.getReseau());
-			trainOriginal.setReelDepartTemps(getDate(trainUpdate.getReelDepartTemps()));
-			trainOriginal.setReelArriveeTemps(getDate(trainUpdate.getReelArriveeTemps()));
+			trainOriginal.setReelDepartTemps(trainUpdate.getReelDepartTemps());
+			trainOriginal.setReelArriveeTemps(trainUpdate.getReelArriveeTemps());
 
 			em.merge(trainOriginal);
 			em.getTransaction().commit();

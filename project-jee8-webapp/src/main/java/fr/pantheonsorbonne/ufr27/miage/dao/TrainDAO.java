@@ -9,7 +9,6 @@ import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Payment;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class TrainDAO {

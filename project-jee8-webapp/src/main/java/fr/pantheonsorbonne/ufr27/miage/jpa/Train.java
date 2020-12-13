@@ -1,6 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
@@ -41,58 +39,21 @@ public class Train {
 
 	protected String statut;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date baseDepartTemps;
+	protected LocalDateTime baseDepartTemps;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date baseArriveeTemps;
+	protected LocalDateTime baseArriveeTemps;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date reelDepartTemps;
+	protected LocalDateTime reelDepartTemps;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	protected Date reelArriveeTemps;
+	protected LocalDateTime reelArriveeTemps;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<HeureDePassage> listeHeureDePassage;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<Passager> listePassagers;
-	
+
 	boolean isCreated;
-
-
-	public Date getBaseDepartTemps() {
-		return baseDepartTemps;
-	}
-
-	public void setBaseDepartTemps(Date baseDepartTemps) {
-		this.baseDepartTemps = baseDepartTemps;
-	}
-
-	public Date getBaseArriveeTemps() {
-		return baseArriveeTemps;
-	}
-
-	public void setBaseArriveeTemps(Date baseArriveeTemps) {
-		this.baseArriveeTemps = baseArriveeTemps;
-	}
-
-	public Date getReelDepartTemps() {
-		return reelDepartTemps;
-	}
-
-	public void setReelDepartTemps(Date reelDepartTemps) {
-		this.reelDepartTemps = reelDepartTemps;
-	}
-
-	public Date getReelArriveeTemps() {
-		return reelArriveeTemps;
-	}
-
-	public void setReelArriveeTemps(Date reelArriveeTemps) {
-		this.reelArriveeTemps = reelArriveeTemps;
-	}
 
 	public String getNomTrain() {
 		return nom;
@@ -132,6 +93,38 @@ public class Train {
 
 	public void setStatut(String statut) {
 		this.statut = statut;
+	}
+
+	public LocalDateTime getBaseDepartTemps() {
+		return baseDepartTemps;
+	}
+
+	public void setBaseDepartTemps(LocalDateTime baseDepartTemps) {
+		this.baseDepartTemps = baseDepartTemps;
+	}
+
+	public LocalDateTime getBaseArriveeTemps() {
+		return baseArriveeTemps;
+	}
+
+	public void setBaseArriveeTemps(LocalDateTime baseArriveeTemps) {
+		this.baseArriveeTemps = baseArriveeTemps;
+	}
+
+	public LocalDateTime getReelDepartTemps() {
+		return reelDepartTemps;
+	}
+
+	public void setReelDepartTemps(LocalDateTime reelDepartTemps) {
+		this.reelDepartTemps = reelDepartTemps;
+	}
+
+	public LocalDateTime getReelArriveeTemps() {
+		return reelArriveeTemps;
+	}
+
+	public void setReelArriveeTemps(LocalDateTime reelArriveeTemps) {
+		this.reelArriveeTemps = reelArriveeTemps;
 	}
 
 	public void setId(int id) {
@@ -189,11 +182,11 @@ public class Train {
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}
-	
+
 	public boolean isCreated() {
 		return isCreated;
 	}
-	
+
 	public void setCreated(boolean isCreated) {
 		this.isCreated = isCreated;
 	}
