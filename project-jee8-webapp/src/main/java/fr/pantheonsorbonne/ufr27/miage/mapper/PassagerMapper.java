@@ -5,19 +5,16 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 
 public class PassagerMapper {
 	public static Passager passagerDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager) {
 
 		Passager passagerDTO = new ObjectFactory().createPassager();
-		Arret arretDepart = ArretMapper.arretDTOMapper(passager.getDepart());
-		Arret arretArrive = ArretMapper.arretDTOMapper(passager.getArrive());
 		passagerDTO.setId(passager.getId());
 		passagerDTO.setNom(passager.getNom());
-		passagerDTO.setDepart(arretDepart);
-		passagerDTO.setArrive(arretArrive);
+		passagerDTO.setDepart(ArretMapper.arretDTOMapper(passager.getDepart()));
+		passagerDTO.setArrive(ArretMapper.arretDTOMapper(passager.getArrive()));
 
 		return passagerDTO;
 	}

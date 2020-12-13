@@ -40,6 +40,7 @@ public class ArretServiceImpl implements ArretService {
 
 			return arret.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
 			throw new CantCreateException();
 		}
 	}
