@@ -2,12 +2,14 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Payment;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class TrainDAO {
@@ -60,6 +62,17 @@ public class TrainDAO {
 		em.remove(hdp);
 	}
 
+	
+	public boolean isTrainCreated(int trainId) {
+
+		Train t = em.find(Train.class, trainId);
+		if (t == null) {
+			throw new NoSuchElementException("No train");
+		}
+		return t.isCreated();
+
+	}
+	
 //	public void addNewDirection(Train train, int arretId) {
 //		train.setDirection()
 //	}

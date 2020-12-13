@@ -97,7 +97,7 @@ public class TestPaymentDAO {
 		em.getTransaction().commit();
 
 		assertTrue(dao.isPaymentValidated(payment.getId()));
-
+        
 	}
 
 	@Test

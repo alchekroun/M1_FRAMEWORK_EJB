@@ -58,6 +58,9 @@ public class Train {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<Passager> listePassagers;
+	
+	boolean isCreated;
+
 
 	public Date getBaseDepartTemps() {
 		return baseDepartTemps;
@@ -185,6 +188,14 @@ public class Train {
 
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
+	}
+	
+	public boolean isCreated() {
+		return isCreated;
+	}
+	
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
 	}
 
 }
