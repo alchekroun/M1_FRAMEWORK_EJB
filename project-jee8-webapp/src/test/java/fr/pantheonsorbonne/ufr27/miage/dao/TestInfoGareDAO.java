@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -20,24 +22,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
+import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
-public class TestArretDAO {
+public class TestInfoGareDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(ArretDAO.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator.from(InfoGareDAO.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
 
 	@Inject
-	ArretDAO dao;
+	InfoGareDAO dao;
 
+	InfoGare infoGare1;
 	Arret arret1;
-	Train train1;
 
 	@BeforeEach
 	public void setup() {
@@ -51,6 +54,10 @@ public class TestArretDAO {
 		arret1.setNom("Paris");
 		em.persist(arret1);
 
+		infoGare1 = new InfoGare();
+		infoGare1.setLocalisation(arret1);
+
+		em.persist(infoGare1);
 		em.getTransaction().commit();
 
 	}
@@ -59,51 +66,44 @@ public class TestArretDAO {
 	public void tearDown() {
 		System.out.println("\n== TearDown");
 		em.getTransaction().begin();
+		em.remove(infoGare1);
+		infoGare1 = null;
 		em.remove(arret1);
 		arret1 = null;
 		em.getTransaction().commit();
 	}
 
 	@Test
-	public void testCreateArret() {
+	public void testCreateInfoGare() {
 
-		assertFalse(dao.isArretCreated(arret1.getId()));
+		assertFalse(dao.isInfoGareCreated(arret1.getId()));
 
 		em.getTransaction().begin();
-		arret1.setCreated(true);
-		em.merge(arret1);
+		infoGare1.setCreated(true);
+		em.merge(infoGare1);
 		em.getTransaction().commit();
 
-		assertTrue(dao.isArretCreated(arret1.getId()));
+		assertTrue(dao.isInfoGareCreated(infoGare1.getId()));
 
 	}
 
 	@Test
-	public void testGetArretFromId() {
-		assertEquals(arret1, dao.getArretFromId(arret1.getId()));
+	public void testGetInfoGareFromId() {
+		assertEquals(infoGare1, dao.getInfoGareFromId(arret1.getId()));
 	}
 
 	@Test
-	public void testGetAllArret() {
-		List<Arret> arrets = dao.getAllArret();
+	public void testGetAllInfoGare() {
+		List<InfoGare> infoGares = dao.getAllInfoGare();
 
-		assertEquals(1, arrets.size());
-		assertEquals(arret1, arrets.get(0));
+		assertEquals(1, infoGares.size());
+		assertEquals(infoGare1, infoGares.get(0));
 	}
 
 	@Test
-	public void testDeleteArret() {
+	public void testDeleteTrain() {
+		dao.deleteInfoGare(arret1.getId());
 
-		dao.deleteArret(arret1.getId());
-
-		assertNull(dao.getArretFromId(arret1.getId()));
+		assertNull(dao.getInfoGareFromId(infoGare1.getId()));
 	}
-
-	/*
-	 * @Test public void testGetAllArretByTrain() {
-	 * 
-	 * List<Arret> arrets = dao.getAllArretByTrain(train1.getId()); assertEquals(1,
-	 * arrets.size()); assertEquals(arret1, arrets.get(0)); }
-	 */
-
 }
