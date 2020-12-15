@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -33,5 +35,15 @@ public class HeureDePassageDAO {
 
 	public void deleteHeureDePassage(int trainId, int arretId) {
 		em.remove(getHdpFromTrainIdAndArretId(trainId, arretId));
+	}
+	
+	public boolean isHeureDePassageCreated(HeureDePassageKey key) {
+
+		HeureDePassage h = em.find(HeureDePassage.class, key);
+		if (h == null) {
+			throw new NoSuchElementException("No HeureDePassage");
+		}
+		return h.isCreated();
+
 	}
 }
