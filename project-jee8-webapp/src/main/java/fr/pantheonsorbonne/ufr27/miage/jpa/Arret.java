@@ -40,6 +40,8 @@ public class Arret {
 	@PrimaryKeyJoinColumn
 	protected InfoGare infoGare;
 
+	boolean isCreated;
+
 	public int getId() {
 		return id;
 	}
@@ -70,6 +72,14 @@ public class Arret {
 
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
+	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
 	}
 
 }

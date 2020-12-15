@@ -27,6 +27,8 @@ public class InfoGare implements Serializable {
 	@JoinColumn(name = "localisation_arret_id")
 	protected Arret localisation;
 
+	boolean isCreated;
+
 	public int getId() {
 		return id;
 	}
@@ -41,5 +43,13 @@ public class InfoGare implements Serializable {
 
 	public void setLocalisation(Arret localisation) {
 		this.localisation = localisation;
+	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
 	}
 }

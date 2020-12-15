@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -35,6 +35,7 @@ public class TestTrainDAO {
 
 	Train train1;
 	Arret arret1;
+	Arret arretDirection;
 
 	@BeforeEach
 	public void setup() {
@@ -44,7 +45,7 @@ public class TestTrainDAO {
 
 		em.getTransaction().begin();
 
-		Arret arretDirection = new Arret();
+		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
 
@@ -78,6 +79,8 @@ public class TestTrainDAO {
 		train1 = null;
 		em.remove(arret1);
 		arret1 = null;
+		em.remove(arretDirection);
+		arretDirection = null;
 		em.getTransaction().commit();
 	}
 
@@ -120,8 +123,9 @@ public class TestTrainDAO {
 
 	@Test
 	public void testFindTrainByDirection() {
-		// TODO
-		fail("Not yet implemented");
+		List<Train> trains = dao.findTrainByDirection(arretDirection.getId());
+		assertEquals(1, trains.size());
+		assertEquals(train1, trains.get(0));
 	}
 
 	@Test
@@ -139,8 +143,9 @@ public class TestTrainDAO {
 
 	@Test
 	public void testDeleteTrain() {
-		// TODO
-		fail("Not yet implemented");
+		dao.deleteTrain(train1.getId());
+
+		assertNull(dao.getTrainFromId(train1.getId()));
 	}
 
 }
