@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,6 +43,7 @@ class TestHeureDePassageDAO {
 	HeureDePassage heureDePassage1;
 	Train train1;
 	Arret arretArrivee;
+	Arret arretDepart;
 	HeureDePassageKey key;
 	
 	@BeforeEach
@@ -51,7 +53,7 @@ class TestHeureDePassageDAO {
 		System.out.println("****************** " + dao.toString());
 		em.getTransaction().begin();
 
-		Arret arretDepart = new Arret();
+		arretDepart = new Arret();
 		arretDepart.setNom("Bordeaux");
 		em.persist(arretDepart);
 
@@ -76,7 +78,7 @@ class TestHeureDePassageDAO {
 		key= new HeureDePassageKey();
 		key.setArretId(arretArrivee.getId());
 		key.setTrainId(train1.getId());
-		em.persist(key);
+		
 		
 		heureDePassage1 = new HeureDePassage();
 		heureDePassage1.setId(key);
@@ -94,40 +96,55 @@ class TestHeureDePassageDAO {
 	void tearDown() throws Exception {
 		System.out.println("\n== TearDown");
 		em.getTransaction().begin();
-		em.remove(arretArrivee);
-		arretArrivee = null;
+		em.remove(heureDePassage1);
+		heureDePassage1= null;
 		em.remove(train1);
 		train1 = null;
-		em.remove(key);
-		key= null;
+		em.remove(arretArrivee);
+		arretArrivee = null;
+		em.remove(arretDepart);
+		arretDepart = null;
 		em.getTransaction().commit();
-	}
+	} 
 	@Test
-	public void testExistTrain() {
+	public void testExistHeureDePassage() {
 
 		assertFalse(dao.isHeureDePassageCreated(heureDePassage1.getId()));
 
 		em.getTransaction().begin();
-		train1.setCreated(true);
+		heureDePassage1.setCreated(true);
 		em.merge(heureDePassage1);
 		em.getTransaction().commit();
 
 		assertTrue(dao.isHeureDePassageCreated(heureDePassage1.getId()));
 
 	}
-	/*@Test
-	void testCreateHeureDePassage() {
-		fail("Not yet implemented");
+	
+	@Test
+	public void testGetHeureDePassageFromkey() {
+		assertEquals(heureDePassage1, dao.getHeureDePassageFromKey(key));
+	}
+	
+	@Test
+	public void testCreateHeureDePassage() {
+		HeureDePassage heureDePassage2= dao.createHeureDePassage(train1, arretDepart,LocalDateTime.now().plusMinutes(30));
+		assertNotNull(heureDePassage2);
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2= null;
+		em.getTransaction().commit();
 	}
 
 	@Test
-	void testGetHdpFromTrainIdAndArretId() {
-		fail("Not yet implemented");
-	}
+	public void testGetHdpFromTrainIdAndArretId() {
+		assertEquals(dao.getHdpFromTrainIdAndArretId(heureDePassage1.getTrain().getId(), heureDePassage1.getArret().getId()),heureDePassage1);
+	} 
 
 	@Test
-	void testDeleteHeureDePassage() {
-		fail("Not yet implemented");
-	} */
+	public void testDeleteHeureDePassage() {
+		dao.deleteHeureDePassage(heureDePassage1.getTrain().getId(),heureDePassage1.getArret().getId());
+
+		assertNull(dao.getHeureDePassageFromKey(key));
+	} 
 	
 }

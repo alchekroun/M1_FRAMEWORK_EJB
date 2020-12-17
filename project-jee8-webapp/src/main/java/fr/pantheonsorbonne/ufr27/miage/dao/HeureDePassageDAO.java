@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
+import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class HeureDePassageDAO {
@@ -26,6 +27,12 @@ public class HeureDePassageDAO {
 		hdp.setPassage(passage);
 		em.persist(hdp);
 		return hdp;
+	}
+	
+	public HeureDePassage getHeureDePassageFromKey(HeureDePassageKey key) {
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDepassage = em
+				.find(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage.class, key);
+		return heureDepassage ;
 	}
 
 	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
