@@ -113,8 +113,9 @@ class TestPassagerDAO {
 
 	@Test
 	void testDeletePassager() {
+		em.getTransaction().begin();
 		dao.deletePassager(passager1.getId());
-
+		em.getTransaction().commit();
 		assertNull(dao.getPassagerFromId(passager1.getId()));
 	}
 

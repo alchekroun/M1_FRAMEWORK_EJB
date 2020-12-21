@@ -93,9 +93,9 @@ public class TestArretDAO {
 
 	@Test
 	public void testDeleteArret() {
-
+		em.getTransaction().begin();
 		dao.deleteArret(arret1.getId());
-
+		em.getTransaction().commit();
 		assertNull(dao.getArretFromId(arret1.getId()));
 	}
 

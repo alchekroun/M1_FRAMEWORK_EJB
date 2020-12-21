@@ -142,8 +142,9 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testDeleteHeureDePassage() {
+		em.getTransaction().begin();
 		dao.deleteHeureDePassage(heureDePassage1.getTrain().getId(),heureDePassage1.getArret().getId());
-
+		em.getTransaction().commit();
 		assertNull(dao.getHeureDePassageFromKey(key));
 	} 
 	

@@ -115,8 +115,8 @@ public class TestTrainDAO {
 	public void testAddArret() {
 		em.getTransaction().begin();
 		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
-		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		em.getTransaction().commit();
+		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		assertEquals(1, listHdp.size());
 		assertEquals(arret1, listHdp.get(0));
 	}
@@ -131,8 +131,7 @@ public class TestTrainDAO {
 	@Test
 	public void testFindTrainByArret() {
 		// TODO
-		fail("Not yet implemented");
-
+				fail("Not yet implemented");
 	}
 
 	@Test
@@ -143,8 +142,9 @@ public class TestTrainDAO {
 
 	@Test
 	public void testDeleteTrain() {
+		em.getTransaction().begin();
 		dao.deleteTrain(train1.getId());
-
+		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
 	}
 

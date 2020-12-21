@@ -102,8 +102,9 @@ public class TestInfoGareDAO {
 
 	@Test
 	public void testDeleteTrain() {
+		em.getTransaction().begin();
 		dao.deleteInfoGare(arret1.getId());
-
+		em.getTransaction().commit();
 		assertNull(dao.getInfoGareFromId(infoGare1.getId()));
 	}
 }
