@@ -13,6 +13,7 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class HeureDePassageDAO {
+
 	@Inject
 	EntityManager em;
 
@@ -25,14 +26,14 @@ public class HeureDePassageDAO {
 		hdp.setArret(arret);
 		hdp.setTrain(train);
 		hdp.setPassage(passage);
-		em.persist(hdp);
+		em.persist(hdp); // throw une erreur null pointer exception
 		return hdp;
 	}
-	
+
 	public HeureDePassage getHeureDePassageFromKey(HeureDePassageKey key) {
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDepassage = em
 				.find(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage.class, key);
-		return heureDepassage ;
+		return heureDepassage;
 	}
 
 	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
@@ -43,7 +44,7 @@ public class HeureDePassageDAO {
 	public void deleteHeureDePassage(int trainId, int arretId) {
 		em.remove(getHdpFromTrainIdAndArretId(trainId, arretId));
 	}
-	
+
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {
 
 		HeureDePassage h = em.find(HeureDePassage.class, key);

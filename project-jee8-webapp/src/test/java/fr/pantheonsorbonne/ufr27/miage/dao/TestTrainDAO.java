@@ -111,6 +111,8 @@ public class TestTrainDAO {
 		assertEquals(train1, trains.get(0));
 	}
 
+	// Problème avec ce test. Notamment avec l'em injecté dans la classe HeureDePassageDAO
+	// em.persist(hdp) throw une erreur disant que "em" est null
 	@Test
 	public void testAddArret() {
 		em.getTransaction().begin();

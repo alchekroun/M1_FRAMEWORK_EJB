@@ -16,7 +16,8 @@ public class TrainDAO {
 	@Inject
 	EntityManager em;
 
-	// TODO A revoir avec le professeur !!!!
+	// TODO A revoir !
+	// S'il y a un @Inject les tests de trainDAO me disent que l'injection se passe mal
 	HeureDePassageDAO hdpDAO = new HeureDePassageDAO();
 
 	public Train getTrainFromId(int trainId) {
