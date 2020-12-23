@@ -27,7 +27,7 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 public class TestArretDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(ArretDAO.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator.from(ArretDAO.class, TestPersistenceProducer.class,HeureDePassageDAO.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
