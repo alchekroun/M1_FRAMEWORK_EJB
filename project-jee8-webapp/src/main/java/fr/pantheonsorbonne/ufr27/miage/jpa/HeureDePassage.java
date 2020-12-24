@@ -30,6 +30,8 @@ public class HeureDePassage {
 	Arret arret;
 
 	protected LocalDateTime passage;
+	
+	boolean isCreated;
 
 	public HeureDePassageKey getId() {
 		return id;
@@ -61,6 +63,14 @@ public class HeureDePassage {
 
 	public void setPassage(LocalDateTime passage) {
 		this.passage = passage;
+	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
 public class TrainMapper {

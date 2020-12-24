@@ -16,7 +16,11 @@ public class TrainDAO {
 	@Inject
 	EntityManager em;
 
+	@Inject
 	HeureDePassageDAO hdpDAO;
+
+	@Inject
+	ArretDAO arretDAO;
 
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
@@ -30,16 +34,10 @@ public class TrainDAO {
 		em.remove(em.find(Train.class, trainId));
 	}
 
-	public void addArret(Train train, int arretId, LocalDateTime passage) {
-		HeureDePassage hdp = hdpDAO.createHeureDePassage(train.getId(), arretId, passage);
+	public void addArret(Train train, Arret arret, LocalDateTime passage) {
+		HeureDePassage hdp = hdpDAO.createHeureDePassage(train, arret, passage);
 		train.addArretHeureDePassage(hdp);
-		em.find(Arret.class, arretId).addArretHeureDePassage(hdp);
-
-		// heureDAO.insertArretAndTrain(train.getId(), arretId);
-		// arretDAO.getArretFromId(arretId)
-		// train.getListeHeureDePassage().add(heureDAO.findHeureByTrainIdAndArretId(train.getId(),
-		// arretId ).get(0));
-		// ajouter train arrivant aussi sur larret???
+		arret.addArretHeureDePassage(hdp);
 	}
 
 	public List<Train> findTrainByDirection(int arretId) {

@@ -11,7 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p") })
+@NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p"),
+		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :id") })
 public class Passager {
 
 	@Id
@@ -27,6 +28,8 @@ public class Passager {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "train_id")
 	private Train train;
+
+	boolean isCreated;
 
 	public int getId() {
 		return id;
@@ -59,4 +62,21 @@ public class Passager {
 	public void setArrive(Arret arrive) {
 		this.arrive = arrive;
 	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
+	}
+
+	public Train getTrain() {
+		return train;
+	}
+
+	public void setTrain(Train train) {
+		this.train = train;
+	}
+
 }

@@ -123,11 +123,12 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		if (arretDAO.getArretFromId(arretId) == null) {
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
 			throw new NoSuchArretException();
 		}
 
-		dao.addArret(train, arretId, passage);
+		dao.addArret(train, arret, passage);
 
 		em.persist(train);
 		em.getTransaction().commit();
