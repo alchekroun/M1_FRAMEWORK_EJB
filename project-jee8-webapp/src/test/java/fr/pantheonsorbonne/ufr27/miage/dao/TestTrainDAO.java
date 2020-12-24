@@ -24,7 +24,8 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 public class TestTrainDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator
+			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -111,7 +112,8 @@ public class TestTrainDAO {
 		assertEquals(train1, trains.get(0));
 	}
 
-	// Problème avec ce test. Notamment avec l'em injecté dans la classe HeureDePassageDAO
+	// Problème avec ce test. Notamment avec l'em injecté dans la classe
+	// HeureDePassageDAO
 	// em.persist(hdp) throw une erreur disant que "em" est null
 	@Test
 	public void testAddArret() {
@@ -133,7 +135,7 @@ public class TestTrainDAO {
 	@Test
 	public void testFindTrainByArret() {
 		// TODO
-				fail("Not yet implemented");
+		fail("Not yet implemented");
 	}
 
 	@Test

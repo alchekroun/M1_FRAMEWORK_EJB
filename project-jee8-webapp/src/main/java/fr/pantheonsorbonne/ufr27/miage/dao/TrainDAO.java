@@ -16,9 +16,11 @@ public class TrainDAO {
 	@Inject
 	EntityManager em;
 
-	// TODO A revoir !
-	// S'il y a un @Inject les tests de trainDAO me disent que l'injection se passe mal
-	HeureDePassageDAO hdpDAO = new HeureDePassageDAO();
+	@Inject
+	HeureDePassageDAO hdpDAO;
+
+	@Inject
+	ArretDAO arretDAO;
 
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
@@ -37,10 +39,9 @@ public class TrainDAO {
 		train.addArretHeureDePassage(hdp);
 		em.find(Arret.class, arret.getId()).addArretHeureDePassage(hdp);
 
-		// heureDAO.insertArretAndTrain(train.getId(), arretId);
-		// arretDAO.getArretFromId(arretId)
-		// train.getListeHeureDePassage().add(heureDAO.findHeureByTrainIdAndArretId(train.getId(),
-		// arretId ).get(0));
+		hdpDAO.createHeureDePassage(train, arret, passage);
+		arretDAO.getArretFromId(arret.getId());
+		train.getListeHeureDePassage().add(hdpDAO.findHeureByTrainAndArret(train, arret));
 		// ajouter train arrivant aussi sur larret???
 	}
 

@@ -2,7 +2,9 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -15,6 +17,10 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 public class HeureDePassageDAO {
 
 	@Inject
+	public HeureDePassageDAO(EntityManager em) {
+		this.em = em;
+	}
+
 	EntityManager em;
 
 	public HeureDePassage createHeureDePassage(Train train, Arret arret, LocalDateTime passage) {
@@ -53,5 +59,11 @@ public class HeureDePassageDAO {
 		}
 		return h.isCreated();
 
+	}
+
+	public HeureDePassage findHeureByTrainAndArret(Train train, Arret arret) {
+		// replace by something better
+		return em.find(Train.class, train.getId()).getListeHeureDePassage().stream()
+				.filter(hdp -> hdp.getArret().equals(arret)).findFirst().orElseThrow();
 	}
 }
