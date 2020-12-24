@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -20,15 +19,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
 public class TestArretDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(ArretDAO.class, TestPersistenceProducer.class,HeureDePassageDAO.class)
-			.activate(RequestScoped.class).build();
+	private WeldInitiator weld = WeldInitiator
+			.from(ArretDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class).activate(RequestScoped.class)
+			.build();
 
 	@Inject
 	EntityManager em;

@@ -37,12 +37,7 @@ public class TrainDAO {
 	public void addArret(Train train, Arret arret, LocalDateTime passage) {
 		HeureDePassage hdp = hdpDAO.createHeureDePassage(train, arret, passage);
 		train.addArretHeureDePassage(hdp);
-		em.find(Arret.class, arret.getId()).addArretHeureDePassage(hdp);
-
-		hdpDAO.createHeureDePassage(train, arret, passage);
-		arretDAO.getArretFromId(arret.getId());
-		train.getListeHeureDePassage().add(hdpDAO.findHeureByTrainAndArret(train, arret));
-		// ajouter train arrivant aussi sur larret???
+		arret.addArretHeureDePassage(hdp);
 	}
 
 	public List<Train> findTrainByDirection(int arretId) {

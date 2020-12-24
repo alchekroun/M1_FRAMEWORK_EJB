@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -112,9 +111,6 @@ public class TestTrainDAO {
 		assertEquals(train1, trains.get(0));
 	}
 
-	// Problème avec ce test. Notamment avec l'em injecté dans la classe
-	// HeureDePassageDAO
-	// em.persist(hdp) throw une erreur disant que "em" est null
 	@Test
 	public void testAddArret() {
 		em.getTransaction().begin();
@@ -122,7 +118,7 @@ public class TestTrainDAO {
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		assertEquals(1, listHdp.size());
-		assertEquals(arret1, listHdp.get(0));
+		assertEquals(arret1, listHdp.get(0).getArret());
 	}
 
 	@Test
