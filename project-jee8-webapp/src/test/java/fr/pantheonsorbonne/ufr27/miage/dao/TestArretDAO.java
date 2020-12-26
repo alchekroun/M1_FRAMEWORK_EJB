@@ -28,14 +28,15 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 public class TestArretDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator
-			.from(ArretDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class).activate(RequestScoped.class)
-			.build();
+			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class)
+			.activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
 
 	@Inject
 	ArretDAO dao;
+	@Inject
 	TrainDAO daoTrain;
 
 	Arret arret1;
@@ -55,7 +56,7 @@ public class TestArretDAO {
 		em.persist(arret1);
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
-		em.persist(arret1);
+		em.persist(arretDirection);
         train1 = new Train();
         train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
@@ -95,9 +96,9 @@ public class TestArretDAO {
 		arret1.setCreated(true);
 		em.merge(arret1);
 		em.getTransaction().commit();
-
+      
 		assertTrue(dao.isArretCreated(arret1.getId()));
-
+	
 	}
 
 	@Test
@@ -109,8 +110,9 @@ public class TestArretDAO {
 	public void testGetAllArret() {
 		List<Arret> arrets = dao.getAllArret();
 
-		assertEquals(1, arrets.size());
+		assertEquals(2, arrets.size());
 		assertEquals(arret1, arrets.get(0));
+		assertEquals(arretDirection, arrets.get(1));
 	}
 
 	@Test
@@ -125,13 +127,13 @@ public class TestArretDAO {
 		em.getTransaction().begin();
 	    daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
 	    em.getTransaction().commit();
-	    List<Arret> arrets = dao.getAllArretByTrain(train1.getId()); 
-	    assertEquals(1, arrets.size()); assertEquals(arret1, arrets.get(0));
+	    List<Arret> Arrets = dao.getAllArretByTrain(train1.getId()); 
+	    assertEquals(1, Arrets.size()); assertEquals(arret1, Arrets.get(0));
 	    em.getTransaction().begin();
 		daoTrain.removeArret(train1,arret1.getId());
 		em.getTransaction().commit();
 	 
-	}
+	} 
 	 
 
 }
