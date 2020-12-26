@@ -45,7 +45,7 @@ public class TrainDAO {
 	}
 
 	public List<Train> findTrainByArret(int arretId) {
-		return em.createNamedQuery("findTrainByArret").setParameter("arredId", arretId).getResultList();
+		return em.createNamedQuery("findTrainByArret").setParameter("arretId", arretId).getResultList();
 	}
 
 	public void removeArret(Train train, int arretId) {

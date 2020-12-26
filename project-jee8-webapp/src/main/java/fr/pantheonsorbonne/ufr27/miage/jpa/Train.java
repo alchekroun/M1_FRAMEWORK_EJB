@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
 		@NamedQuery(name = "findTrainByDirection", query = "SELECT t FROM Train t WHERE t.direction.id = :arretId"),
-		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId") })
+		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId") })
 public class Train {
 
 	@Id
