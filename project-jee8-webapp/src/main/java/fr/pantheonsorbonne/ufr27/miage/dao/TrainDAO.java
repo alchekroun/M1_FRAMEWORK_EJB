@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class TrainDAO {
@@ -22,6 +23,9 @@ public class TrainDAO {
 	@Inject
 	ArretDAO arretDAO;
 
+	@Inject
+	PassagerDAO passagerDAO;
+
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
 	}
@@ -30,14 +34,18 @@ public class TrainDAO {
 		return em.createNamedQuery("getAllTrain").getResultList();
 	}
 
-	public void deleteTrain(int trainId) {
-		em.remove(em.find(Train.class, trainId));
-	}
-
-	public void addArret(Train train, Arret arret, LocalDateTime passage) {
-		HeureDePassage hdp = hdpDAO.createHeureDePassage(train, arret, passage);
-		train.addArretHeureDePassage(hdp);
-		arret.addArretHeureDePassage(hdp);
+	public void deleteTrain(Train train) {
+		if (!train.getListePassagers().isEmpty()) {
+			for (Passager p : train.getListePassagers()) {
+				passagerDAO.deletePassager(p);
+			}
+		}
+		if (!train.getListeHeureDePassage().isEmpty()) {
+			for (HeureDePassage hdp : train.getListeHeureDePassage()) {
+				train.removeArretHeureDePassage(hdp);
+			}
+		}
+		em.remove(em.find(Train.class, train.getId()));
 	}
 
 	public List<Train> findTrainByDirection(int arretId) {
@@ -48,11 +56,22 @@ public class TrainDAO {
 		return em.createNamedQuery("findTrainByArret").setParameter("arretId", arretId).getResultList();
 	}
 
-	public void removeArret(Train train, int arretId) {
-		HeureDePassage hdp = hdpDAO.getHdpFromTrainIdAndArretId(train.getId(), arretId);
-		train.removeArretHeureDePassage(hdp);
-		em.find(Arret.class, arretId).removeArretHeureDePassage(hdp);
-		em.remove(hdp);
+	public void addArret(Train train, Arret arret, LocalDateTime passage) {
+		hdpDAO.createHeureDePassage(train, arret, passage);
+	}
+
+	public void removeArret(Train train, Arret arret) {
+		hdpDAO.deleteHeureDePassage(train, arret);
+	}
+
+	public void addPassager(Train train, Passager p) {
+		p.setTrain(train);
+		train.addPassager(p);
+	}
+
+	public void removePassager(Train train, Passager p) {
+		p.setTrain(null);
+		train.removePassager(p);
 	}
 
 	public boolean isTrainCreated(int trainId) {

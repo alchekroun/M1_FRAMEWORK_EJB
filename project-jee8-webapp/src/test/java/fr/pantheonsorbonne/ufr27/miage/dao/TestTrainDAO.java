@@ -162,7 +162,7 @@ public class TestTrainDAO {
 	@Test
 	public void testDeleteTrain() {
 		em.getTransaction().begin();
-		dao.deleteTrain(train1.getId());
+		dao.deleteTrain(train1);
 		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
 	}
