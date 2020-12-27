@@ -70,13 +70,11 @@ public class TrainServiceImpl implements TrainService {
 	@Override
 	public void deleteTrain(int trainId) throws NoSuchTrainException {
 		em.getTransaction().begin();
-
-		// Redondance pour vérifier que le train existe bien
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		dao.deleteTrain(train.getId());
+		dao.deleteTrain(train);
 
 		em.getTransaction().commit();
 	}
@@ -141,11 +139,12 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		if (arretDAO.getArretFromId(arretId) == null) {
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
 			throw new NoSuchArretException();
 		}
 
-		dao.removeArret(train, arretId);
+		dao.removeArret(train, arret);
 
 		em.getTransaction().commit();
 

@@ -7,20 +7,23 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class PassagerDAO {
 	@Inject
 	EntityManager em;
 
+	@Inject
+	TrainDAO trainDAO;
+
 	public Passager getPassagerFromId(int passagerId) {
-		fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager = em
-				.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, passagerId);
-		return passager;
+		return em.find(Passager.class, passagerId);
 	}
 
-	public void deletePassager(int passagerId) {
-		em.remove(em.find(Passager.class, passagerId));
+	public void deletePassager(Passager passager) {
+		if (passager.getTrain() != null) {
+			trainDAO.removePassager(passager.getTrain(), passager);
+		}
+		em.remove(passager);
 	}
 
 	public List<Passager> getAllPassager() {

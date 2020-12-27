@@ -28,7 +28,9 @@ public class HeureDePassageDAO {
 		hdp.setArret(arret);
 		hdp.setTrain(train);
 		hdp.setPassage(passage);
-		em.persist(hdp); // throw une erreur null pointer exception
+		em.persist(hdp);
+		train.addArretHeureDePassage(hdp);
+		arret.addArretHeureDePassage(hdp);
 		return hdp;
 	}
 
@@ -43,8 +45,11 @@ public class HeureDePassageDAO {
 				.setParameter("arretId", arretId).getSingleResult();
 	}
 
-	public void deleteHeureDePassage(int trainId, int arretId) {
-		em.remove(getHdpFromTrainIdAndArretId(trainId, arretId));
+	public void deleteHeureDePassage(Train train, Arret arret) {
+		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
+		train.removeArretHeureDePassage(hdp);
+		arret.removeArretHeureDePassage(hdp);
+		em.remove(hdp);
 	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {

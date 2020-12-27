@@ -143,14 +143,6 @@ public class Train {
 		this.direction = direction;
 	}
 
-	public List<Passager> getListePassagers() {
-		return listePassagers;
-	}
-
-	public void setListePassagers(List<Passager> listePassagers) {
-		this.listePassagers = listePassagers;
-	}
-
 	public String getNom() {
 		return nom;
 	}
@@ -181,6 +173,22 @@ public class Train {
 
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
+	}
+
+	public List<Passager> getListePassagers() {
+		return listePassagers;
+	}
+
+	public void setListePassagers(List<Passager> listePassagers) {
+		this.listePassagers = listePassagers;
+	}
+
+	public void addPassager(Passager p) {
+		this.listePassagers.add(p);
+	}
+
+	public void removePassager(Passager p) {
+		this.listePassagers.remove(p);
 	}
 
 	public boolean isCreated() {

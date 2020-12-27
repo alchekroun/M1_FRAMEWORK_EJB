@@ -71,12 +71,11 @@ public class PassagerServiceImpl implements PassagerService {
 	@Override
 	public void deletePassager(int passagerId) throws NoSuchPassagerException {
 		em.getTransaction().begin();
-		// Redondance pour vérifier que le passager existe bien
 		fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager = dao.getPassagerFromId(passagerId);
 		if (passager == null) {
 			throw new NoSuchPassagerException();
 		}
-		dao.deletePassager(passager.getId());
+		dao.deletePassager(passager);
 		em.getTransaction().commit();
 
 	}
