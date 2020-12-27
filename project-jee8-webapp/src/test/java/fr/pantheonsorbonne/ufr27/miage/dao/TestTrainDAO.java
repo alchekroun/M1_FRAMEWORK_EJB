@@ -119,6 +119,9 @@ public class TestTrainDAO {
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		assertEquals(1, listHdp.size());
 		assertEquals(arret1, listHdp.get(0).getArret());
+		em.getTransaction().begin();
+		dao.removeArret(train1, arret1.getId());
+		em.getTransaction().commit();
 	}
 
 	@Test
@@ -130,15 +133,31 @@ public class TestTrainDAO {
 
 	@Test
 	public void testFindTrainByArret() {
-		// TODO
-		fail("Not yet implemented");
+		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		em.getTransaction().commit();
+		List<Train> trains = dao.findTrainByArret(arret1.getId());
+		assertEquals(1, trains.size());
+		assertEquals(train1, trains.get(0));
+		em.getTransaction().begin();
+		dao.removeArret(train1, arret1.getId());
+		em.getTransaction().commit();
+		
 	}
 
 	@Test
 	public void testRemoveArret() {
-		// TODO
-		fail("Not yet implemented");
-	}
+		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		em.getTransaction().commit();
+		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
+		em.getTransaction().begin();
+		dao.removeArret(train1,arret1.getId());
+		em.getTransaction().commit();
+		listHdp = train1.getListeHeureDePassage();
+		assertTrue(dao.findTrainByArret(arret1.getId()).isEmpty());
+		assertTrue(train1.getListeHeureDePassage().isEmpty());
+	} 
 
 	@Test
 	public void testDeleteTrain() {
