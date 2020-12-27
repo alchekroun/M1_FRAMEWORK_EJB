@@ -70,6 +70,12 @@ public class TestTrainDAO {
 		arret1.setNom("Lille");
 		em.persist(arret1);
 		
+		passager1 = new Passager();
+		passager1.setNom("David Serruya");
+		passager1.setArrive(arretDirection);
+		passager1.setDepart(arret1);
+		em.persist(passager1);
+		
 
 		em.getTransaction().commit();
 
@@ -85,6 +91,8 @@ public class TestTrainDAO {
 		arret1 = null;
 		em.remove(arretDirection);
 		arretDirection = null;
+		em.remove(passager1);
+		passager1 = null;
 		em.getTransaction().commit();
 	}
 
@@ -166,47 +174,23 @@ public class TestTrainDAO {
 	@Test
 	public void testAddPassager() {
 		
-		em.getTransaction().begin();
-		passager1 = new Passager();
-		passager1.setNom("David Serruya");
-		passager1.setArrive(arretDirection);
-		passager1.setDepart(arret1);
-		passager1.setTrain(train1);
-		em.persist(passager1);
-		em.getTransaction().commit();
-		
+		assertEquals(passager1.getTrain(),null);
+		assertTrue(train1.getListePassagers().isEmpty());
 		dao.addPassager(train1, passager1);
 		assertFalse(train1.getListePassagers().isEmpty());
 		assertEquals(train1.getListePassagers().get(0),passager1);
+		assertEquals(passager1.getTrain(),train1);
 		dao.removePassager(train1, passager1);
 		
-		em.getTransaction().begin();
-		em.remove(passager1);
-		passager1 = null;
-		em.getTransaction().commit();
 	}
 	
 	@Test
 	public void testRemovePassager() {
-		em.getTransaction().begin();
-		passager1 = new Passager();
-		passager1.setNom("David Serruya");
-		passager1.setArrive(arretDirection);
-		passager1.setDepart(arret1);
-		passager1.setTrain(train1);
-		em.persist(passager1);
-		em.getTransaction().commit();
 		
 		dao.addPassager(train1, passager1);
-		
 		dao.removePassager(train1, passager1);
 		assertTrue(train1.getListePassagers().isEmpty());
-		
-		em.getTransaction().begin();
-		em.remove(passager1);
-		passager1 = null;
-		em.getTransaction().commit();
-		
+		assertNull(passager1.getTrain());
 	}
 
 	@Test
