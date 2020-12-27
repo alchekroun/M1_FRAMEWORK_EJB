@@ -20,16 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
 public class TestArretDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator
-			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class)
-			.activate(RequestScoped.class).build();
+	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class).activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
@@ -57,8 +55,8 @@ public class TestArretDAO {
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
-        train1 = new Train();
-        train1.setNom("Bordeaux - Paris");
+		train1 = new Train();
+		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
 		train1.setDirection(arretDirection);
 		train1.setStatut("enmarche");
@@ -83,7 +81,7 @@ public class TestArretDAO {
 		em.remove(arretDirection);
 		arretDirection = null;
 		em.remove(train1);
-		train1=null;
+		train1 = null;
 		em.getTransaction().commit();
 	}
 
@@ -96,9 +94,9 @@ public class TestArretDAO {
 		arret1.setCreated(true);
 		em.merge(arret1);
 		em.getTransaction().commit();
-      
+
 		assertTrue(dao.isArretCreated(arret1.getId()));
-	
+
 	}
 
 	@Test
@@ -123,17 +121,18 @@ public class TestArretDAO {
 		assertNull(dao.getArretFromId(arret1.getId()));
 	}
 
-	@Test public void testGetAllArretByTrain() {
+	@Test
+	public void testGetAllArretByTrain() {
 		em.getTransaction().begin();
-	    daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
-	    em.getTransaction().commit();
-	    List<Arret> Arrets = dao.getAllArretByTrain(train1.getId()); 
-	    assertEquals(1, Arrets.size()); assertEquals(arret1, Arrets.get(0));
-	    em.getTransaction().begin();
-		daoTrain.removeArret(train1,arret1.getId());
+		daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
 		em.getTransaction().commit();
-	 
-	} 
-	 
+		List<Arret> Arrets = dao.getAllArretByTrain(train1.getId());
+		assertEquals(1, Arrets.size());
+		assertEquals(arret1, Arrets.get(0));
+		em.getTransaction().begin();
+		daoTrain.removeArret(train1, arret1);
+		em.getTransaction().commit();
+
+	}
 
 }

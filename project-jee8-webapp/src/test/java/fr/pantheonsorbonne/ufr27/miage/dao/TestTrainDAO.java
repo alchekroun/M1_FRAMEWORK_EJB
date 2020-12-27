@@ -24,7 +24,8 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 public class TestTrainDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator
-			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class)
+			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class,
+					PassagerDAO.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -120,7 +121,7 @@ public class TestTrainDAO {
 		assertEquals(1, listHdp.size());
 		assertEquals(arret1, listHdp.get(0).getArret());
 		em.getTransaction().begin();
-		dao.removeArret(train1, arret1.getId());
+		dao.removeArret(train1, arret1);
 		em.getTransaction().commit();
 	}
 
@@ -140,9 +141,9 @@ public class TestTrainDAO {
 		assertEquals(1, trains.size());
 		assertEquals(train1, trains.get(0));
 		em.getTransaction().begin();
-		dao.removeArret(train1, arret1.getId());
+		dao.removeArret(train1, arret1);
 		em.getTransaction().commit();
-		
+
 	}
 
 	@Test
@@ -152,12 +153,12 @@ public class TestTrainDAO {
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		em.getTransaction().begin();
-		dao.removeArret(train1,arret1.getId());
+		dao.removeArret(train1, arret1);
 		em.getTransaction().commit();
 		listHdp = train1.getListeHeureDePassage();
 		assertTrue(dao.findTrainByArret(arret1.getId()).isEmpty());
 		assertTrue(train1.getListeHeureDePassage().isEmpty());
-	} 
+	}
 
 	@Test
 	public void testDeleteTrain() {

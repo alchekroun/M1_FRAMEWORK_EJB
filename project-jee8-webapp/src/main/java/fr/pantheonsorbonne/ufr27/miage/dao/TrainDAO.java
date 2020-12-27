@@ -23,9 +23,6 @@ public class TrainDAO {
 	@Inject
 	ArretDAO arretDAO;
 
-	@Inject
-	PassagerDAO passagerDAO;
-
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
 	}
@@ -37,7 +34,7 @@ public class TrainDAO {
 	public void deleteTrain(Train train) {
 		if (!train.getListePassagers().isEmpty()) {
 			for (Passager p : train.getListePassagers()) {
-				passagerDAO.deletePassager(p);
+				train.removePassager(p);
 			}
 		}
 		if (!train.getListeHeureDePassage().isEmpty()) {
