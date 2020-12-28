@@ -43,6 +43,7 @@ public class TestArretDAO {
 	Train train1;
 	Arret arretDirection;
 
+
 	@BeforeEach
 	public void setup() {
 		System.out.println("\n== SetUp");
@@ -54,12 +55,12 @@ public class TestArretDAO {
 		arret1 = new Arret();
 		arret1.setNom("Caen");
 		em.persist(arret1);
-		infoGare1 = new InfoGare();
-		infoGare1.setLocalisation(arret1);
-		em.persist(infoGare1);
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
+		infoGare1 = new InfoGare();
+		infoGare1.setLocalisation(arret1);
+		em.persist(infoGare1);
 		train1 = new Train();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
@@ -116,7 +117,7 @@ public class TestArretDAO {
 		List<Arret> arrets = dao.getAllArret();
 
 		assertEquals(2, arrets.size());
-		assertEquals(arret1, arrets.get(0));
+		assertEquals(arret1,arrets.get(0));
 		assertEquals(arretDirection, arrets.get(1));
 	}
 

@@ -39,6 +39,8 @@ class TestPassagerDAO {
 
 	Passager passager1;
 	Train train1;
+	Arret arretDepart;
+	Arret arretArrivee ;
 
 	@BeforeEach
 	public void setup() {
@@ -48,11 +50,11 @@ class TestPassagerDAO {
 
 		em.getTransaction().begin();
 
-		Arret arretDepart = new Arret();
+		arretDepart = new Arret();
 		arretDepart.setNom("Bordeaux");
 		em.persist(arretDepart);
 
-		Arret arretArrivee = new Arret();
+	    arretArrivee = new Arret();
 		arretArrivee.setNom("Paris");
 		em.persist(arretArrivee);
 
@@ -89,6 +91,10 @@ class TestPassagerDAO {
 		passager1 = null;
 		em.remove(train1);
 		train1 = null;
+		em.remove(arretDepart);
+		arretDepart = null;
+		em.remove(arretArrivee);
+		arretArrivee = null;
 		em.getTransaction().commit();
 	}
 
