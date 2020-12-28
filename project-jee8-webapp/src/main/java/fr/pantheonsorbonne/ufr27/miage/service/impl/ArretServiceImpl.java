@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
@@ -33,9 +34,10 @@ public class ArretServiceImpl implements ArretService {
 			em.getTransaction().begin();
 
 			fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = new fr.pantheonsorbonne.ufr27.miage.jpa.Arret();
-
+			fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = new fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare();
 			arret.setNom(arretDTO.getNom());
-
+			infoGare.setLocalisation(arret);
+			em.persist(infoGare);
 			em.persist(arret);
 			em.getTransaction().commit();
 
@@ -80,15 +82,20 @@ public class ArretServiceImpl implements ArretService {
 	}
 
 	@Override
-	public void deleteArret(int arretId) throws NoSuchArretException {
+	public void deleteArret(int arretId) throws NoSuchArretException, CantDeleteException {
 		em.getTransaction().begin();
-		// Redondance pour vérifier que le arret existe bien
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = dao.getArretFromId(arretId);
-		if (arret == null) {
+		if (arret != null) {
+			if (arret.getTrainsArrivants().isEmpty()) {
+				dao.deleteArret(arret);
+
+				em.getTransaction().commit();
+			} else {
+				throw new CantDeleteException("L\'arret est la destination d\'un train");
+			}
+		} else {
 			throw new NoSuchArretException();
 		}
-		dao.deleteArret(arret.getId());
-		em.getTransaction().commit();
 
 	}
 

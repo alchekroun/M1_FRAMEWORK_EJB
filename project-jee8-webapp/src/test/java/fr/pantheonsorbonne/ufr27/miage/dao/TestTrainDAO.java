@@ -24,10 +24,8 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 public class TestTrainDAO {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator
-			.from(TrainDAO.class, TestPersistenceProducer.class, HeureDePassageDAO.class, ArretDAO.class,
-					PassagerDAO.class)
-			.activate(RequestScoped.class).build();
+	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class).activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
@@ -69,13 +67,12 @@ public class TestTrainDAO {
 		arret1 = new Arret();
 		arret1.setNom("Lille");
 		em.persist(arret1);
-		
+
 		passager1 = new Passager();
 		passager1.setNom("David Serruya");
 		passager1.setArrive(arretDirection);
 		passager1.setDepart(arret1);
 		em.persist(passager1);
-		
 
 		em.getTransaction().commit();
 
@@ -170,38 +167,44 @@ public class TestTrainDAO {
 		assertTrue(dao.findTrainByArret(arret1.getId()).isEmpty());
 		assertTrue(train1.getListeHeureDePassage().isEmpty());
 	}
-	
+
 	@Test
 	public void testAddPassager() {
-		
-		assertEquals(passager1.getTrain(),null);
+
+		assertEquals(passager1.getTrain(), null);
 		assertTrue(train1.getListePassagers().isEmpty());
 		dao.addPassager(train1, passager1);
 		assertFalse(train1.getListePassagers().isEmpty());
-		assertEquals(train1.getListePassagers().get(0),passager1);
-		assertEquals(passager1.getTrain(),train1);
+		assertEquals(train1.getListePassagers().get(0), passager1);
+		assertEquals(passager1.getTrain(), train1);
 		dao.removePassager(train1, passager1);
-		
+
 	}
-	
+
 	@Test
 	public void testRemovePassager() {
-		
+
 		dao.addPassager(train1, passager1);
 		dao.removePassager(train1, passager1);
 		assertTrue(train1.getListePassagers().isEmpty());
 		assertNull(passager1.getTrain());
 	}
 
+	// Vérifier bcp plus de chsoe sur la méthode :
+	// Si le train a été bien enlevé des listes contenu dans l'Arret
 	@Test
 	public void testDeleteTrain() {
 		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		dao.addPassager(train1, passager1);
 		dao.deleteTrain(train1);
 		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
+		assertFalse(arretDirection.getTrainsArrivants().contains(train1));
+		assertFalse(passager1.getTrain() == train1);
+		for (HeureDePassage hdp : arret1.getListeHeureDePassage()) {
+			assertFalse(hdp.getTrain() == train1);
+		}
 	}
-	
-	
-	
 
 }

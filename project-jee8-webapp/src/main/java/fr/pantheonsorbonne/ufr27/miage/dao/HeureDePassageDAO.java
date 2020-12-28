@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -35,9 +36,7 @@ public class HeureDePassageDAO {
 	}
 
 	public HeureDePassage getHeureDePassageFromKey(HeureDePassageKey key) {
-		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDepassage = em
-				.find(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage.class, key);
-		return heureDepassage;
+		return em.find(HeureDePassage.class, key);
 	}
 
 	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
@@ -45,11 +44,35 @@ public class HeureDePassageDAO {
 				.setParameter("arretId", arretId).getSingleResult();
 	}
 
+	public List<HeureDePassage> getAllHeureDePassage() {
+		return em.createNamedQuery("getAllHeureDePassage").getResultList();
+	}
+
 	public void deleteHeureDePassage(Train train, Arret arret) {
 		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
 		train.removeArretHeureDePassage(hdp);
 		arret.removeArretHeureDePassage(hdp);
 		em.remove(hdp);
+	}
+
+	// Obliger d'utiliser des fonctions comme celles ci pour eviter les erreurs :
+	// ConcurentModificationException
+	public void deleteHeureDePassageByTrain(Train train) {
+		List<HeureDePassage> listHdp = getAllHeureDePassage();
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.getTrain() == train) {
+				deleteHeureDePassage(train, hdp.getArret());
+			}
+		}
+	}
+
+	public void deleteHeureDePassageByArret(Arret arret) {
+		List<HeureDePassage> listHdp = getAllHeureDePassage();
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.getArret() == arret) {
+				deleteHeureDePassage(hdp.getTrain(), arret);
+			}
+		}
 	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {

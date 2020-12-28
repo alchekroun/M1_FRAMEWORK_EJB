@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
@@ -66,6 +67,8 @@ public class ArretEndPoint {
 			return Response.status(200, "arret deleted").build();
 		} catch (NoSuchArretException e) {
 			throw new WebApplicationException("No such arret", 404);
+		} catch (CantDeleteException e) {
+			throw new WebApplicationException(e.getMessage(), 400);
 		}
 	}
 

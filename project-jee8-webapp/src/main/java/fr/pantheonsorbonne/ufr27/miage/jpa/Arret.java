@@ -19,7 +19,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Entity
 
 @NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a"),
-	@NamedQuery(name = "findAllArretByTrain", query = "SELECT a FROM Arret a  JOIN a.listeHeureDePassage h WHERE h.train.id = :id")})
+		@NamedQuery(name = "findAllArretByTrain", query = "SELECT a FROM Arret a  JOIN a.listeHeureDePassage h WHERE h.train.id = :id") })
 public class Arret {
 
 	@Id
@@ -73,6 +73,18 @@ public class Arret {
 
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
+	}
+
+	public Set<Train> getTrainsArrivants() {
+		return trainsArrivants;
+	}
+
+	public void addTrainArrivant(Train train) {
+		this.trainsArrivants.add(train);
+	}
+
+	public void removeTrainArrivant(Train train) {
+		this.trainsArrivants.remove(train);
 	}
 
 	public boolean isCreated() {

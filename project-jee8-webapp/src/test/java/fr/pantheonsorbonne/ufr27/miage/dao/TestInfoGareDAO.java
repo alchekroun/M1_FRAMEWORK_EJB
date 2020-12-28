@@ -2,14 +2,8 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -22,9 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -98,13 +90,5 @@ public class TestInfoGareDAO {
 
 		assertEquals(1, infoGares.size());
 		assertEquals(infoGare1, infoGares.get(0));
-	}
-
-	@Test
-	public void testDeleteTrain() {
-		em.getTransaction().begin();
-		dao.deleteInfoGare(arret1.getId());
-		em.getTransaction().commit();
-		assertNull(dao.getInfoGareFromId(infoGare1.getId()));
 	}
 }

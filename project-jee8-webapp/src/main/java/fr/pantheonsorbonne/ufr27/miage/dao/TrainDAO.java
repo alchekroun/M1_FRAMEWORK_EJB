@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
@@ -20,9 +21,6 @@ public class TrainDAO {
 	@Inject
 	HeureDePassageDAO hdpDAO;
 
-	@Inject
-	ArretDAO arretDAO;
-
 	public Train getTrainFromId(int trainId) {
 		return em.find(Train.class, trainId);
 	}
@@ -34,15 +32,15 @@ public class TrainDAO {
 	public void deleteTrain(Train train) {
 		if (!train.getListePassagers().isEmpty()) {
 			for (Passager p : train.getListePassagers()) {
-				train.removePassager(p);
+				p.setTrain(null);
 			}
 		}
 		if (!train.getListeHeureDePassage().isEmpty()) {
-			for (HeureDePassage hdp : train.getListeHeureDePassage()) {
-				train.removeArretHeureDePassage(hdp);
-			}
+			hdpDAO.deleteHeureDePassageByTrain(train);
 		}
-		em.remove(em.find(Train.class, train.getId()));
+		// TODO A revoir, étudié s'il faut utiliser le DAO arret
+		train.getDirection().removeTrainArrivant(train);
+		em.remove(train);
 	}
 
 	public List<Train> findTrainByDirection(int arretId) {
