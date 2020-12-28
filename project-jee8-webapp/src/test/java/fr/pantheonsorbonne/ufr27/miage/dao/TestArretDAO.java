@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
+import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
@@ -38,6 +39,7 @@ public class TestArretDAO {
 	TrainDAO daoTrain;
 
 	Arret arret1;
+	InfoGare infoGare1;
 	Train train1;
 	Arret arretDirection;
 
@@ -52,6 +54,9 @@ public class TestArretDAO {
 		arret1 = new Arret();
 		arret1.setNom("Caen");
 		em.persist(arret1);
+		infoGare1 = new InfoGare();
+		infoGare1.setLocalisation(arret1);
+		em.persist(infoGare1);
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
@@ -76,6 +81,8 @@ public class TestArretDAO {
 	public void tearDown() {
 		System.out.println("\n== TearDown");
 		em.getTransaction().begin();
+		em.remove(infoGare1);
+		infoGare1 = null;
 		em.remove(arret1);
 		arret1 = null;
 		em.remove(arretDirection);
@@ -116,7 +123,9 @@ public class TestArretDAO {
 	@Test
 	public void testDeleteArret() {
 		em.getTransaction().begin();
-		dao.deleteArret(arret1.getId());
+		if (arret1 != null) {
+			dao.deleteArret(arret1);
+		}
 		em.getTransaction().commit();
 		assertNull(dao.getArretFromId(arret1.getId()));
 	}

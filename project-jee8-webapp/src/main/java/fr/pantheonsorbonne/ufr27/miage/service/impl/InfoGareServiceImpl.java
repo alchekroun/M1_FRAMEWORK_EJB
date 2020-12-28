@@ -22,53 +22,12 @@ public class InfoGareServiceImpl implements InfoGareService {
 	InfoGareDAO dao;
 
 	@Override
-	public int createInfoGare(InfoGare infoGareDTO) throws CantCreateException {
-		try {
-			em.getTransaction().begin();
-
-			fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = new fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare();
-
-			infoGare.setLocalisation(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, infoGareDTO.getLocalisationArretId()));
-
-			em.persist(infoGare);
-			em.getTransaction().commit();
-
-			return infoGare.getId();
-		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
-			throw new CantCreateException();
-		}
-
-	}
-
-	@Override
 	public InfoGare getInfoGareFromId(int infoGareId) throws NoSuchInfoGareException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = dao.getInfoGareFromId(infoGareId);
 		if (infoGare == null) {
 			throw new NoSuchInfoGareException();
 		}
 		return InfoGareMapper.infoGareDTOMapper(infoGare);
-	}
-
-	/*
-	 * @Override public void updateInfoGare(InfoGare infoGare) throws
-	 * NoSuchInfoGareException {
-	 * 
-	 * 
-	 * }
-	 */
-
-	@Override
-	public void deleteInfoGare(int infoGareId) throws NoSuchInfoGareException {
-		em.getTransaction().begin();
-		// Redondance pour vérifier que le infoGare existe bien
-		fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = dao.getInfoGareFromId(infoGareId);
-		if (infoGare == null) {
-			throw new NoSuchInfoGareException();
-		}
-		dao.deleteInfoGare(infoGare.getId());
-		em.getTransaction().commit();
-
 	}
 
 	@Override

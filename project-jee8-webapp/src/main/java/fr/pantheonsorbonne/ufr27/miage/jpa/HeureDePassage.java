@@ -11,8 +11,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 @Entity
-@NamedQueries({
-		@NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
+@NamedQueries({ @NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
 		@NamedQuery(name = "findHeureByTrainIdAndArretId", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId") })
 public class HeureDePassage {
 
@@ -30,7 +29,7 @@ public class HeureDePassage {
 	Arret arret;
 
 	protected LocalDateTime passage;
-	
+
 	boolean isCreated;
 
 	public HeureDePassageKey getId() {

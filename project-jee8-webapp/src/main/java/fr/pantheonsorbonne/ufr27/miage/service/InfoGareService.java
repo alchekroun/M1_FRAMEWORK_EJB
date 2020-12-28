@@ -9,18 +9,8 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.InfoGare;
 
 public interface InfoGareService {
 
-	// C
-	public int createInfoGare(InfoGare infoGareDTO) throws CantCreateException;
-
 	// R
 	public InfoGare getInfoGareFromId(int infoGareId) throws NoSuchInfoGareException;
-
-	// U (inutile pour l'instant)
-	// public void updateInfoGare(InfoGare infoGare) throws NoSuchInfoGareException,
-	// CantUpdateException;
-
-	// D
-	public void deleteInfoGare(int infoGareId) throws NoSuchInfoGareException;
 
 	public List<InfoGare> getAllInfoGare() throws EmptyListException;
 }
