@@ -29,6 +29,7 @@ import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
+import fr.pantheonsorbonne.ufr27.miage.jms.BulletinSubscriber;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
@@ -132,6 +133,23 @@ public class Main {
 
 		BrokerUtils.startBroker();
 
+		Thread subThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					final BulletinSubscriber bs = new BulletinSubscriber();
+					while (!Thread.currentThread().isInterrupted()) {
+						System.out.println("received : " + bs.consume());
+					}
+					bs.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		subThread.start();
+
 		PersistenceConf pc = new PersistenceConf();
 		pc.getEM();
 		pc.launchH2WS();
@@ -140,6 +158,7 @@ public class Main {
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
 				BASE_URI));
 		System.in.read();
+		subThread.interrupt();
 		server.stop();
 
 	}
