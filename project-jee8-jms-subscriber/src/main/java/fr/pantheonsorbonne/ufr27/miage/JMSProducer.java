@@ -1,12 +1,13 @@
-package fr.pantheonsorbonne.ufr27.miage.jms.conf;
+package fr.pantheonsorbonne.ufr27.miage;
 
 import java.util.Hashtable;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
-import javax.jms.TopicConnectionFactory;
+import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 import javax.jms.Topic;
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -27,7 +28,7 @@ public class JMSProducer {
 	static {
 		Hashtable<String, String> jndiBindings = new Hashtable<>();
 		jndiBindings.put(Context.INITIAL_CONTEXT_FACTORY, ActiveMQInitialContextFactory.class.getName());
-		jndiBindings.put("topicConnectionFactory.TopicConnectionFactory", "tcp://localhost:61616");
+		jndiBindings.put("connectionFactory.ConnectionFactory", "tcp://localhost:61616");
 		jndiBindings.put("topic.BulletinTopic", "BulletinTopic");
 		// jndiBindings.put("queue.PaymentQueue", "PaymentQueue");
 		// jndiBindings.put("queue.PaymentAckQueue", "PaymentAckQueue");
@@ -66,8 +67,7 @@ public class JMSProducer {
 	}
 
 	@Produces
-	public TopicConnectionFactory getJMSTopicConnectionFactory() throws NamingException {
-		return (TopicConnectionFactory) JNDI_CONTEXT.lookup("TopicConnectionFactory");
+	public ConnectionFactory getJMSConnectionFactory() throws NamingException {
+		return (ConnectionFactory) JNDI_CONTEXT.lookup("ConnectionFactory");
 	}
-
 }

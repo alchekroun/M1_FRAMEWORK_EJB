@@ -6,8 +6,6 @@ import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
-import fr.pantheonsorbonne.ufr27.miage.jms.BulletinSubscriber;
-
 public class AppSubscriber {
 	public static void main(String[] args) throws JMSException, NamingException, InterruptedException, IOException {
 
