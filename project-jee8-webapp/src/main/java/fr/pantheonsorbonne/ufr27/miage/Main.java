@@ -29,7 +29,7 @@ import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
-import fr.pantheonsorbonne.ufr27.miage.jms.BulletinSubscriber;
+import fr.pantheonsorbonne.ufr27.miage.jms.BulletinPublisher;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
@@ -137,9 +137,8 @@ public class Main {
 			@Override
 			public void run() {
 				try {
-					final BulletinSubscriber bs = new BulletinSubscriber();
+					final BulletinPublisher bs = new BulletinPublisher();
 					while (!Thread.currentThread().isInterrupted()) {
-						System.out.println("received : " + bs.consume());
 					}
 					bs.close();
 				} catch (IOException e) {

@@ -2,21 +2,18 @@ package fr.pantheonsorbonne.ufr27.miage.jms;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.UUID;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicSubscriber;
+import javax.jms.TopicPublisher;
+import javax.jms.TopicSession;
 
-public class BulletinSubscriber implements Closeable {
+public class BulletinPublisher implements Closeable {
 
 	@Inject
 	@Named("bulletin")
@@ -26,45 +23,41 @@ public class BulletinSubscriber implements Closeable {
 	private TopicConnectionFactory topicConnectionFactory;
 
 	private TopicConnection connection;
-	private TopicSubscriber messageConsumer;
+	private TopicPublisher messagePublisher;
 
-	private Session session;
+	private TopicSession session;
 
 	@PostConstruct
 	void init() {
 		try {
-			connection = topicConnectionFactory.createTopicConnection("alex", "alex");
-			connection.setClientID("Bulletin subscriber " + UUID.randomUUID());
+			this.connection = topicConnectionFactory.createTopicConnection("alex", "alex");
 			connection.start();
-			session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-			messageConsumer = session.createDurableSubscriber(topic, "bulletin-subscription");
+			this.session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+			this.messagePublisher = session.createPublisher(topic);
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-	public String consume() {
+	public String publish(String message) {
 		try {
-			Message message = messageConsumer.receive();
-			return ((TextMessage) message).getText();
-
+			this.messagePublisher.send(this.session.createTextMessage(message));
+			return message;
 		} catch (JMSException e) {
-			System.out.println("failed to consume message ");
-			return "";
+			System.out.println("Failed to send message to queue");
+			return "Nothing sent";
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
 		try {
-			messageConsumer.close();
+			messagePublisher.close();
 			session.close();
 			connection.close();
 		} catch (JMSException e) {
-			System.out.println("Failed to close JMS resources");
+			System.out.println("failed to close JMS resources");
 		}
-
 	}
-
 }

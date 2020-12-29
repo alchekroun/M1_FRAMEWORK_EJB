@@ -7,13 +7,18 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.JMSException;
-import javax.jms.MessageProducer;
+import javax.jms.Message;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.TopicConnection;
 import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 
-public class BulletinPublisher implements Closeable {
+import org.jgroups.util.UUID;
+
+public class BulletinSubscriber implements Closeable {
 
 	@Inject
 	@Named("bulletin")
@@ -23,36 +28,38 @@ public class BulletinPublisher implements Closeable {
 	private TopicConnectionFactory connectionFactory;
 
 	private TopicConnection connection;
+	private TopicSubscriber messageConsumer;
 
-	Session session;
-	MessageProducer messagePublisher;
+	private TopicSession session;
 
 	@PostConstruct
 	private void init() {
 		try {
 			this.connection = connectionFactory.createTopicConnection("alex", "alex");
+			this.connection.setClientID("Bulletin subscriber " + UUID.randomUUID());
 			connection.start();
 			this.session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-			this.messagePublisher = session.createProducer(topic);
+			this.messageConsumer = session.createDurableSubscriber(topic, "bulletin-subscription");
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public String publish(String message) {
+	public String consume() {
 		try {
-			this.messagePublisher.send(this.session.createTextMessage(message));
-			return message;
+			Message message = messageConsumer.receive();
+			return ((TextMessage) message).getText();
+
 		} catch (JMSException e) {
-			System.out.println("Failed to send message to queue");
-			return "Nothing sent";
+			System.out.println("failed to consume message ");
+			return "";
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
 		try {
-			messagePublisher.close();
+			messageConsumer.close();
 			session.close();
 			connection.close();
 		} catch (JMSException e) {
