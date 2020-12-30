@@ -11,6 +11,7 @@
 	<xsd:element name="train" type="train"></xsd:element>
 	<xsd:element name="trainAvecResa" type="trainAvecResa"></xsd:element>
 	<xsd:element name="trainSansResa" type="trainSansResa"></xsd:element>
+	<xsd:element name="trainWrapper" type="trainWrapper"></xsd:element>
 	<xsd:element name="passager" type="passager"></xsd:element>
 	<xsd:element name="perturbation" type="perturbation"></xsd:element>
 	<xsd:element name="infoCentre" type="infoCentre"></xsd:element>
@@ -126,6 +127,13 @@
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="trainWrapper">
+		<xsd:sequence>
+			<xsd:element name="trains" type="train"
+				maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
 	</xsd:complexType>
 
 	<xsd:complexType name="passager">

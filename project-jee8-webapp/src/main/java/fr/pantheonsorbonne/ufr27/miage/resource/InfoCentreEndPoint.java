@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 import fr.pantheonsorbonne.ufr27.miage.service.InfoCentreService;
 
 @Path("/infoCentre/")
@@ -35,10 +36,10 @@ public class InfoCentreEndPoint {
 	@POST
 	@Path("/periodicBulletin")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response sendPeriodicBulletin(List<Train> listTrains) {
+	public Response sendPeriodicBulletin(TrainWrapper trains) {
 		// try {
 		System.out.println("\n ###### inRessources #######");
-		service.periodicBulletin(listTrains);
+		service.periodicBulletin(trains.getTrains());
 		return Response.status(200, "bulletin sended").build();
 		// } catch() {
 		// throw new WebApplicationException(404);

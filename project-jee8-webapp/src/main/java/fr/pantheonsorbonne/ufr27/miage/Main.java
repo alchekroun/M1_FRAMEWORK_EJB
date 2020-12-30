@@ -153,18 +153,15 @@ public class Main {
 
 	}
 
-	public static InfoCentrePublisher infoCentrePublisher = null;
-
-	public static void periodicBulletin(List<Train> listTrains) throws InterruptedException, IOException {
-		// initialize CDI 2.0 SE container
+	public static void testExemple() {
 		SeContainerInitializer initializer = SeContainerInitializer.newInstance();
-		System.out.println("\n ###### inMAIN #######");
 
 		try (SeContainer container = initializer.disableDiscovery().addPackages(Main.class).initialize()) {
-			if (infoCentrePublisher == null) {
-				infoCentrePublisher = container.select(InfoCentrePublisher.class).get();
-			}
-			infoCentrePublisher.sendBulletin(listTrains);
+
+			final InfoCentrePublisher infoCentrePublisher = container.select(InfoCentrePublisher.class).get();
+
+			// code
+
 		}
 	}
 

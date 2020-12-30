@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response.Status.Family;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
 /**
  * Hello world!
@@ -93,11 +94,11 @@ public class RestClientApp
 
 					if (responseRemoveArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 						System.out.println("--------------Arret removed successfully--------------");
-						List<Train> listTrains = new ArrayList<Train>();
-						listTrains.add(train);
+						TrainWrapper trains = new TrainWrapper();
+						trains.getTrains().add(train);
 						System.out.println("--------------Send Bulletin--------------");
 						Response responseSendBulletin = target.path("infoCentre/periodicBulletin").request()
-								.accept(MediaType.APPLICATION_JSON).post(Entity.json(listTrains));
+								.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
 						if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 							System.out.println("--------------Bulletin sended succesfully--------------");
 						} else {

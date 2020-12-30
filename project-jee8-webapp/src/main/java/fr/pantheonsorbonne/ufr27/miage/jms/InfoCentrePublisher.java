@@ -7,14 +7,12 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicPublisher;
-import javax.jms.TopicSession;
-
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 
 public class InfoCentrePublisher implements Closeable {
@@ -24,20 +22,20 @@ public class InfoCentrePublisher implements Closeable {
 	private Topic topic;
 
 	@Inject
-	private TopicConnectionFactory topicConnectionFactory;
+	private ConnectionFactory connectionFactory;
 
-	private TopicConnection connection;
-	private TopicPublisher messagePublisher;
+	private Connection connection;
+	private MessageProducer messagePublisher;
 
-	private TopicSession session;
+	private Session session;
 
 	@PostConstruct
 	void init() {
 		try {
-			this.connection = topicConnectionFactory.createTopicConnection("alex", "alex");
+			this.connection = connectionFactory.createConnection("alex", "alex");
 			connection.start();
-			this.session = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-			this.messagePublisher = session.createPublisher(topic);
+			this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			this.messagePublisher = session.createProducer(topic);
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
