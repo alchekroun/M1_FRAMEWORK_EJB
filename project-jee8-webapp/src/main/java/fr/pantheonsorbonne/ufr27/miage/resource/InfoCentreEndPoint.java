@@ -1,5 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.resource;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,6 +30,19 @@ public class InfoCentreEndPoint {
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("This train is not registered", 404);
 		}
+	}
+
+	@POST
+	@Path("/periodicBulletin")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response sendPeriodicBulletin(List<Train> listTrains) {
+		// try {
+		System.out.println("\n ###### inRessources #######");
+		service.periodicBulletin(listTrains);
+		return Response.status(200, "bulletin sended").build();
+		// } catch() {
+		// throw new WebApplicationException(404);
+		// }
 	}
 
 }

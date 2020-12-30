@@ -36,11 +36,11 @@ public class TrainServiceImpl implements TrainService {
 
 			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
 
-			train.setNomTrain(trainDTO.getNom());
+			train.setNom(trainDTO.getNom());
 			train.setDirection(
 					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainDTO.getDirection().getId()));
 			train.setDirectionType(trainDTO.getDirectionType());
-			train.setNumeroTrain(trainDTO.getNumeroTrain());
+			train.setNumero(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
 			train.setBaseDepartTemps(trainDTO.getBaseDepartTemps());
@@ -87,11 +87,11 @@ public class TrainServiceImpl implements TrainService {
 			if (trainOriginal == null) {
 				throw new NoSuchTrainException();
 			}
-			trainOriginal.setNomTrain(trainUpdate.getNom());
+			trainOriginal.setNom(trainUpdate.getNom());
 			trainOriginal.setDirection(
 					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainUpdate.getDirection().getId()));
 			trainOriginal.setDirectionType(trainUpdate.getDirectionType());
-			trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
+			trainOriginal.setNumero(trainUpdate.getNumeroTrain());
 			trainOriginal.setReseau(trainUpdate.getReseau());
 			trainOriginal.setReelDepartTemps(trainUpdate.getReelDepartTemps());
 			trainOriginal.setReelArriveeTemps(trainUpdate.getReelArriveeTemps());

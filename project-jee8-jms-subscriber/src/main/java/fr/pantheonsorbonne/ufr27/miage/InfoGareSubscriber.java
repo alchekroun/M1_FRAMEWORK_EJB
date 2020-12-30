@@ -16,7 +16,7 @@ import javax.jms.Topic;
 import javax.jms.Connection;
 import org.jgroups.util.UUID;
 
-public class BulletinSubscriber implements Closeable {
+public class InfoGareSubscriber implements Closeable {
 
 	@Inject
 	@Named("bulletin")
@@ -29,6 +29,8 @@ public class BulletinSubscriber implements Closeable {
 	private MessageConsumer messageConsumer;
 
 	private Session session;
+
+	private String arret;
 
 	@PostConstruct
 	private void init() {
@@ -64,6 +66,14 @@ public class BulletinSubscriber implements Closeable {
 			System.out.println("Failed to close JMS resources");
 		}
 
+	}
+
+	public String getArret() {
+		return arret;
+	}
+
+	public void setArret(String arret) {
+		this.arret = arret;
 	}
 
 }

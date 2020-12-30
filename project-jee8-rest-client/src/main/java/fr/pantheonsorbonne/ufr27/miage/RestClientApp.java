@@ -2,6 +2,9 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -38,7 +41,7 @@ public class RestClientApp
 		ObjectFactory factory = new ObjectFactory();
 
 		// Creation arret
-		System.out.println("#\t#Creation Arret#\t#");
+		System.out.println("--------------Creation Arret--------------");
 		Arret arret1Paris = factory.createArret();
 		arret1Paris.setId(1);
 		arret1Paris.setNom("Paris");
@@ -48,11 +51,11 @@ public class RestClientApp
 
 		// URI arret1ParisLocation = null;
 		if (responseCreationArret1Paris.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("Arret Created Successfully");
+			System.out.println("--------------Arret Created Successfully--------------");
 			// arret1ParisLocation = responseCreationArret1Paris.getLocation();
 
 			// Creation train
-			System.out.println("#\t#Creation Train#\t#");
+			System.out.println("--------------Creation Train--------------");
 			Train train1 = factory.createTrainAvecResa();
 			train1.setId(1);
 			train1.setNom("Bordeaux - Paris");
@@ -72,8 +75,8 @@ public class RestClientApp
 
 			URI train1Location = null;
 			if (responseCreationTrain1.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-				System.out.println("Train Created Successfully");
-				System.out.println("Add arret to train");
+				System.out.println("--------------Train Created Successfully--------------");
+				System.out.println("--------------Add arret to train--------------");
 				train1Location = responseCreationTrain1.getLocation();
 
 				Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
@@ -83,13 +86,24 @@ public class RestClientApp
 						.put(Entity.json(LocalDateTime.now().plusMinutes(20).toString()));
 
 				if (responseAddArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-					System.out.println("Arret added successfully");
-					System.out.println("Remove arret to train");
+					System.out.println("--------------Arret added successfully--------------");
+					System.out.println("--------------Remove arret to train--------------");
 					Response responseRemoveArret = target
 							.path("train/" + train.getId() + "/removearret/" + arretLille.getId()).request().delete();
 
 					if (responseRemoveArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-						System.out.println("Arret removed successfully");
+						System.out.println("--------------Arret removed successfully--------------");
+						List<Train> listTrains = new ArrayList<Train>();
+						listTrains.add(train);
+						System.out.println("--------------Send Bulletin--------------");
+						Response responseSendBulletin = target.path("infoCentre/periodicBulletin").request()
+								.accept(MediaType.APPLICATION_JSON).post(Entity.json(listTrains));
+						if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+							System.out.println("--------------Bulletin sended succesfully--------------");
+						} else {
+							throw new RuntimeException(
+									"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
+						}
 
 					} else {
 						throw new RuntimeException(

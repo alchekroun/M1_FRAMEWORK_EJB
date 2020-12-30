@@ -14,7 +14,7 @@ public class TrainMapper {
 		Train trainDTO = new ObjectFactory().createTrain();
 
 		trainDTO.setId(train.getId());
-		trainDTO.setNom(train.getNomTrain());
+		trainDTO.setNom(train.getNom());
 		trainDTO.setDirectionType(train.getDirectionType());
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());

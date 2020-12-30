@@ -2,6 +2,8 @@ package fr.pantheonsorbonne.ufr27.miage.jms;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,7 +15,9 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 
-public class BulletinPublisher implements Closeable {
+import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+
+public class InfoCentrePublisher implements Closeable {
 
 	@Inject
 	@Named("bulletin")
@@ -59,5 +63,24 @@ public class BulletinPublisher implements Closeable {
 		} catch (JMSException e) {
 			System.out.println("failed to close JMS resources");
 		}
+	}
+
+	public String prepareBulletinToPublish(List<Train> listTrains) {
+		StringBuilder message = new StringBuilder();
+		message.append("------------------------INFO TRAINS---------------------\n");
+		for (Train t : listTrains) {
+			message.append("Train n°: ");
+			message.append(t.getNumero());
+			message.append("\nDestination : ");
+			message.append(t.getDirection());
+			message.append("\n");
+		}
+		message.append("------------------------FIN INFO TRAINS---------------------");
+		return message.toString();
+	}
+
+	public void sendBulletin(List<Train> listTrains) {
+		String message = prepareBulletinToPublish(listTrains);
+		System.out.println("Bulletin sent : " + publish(message));
 	}
 }

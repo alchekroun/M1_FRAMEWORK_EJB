@@ -14,20 +14,16 @@ public class AppSubscriber {
 
 		try (SeContainer container = initializer.disableDiscovery().addPackages(AppSubscriber.class).initialize()) {
 
-			final BulletinSubscriber bulletinSubscriber = container.select(BulletinSubscriber.class).get();
-
+			final InfoGareSubscriber infoGareParis = container.select(InfoGareSubscriber.class).get();
+			infoGareParis.setArret("Paris");
 			while (true) {
-				String message = bulletinSubscriber.consume();
-				System.out.println("Message read from bulletinPublisher: " + message);
-				if ("EXIT".equals(message)) {
-					break;
-				}
+				infoGareParis.consume();
 			}
-			bulletinSubscriber.close();
+			// infoGareParis.close();
 
 		}
 
-		System.exit(0);
+		// System.exit(0);
 
 	}
 

@@ -55,28 +55,12 @@ public class Train {
 
 	boolean isCreated;
 
-	public String getNomTrain() {
-		return nom;
-	}
-
-	public void setNomTrain(String nom) {
-		this.nom = nom;
-	}
-
 	public String getDirectionType() {
 		return directionType;
 	}
 
 	public void setDirectionType(String directionType) {
 		this.directionType = directionType;
-	}
-
-	public int getNumeroTrain() {
-		return numero;
-	}
-
-	public void setNumeroTrain(int numero) {
-		this.numero = numero;
 	}
 
 	public String getReseau() {

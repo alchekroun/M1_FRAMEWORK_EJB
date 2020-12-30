@@ -2,8 +2,10 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
-
+import javax.enterprise.inject.se.SeContainer;
+import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.inject.Singleton;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -29,15 +31,17 @@ import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
-import fr.pantheonsorbonne.ufr27.miage.jms.BulletinPublisher;
+import fr.pantheonsorbonne.ufr27.miage.jms.InfoCentrePublisher;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
+import fr.pantheonsorbonne.ufr27.miage.service.InfoCentreService;
 import fr.pantheonsorbonne.ufr27.miage.service.InfoGareService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
 import fr.pantheonsorbonne.ufr27.miage.service.MailingService;
@@ -47,6 +51,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.service.UserService;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoCentreServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoGareServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.MailingServiceImpl;
@@ -92,6 +97,7 @@ public class Main {
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(PassagerServiceImpl.class).to(PassagerService.class);
 						bind(InfoGareServiceImpl.class).to(InfoGareService.class);
+						bind(InfoCentreServiceImpl.class).to(InfoCentreService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
 						bind(PaymentServiceImpl.class).to(PaymentService.class);
 						bind(InvoicingServiceImpl.class).to(InvoicingService.class);
@@ -110,6 +116,8 @@ public class Main {
 
 						bind(PaymentValidationAckownledgerBean.class).to(PaymentValidationAckownledgerBean.class)
 								.in(Singleton.class);
+
+						bind(InfoCentrePublisher.class).to(InfoCentrePublisher.class).in(Singleton.class);
 
 					}
 
@@ -133,22 +141,6 @@ public class Main {
 
 		BrokerUtils.startBroker();
 
-		Thread subThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					final BulletinPublisher bs = new BulletinPublisher();
-					while (!Thread.currentThread().isInterrupted()) {
-					}
-					bs.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-		subThread.start();
-
 		PersistenceConf pc = new PersistenceConf();
 		pc.getEM();
 		pc.launchH2WS();
@@ -157,8 +149,23 @@ public class Main {
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
 				BASE_URI));
 		System.in.read();
-		subThread.interrupt();
 		server.stop();
 
 	}
+
+	public static InfoCentrePublisher infoCentrePublisher = null;
+
+	public static void periodicBulletin(List<Train> listTrains) throws InterruptedException, IOException {
+		// initialize CDI 2.0 SE container
+		SeContainerInitializer initializer = SeContainerInitializer.newInstance();
+		System.out.println("\n ###### inMAIN #######");
+
+		try (SeContainer container = initializer.disableDiscovery().addPackages(Main.class).initialize()) {
+			if (infoCentrePublisher == null) {
+				infoCentrePublisher = container.select(InfoCentrePublisher.class).get();
+			}
+			infoCentrePublisher.sendBulletin(listTrains);
+		}
+	}
+
 }
