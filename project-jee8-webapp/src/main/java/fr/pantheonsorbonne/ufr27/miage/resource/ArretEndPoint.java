@@ -2,7 +2,10 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.NoSuchElementException;
+
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,7 +29,10 @@ import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 
 @Path("/arret/")
 public class ArretEndPoint {
-
+	
+	@Inject
+	EntityManager em;
+	
 	@Inject
 	ArretService service;
 
@@ -108,5 +114,6 @@ public class ArretEndPoint {
 			throw new WebApplicationException("No such train", 404);
 		}
 	}
+	
 
 }
