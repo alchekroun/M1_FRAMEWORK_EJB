@@ -38,6 +38,8 @@ class TestArret {
 	
 	List<HeureDePassage> listeHeureDePassage;
 	Set<Train> trainsArrivants;
+	List<HeureDePassage> listeHeureDePassage2;
+	Set<Train> trainsArrivants2;
 	
 	Train train1;
 	Arret arret1;
@@ -60,8 +62,8 @@ class TestArret {
 	void setUp() throws Exception {
 		System.out.println("\n== SetUp");
 		
-		ArrayList<HeureDePassage> listeHeureDePassage2 = new ArrayList<HeureDePassage>();
-		HashSet<Train> trainsArrivants2 = new HashSet<Train>();
+		listeHeureDePassage2 = new ArrayList<HeureDePassage>();
+		trainsArrivants2 = new HashSet<Train>();
 		
 		arret1 = new Arret();
 		arret1.setId(indexArret++);
@@ -69,7 +71,6 @@ class TestArret {
 		arret1.setListeHeureDePassage(listeHeureDePassage2);
 		arret1.setTrainsArrivants(trainsArrivants2);
 	
-		
 		arretDirection = new Arret();
 		arretDirection.setId(indexArret++);
 		arretDirection.setNom("Paris");
