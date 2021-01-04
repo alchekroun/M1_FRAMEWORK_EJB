@@ -20,8 +20,9 @@ public class ArretDAO {
 		return em.find(Arret.class, arretId);
 	}
 
-	public List<Arret> getAllArret() {
-		return em.createNamedQuery("getAllArret").getResultList();
+	public Arret update(Arret arretOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate) {
+		arretOriginal.setNom(arretUpdate.getNom());
+		return arretOriginal;
 	}
 
 	public void deleteArret(Arret arret) {
@@ -32,6 +33,10 @@ public class ArretDAO {
 		// l'arret
 		em.remove(em.find(InfoGare.class, arret.getId()));
 		em.remove(arret);
+	}
+
+	public List<Arret> getAllArret() {
+		return em.createNamedQuery("getAllArret").getResultList();
 	}
 
 	public List<Arret> getAllArretByTrain(int trainId) {

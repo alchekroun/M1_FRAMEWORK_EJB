@@ -29,6 +29,7 @@ public class TrainServiceImpl implements TrainService {
 	@Inject
 	ArretDAO arretDAO;
 
+	// Create
 	@Override
 	public int createTrain(Train trainDTO) throws CantCreateException {
 		em.getTransaction().begin();
@@ -58,6 +59,7 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
+	// Read
 	@Override
 	public Train getTrainFromId(int trainId) throws NoSuchTrainException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
@@ -67,6 +69,25 @@ public class TrainServiceImpl implements TrainService {
 		return TrainMapper.trainDTOMapper(train);
 	}
 
+	// Update
+	@Override
+	public void updateTrain(Train trainUpdate) throws NoSuchTrainException, CantUpdateException {
+		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
+			if (trainOriginal == null) {
+				throw new NoSuchTrainException();
+			}
+
+			em.merge(dao.updateTrain(trainOriginal, trainUpdate));
+			em.getTransaction().commit();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
+		}
+	}
+
+	// Delete
 	@Override
 	public void deleteTrain(int trainId) throws NoSuchTrainException {
 		em.getTransaction().begin();
@@ -77,31 +98,6 @@ public class TrainServiceImpl implements TrainService {
 		dao.deleteTrain(train);
 
 		em.getTransaction().commit();
-	}
-
-	@Override
-	public void updateTrain(Train trainUpdate) throws NoSuchTrainException, CantUpdateException {
-		em.getTransaction().begin();
-		try {
-			fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
-			if (trainOriginal == null) {
-				throw new NoSuchTrainException();
-			}
-			trainOriginal.setNom(trainUpdate.getNom());
-			trainOriginal.setDirection(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainUpdate.getDirection().getId()));
-			trainOriginal.setDirectionType(trainUpdate.getDirectionType());
-			trainOriginal.setNumero(trainUpdate.getNumeroTrain());
-			trainOriginal.setReseau(trainUpdate.getReseau());
-			trainOriginal.setReelDepartTemps(trainUpdate.getReelDepartTemps());
-			trainOriginal.setReelArriveeTemps(trainUpdate.getReelArriveeTemps());
-
-			em.merge(trainOriginal);
-			em.getTransaction().commit();
-		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
-			em.getTransaction().rollback();
-			throw new CantUpdateException();
-		}
 	}
 
 	@Override

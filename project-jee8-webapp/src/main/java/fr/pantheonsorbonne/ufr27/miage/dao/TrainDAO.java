@@ -25,6 +25,22 @@ public class TrainDAO {
 		return em.find(Train.class, trainId);
 	}
 
+	public Train updateTrain(Train trainOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train trainUpdate) {
+		trainOriginal.setNom(trainUpdate.getNom());
+		trainOriginal.setDirection(em.find(Arret.class, trainUpdate.getDirection().getId()));
+		trainOriginal.setDirectionType(trainUpdate.getDirectionType());
+		trainOriginal.setNumero(trainUpdate.getNumeroTrain());
+		trainOriginal.setReseau(trainUpdate.getReseau());
+		trainOriginal.setBaseArriveeTemps(trainUpdate.getBaseArriveeTemps());
+		trainOriginal.setBaseDepartTemps(trainUpdate.getBaseDepartTemps());
+		trainOriginal.setReelDepartTemps(trainUpdate.getReelDepartTemps());
+		trainOriginal.setReelArriveeTemps(trainUpdate.getReelArriveeTemps());
+
+		// TODO Vérifier si l'on doit quand même ajouter les setter des list passager et
+		// hdp
+		return trainOriginal;
+	}
+
 	public List<Train> getAllTrain() {
 		return em.createNamedQuery("getAllTrain").getResultList();
 	}

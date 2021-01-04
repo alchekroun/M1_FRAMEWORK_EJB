@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 
 public class PassagerDAO {
 	@Inject
@@ -17,6 +18,16 @@ public class PassagerDAO {
 
 	public Passager getPassagerFromId(int passagerId) {
 		return em.find(Passager.class, passagerId);
+	}
+
+	public Passager updatePassager(Passager passagerOriginal,
+			fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager passagerUpdate) {
+
+		passagerOriginal.setArrive(em.find(Arret.class, passagerUpdate.getArrive().getId()));
+		passagerOriginal.setDepart(em.find(Arret.class, passagerUpdate.getDepart().getId()));
+		passagerOriginal.setNom(passagerUpdate.getNom());
+
+		return passagerOriginal;
 	}
 
 	public void deletePassager(Passager passager) {

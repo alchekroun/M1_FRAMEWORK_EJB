@@ -28,6 +28,7 @@ public class ArretServiceImpl implements ArretService {
 	@Inject
 	TrainDAO daoTrain;
 
+	// Create
 	@Override
 	public int createArret(Arret arretDTO) throws CantCreateException {
 		try {
@@ -48,6 +49,7 @@ public class ArretServiceImpl implements ArretService {
 		}
 	}
 
+	// Read
 	@Override
 	public Arret getArretFromId(int arretId) throws NoSuchArretException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = dao.getArretFromId(arretId);
@@ -57,30 +59,26 @@ public class ArretServiceImpl implements ArretService {
 		return ArretMapper.arretDTOMapper(arret);
 	}
 
-	@Override
-	public List<Arret> getAllArret() throws EmptyListException {
-		List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listeArrets = dao.getAllArret();
-		if (listeArrets == null) {
-			throw new EmptyListException();
-		}
-		return ArretMapper.arretAllDTOMapper(listeArrets);
-	}
-
+	// Update
 	@Override
 	public void updateArret(Arret arretUpdate) throws NoSuchArretException, CantUpdateException {
-		em.getTransaction().begin();
 		try {
+			em.getTransaction().begin();
 			fr.pantheonsorbonne.ufr27.miage.jpa.Arret arretOriginal = dao.getArretFromId(arretUpdate.getId());
-			arretOriginal.setNom(arretUpdate.getNom());
+			if (arretOriginal == null) {
+				throw new NoSuchArretException();
+			}
 
-			em.merge(arretOriginal);
+			em.merge(dao.update(arretOriginal, arretUpdate));
 			em.getTransaction().commit();
+
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
 			em.getTransaction().rollback();
 			throw new CantUpdateException();
 		}
 	}
 
+	// Delete
 	@Override
 	public void deleteArret(int arretId) throws NoSuchArretException, CantDeleteException {
 		em.getTransaction().begin();
@@ -97,6 +95,15 @@ public class ArretServiceImpl implements ArretService {
 			throw new NoSuchArretException();
 		}
 
+	}
+
+	@Override
+	public List<Arret> getAllArret() throws EmptyListException {
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listeArrets = dao.getAllArret();
+		if (listeArrets == null) {
+			throw new EmptyListException();
+		}
+		return ArretMapper.arretAllDTOMapper(listeArrets);
 	}
 
 	@Override

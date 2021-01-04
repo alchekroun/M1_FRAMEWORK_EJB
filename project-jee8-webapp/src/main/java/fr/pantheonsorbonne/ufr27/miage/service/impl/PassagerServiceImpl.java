@@ -27,6 +27,7 @@ public class PassagerServiceImpl implements PassagerService {
 	@Inject
 	TrainDAO daoTrain;
 
+	// Create
 	@Override
 	public int createPassager(Passager passagerDTO) throws CantCreateException {
 		try {
@@ -50,6 +51,7 @@ public class PassagerServiceImpl implements PassagerService {
 		}
 	}
 
+	// Read
 	@Override
 	public Passager getPassagerFromId(int passagerId) throws NoSuchPassagerException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager = dao.getPassagerFromId(passagerId);
@@ -59,15 +61,23 @@ public class PassagerServiceImpl implements PassagerService {
 		return PassagerMapper.passagerDTOMapper(passager);
 	}
 
+	// Update
 	@Override
-	public List<Passager> getAllPassager() throws EmptyListException {
-		List<fr.pantheonsorbonne.ufr27.miage.jpa.Passager> listePassagers = dao.getAllPassager();
-		if (listePassagers == null) {
-			throw new EmptyListException();
+	public void updatePassager(Passager passagerUpdate) throws NoSuchPassagerException, CantUpdateException {
+		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager passagerOriginal = dao
+					.getPassagerFromId(passagerUpdate.getId());
+
+			em.merge(dao.updatePassager(passagerOriginal, passagerUpdate));
+			em.getTransaction().commit();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
 		}
-		return PassagerMapper.passagerAllDTOMapper(listePassagers);
 	}
 
+	// Delete
 	@Override
 	public void deletePassager(int passagerId) throws NoSuchPassagerException {
 		em.getTransaction().begin();
@@ -81,29 +91,21 @@ public class PassagerServiceImpl implements PassagerService {
 	}
 
 	@Override
+	public List<Passager> getAllPassager() throws EmptyListException {
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.Passager> listePassagers = dao.getAllPassager();
+		if (listePassagers == null) {
+			throw new EmptyListException();
+		}
+		return PassagerMapper.passagerAllDTOMapper(listePassagers);
+	}
+
+	@Override
 	public List<Passager> getAllPassagerByTrain(int trainId) throws NoSuchTrainException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = daoTrain.getTrainFromId(trainId);
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
 		return PassagerMapper.passagerAllDTOMapper(dao.getAllPassagerByTrain(trainId));
-	}
-
-	@Override
-	public void updatePassager(Passager passagerUpdate) throws NoSuchPassagerException, CantUpdateException {
-		em.getTransaction().begin();
-		try {
-			fr.pantheonsorbonne.ufr27.miage.jpa.Passager passagerOriginal = dao
-					.getPassagerFromId(passagerUpdate.getId());
-			passagerOriginal.setArrive(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, passagerUpdate.getArrive().getId()));
-			passagerOriginal.setDepart(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, passagerUpdate.getDepart().getId()));
-			passagerOriginal.setNom(passagerUpdate.getNom());
-		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
-			em.getTransaction().rollback();
-			throw new CantUpdateException();
-		}
 	}
 
 }
