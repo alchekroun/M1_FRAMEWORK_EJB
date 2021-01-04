@@ -9,6 +9,7 @@ import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.inject.Singleton;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
+import javax.jms.Topic;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -33,6 +34,7 @@ import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
 import fr.pantheonsorbonne.ufr27.miage.jms.InfoCentrePublisher;
 import fr.pantheonsorbonne.ufr27.miage.jms.PaymentValidationAckownledgerBean;
+import fr.pantheonsorbonne.ufr27.miage.jms.conf.BulletinTopicSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.ConnectionFactorySupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
@@ -82,7 +84,6 @@ public class Main {
 						// Déclarer les classes pouvant être injectée
 
 						// DAO
-
 						bind(TrainDAO.class).to(TrainDAO.class);
 						bind(PassagerDAO.class).to(PassagerDAO.class);
 						bind(ArretDAO.class).to(ArretDAO.class);
@@ -109,6 +110,7 @@ public class Main {
 						bindFactory(EMFFactory.class).to(EntityManagerFactory.class).in(Singleton.class);
 						bindFactory(EMFactory.class).to(EntityManager.class).in(RequestScoped.class);
 						bindFactory(ConnectionFactorySupplier.class).to(ConnectionFactory.class).in(Singleton.class);
+						bindFactory(BulletinTopicSupplier.class).to(Topic.class).named("bulletin").in(Singleton.class);
 						bindFactory(PaymentAckQueueSupplier.class).to(Queue.class).named("PaymentAckQueue")
 								.in(Singleton.class);
 						bindFactory(PaymentQueueSupplier.class).to(Queue.class).named("PaymentQueue")

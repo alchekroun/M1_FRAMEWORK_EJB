@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.ConnectionFactory;
 import javax.jms.Topic;
@@ -21,6 +22,12 @@ import org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory;
  */
 @ApplicationScoped
 public class JMSProducer {
+	
+	@Inject
+	BulletinTopicSupplier bulletinTopicSupplier;
+	
+	@Inject
+	ConnectionFactorySupplier connectionFactorySupplier;
 
 	// fake JNDI context to create object
 	private static final Context JNDI_CONTEXT;
@@ -63,12 +70,12 @@ public class JMSProducer {
 	@Produces
 	@Named("bulletin")
 	public Topic getJMSQueue() throws NamingException {
-		return (Topic) JNDI_CONTEXT.lookup("BulletinTopic");
+		return bulletinTopicSupplier.get();
 	}
 
 	@Produces
 	public ConnectionFactory getJMSConnectionFactory() throws NamingException {
-		return (ConnectionFactory) JNDI_CONTEXT.lookup("ConnectionFactory");
+		return connectionFactorySupplier.get();
 	}
 
 }

@@ -46,4 +46,28 @@ public class InfoCentreEndPoint {
 		// }
 	}
 
+	@POST
+	@Path("/nhe")
+	public Response launchPeriodicBulletin() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					service.periodicBulletin();
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+
+			}
+		}).start();
+
+		return Response.accepted().build();
+
+	}
+
 }
