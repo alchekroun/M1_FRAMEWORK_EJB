@@ -66,11 +66,12 @@ public class InfoCentrePublisher implements Closeable {
 	public String prepareBulletinToPublish(List<Train> listTrains) {
 		StringBuilder message = new StringBuilder();
 		message.append("------------------------INFO TRAINS---------------------\n");
+		// this should be converted in DTO and sent as XML or Json through JMS
 		for (Train t : listTrains) {
 			message.append("Train n°: ");
 			message.append(t.getNumero());
 			message.append("\nDestination : ");
-			message.append(t.getDirection());
+			message.append(t.getDirection().getNom());
 			message.append("\n");
 		}
 		message.append("------------------------FIN INFO TRAINS---------------------");

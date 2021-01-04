@@ -1,4 +1,4 @@
-package fr.pantheonsorbonne.ufr27.miage;
+package fr.pantheonsorbonne.ufr27.miage.jms;
 
 import java.io.Closeable;
 import java.io.IOException;

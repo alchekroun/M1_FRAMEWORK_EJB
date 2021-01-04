@@ -11,4 +11,6 @@ public interface InfoCentreService {
 
 	void periodicBulletin(List<Train> listTrains);
 
+	void periodicBulletin();
+
 }

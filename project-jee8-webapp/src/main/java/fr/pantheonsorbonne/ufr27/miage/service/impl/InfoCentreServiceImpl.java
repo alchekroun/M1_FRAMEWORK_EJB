@@ -42,4 +42,11 @@ public class InfoCentreServiceImpl implements InfoCentreService {
 
 	}
 
+	@Override
+	public void periodicBulletin() {
+
+		infoCentrePublisher.sendBulletin(daoTrain.getAllTrain());
+
+	}
+
 }
