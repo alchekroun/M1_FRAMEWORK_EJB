@@ -69,7 +69,7 @@ public class ArretServiceImpl implements ArretService {
 				throw new NoSuchArretException();
 			}
 
-			em.merge(dao.update(arretOriginal, arretUpdate));
+			em.merge(dao.updateArret(arretOriginal, arretUpdate));
 			em.getTransaction().commit();
 
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {

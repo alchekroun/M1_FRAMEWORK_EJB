@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -40,7 +41,7 @@ class TestPassagerDAO {
 	Passager passager1;
 	Train train1;
 	Arret arretDepart;
-	Arret arretArrivee ;
+	Arret arretArrivee;
 
 	@BeforeEach
 	public void setup() {
@@ -54,7 +55,7 @@ class TestPassagerDAO {
 		arretDepart.setNom("Bordeaux");
 		em.persist(arretDepart);
 
-	    arretArrivee = new Arret();
+		arretArrivee = new Arret();
 		arretArrivee.setNom("Paris");
 		em.persist(arretArrivee);
 
@@ -115,6 +116,31 @@ class TestPassagerDAO {
 	@Test
 	void testGetPassagerFromId() {
 		assertEquals(passager1, dao.getPassagerFromId(passager1.getId()));
+	}
+
+	@Test
+	void testUpdatePassager() {
+		ObjectFactory factory = new ObjectFactory();
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager passagerUpdate = factory.createPassager();
+		passagerUpdate.setId(passager1.getId());
+		passagerUpdate.setNom("tiesto");
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate1 = factory.createArret();
+		arretUpdate1.setId(arretArrivee.getId());
+		arretUpdate1.setNom(arretArrivee.getNom());
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate2 = factory.createArret();
+		arretUpdate2.setId(arretDepart.getId());
+		arretUpdate2.setNom(arretDepart.getNom());
+		passagerUpdate.setDepart(arretUpdate1);
+		passagerUpdate.setArrive(arretUpdate2);
+		Passager passagerOriginalNonModif = passager1;
+		
+		em.getTransaction().begin();
+		em.merge(dao.updatePassager(passager1, passagerUpdate));
+		em.getTransaction().commit();
+		passager1 = em.find(Passager.class, passager1.getId());
+		assertEquals(passager1.getNom(), passagerUpdate.getNom());
+		assertEquals(passagerOriginalNonModif.getDepart(), passager1.getDepart());
+		assertEquals(passagerOriginalNonModif.getArrive(), passager1.getArrive());
 	}
 
 	@Test

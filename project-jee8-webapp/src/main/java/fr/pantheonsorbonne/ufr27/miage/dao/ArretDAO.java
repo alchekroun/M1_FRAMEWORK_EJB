@@ -20,7 +20,7 @@ public class ArretDAO {
 		return em.find(Arret.class, arretId);
 	}
 
-	public Arret update(Arret arretOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate) {
+	public Arret updateArret(Arret arretOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate) {
 		arretOriginal.setNom(arretUpdate.getNom());
 		return arretOriginal;
 	}

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -42,7 +43,6 @@ public class TestArretDAO {
 	InfoGare infoGare1;
 	Train train1;
 	Arret arretDirection;
-
 
 	@BeforeEach
 	public void setup() {
@@ -117,8 +117,8 @@ public class TestArretDAO {
 		List<Arret> arrets = dao.getAllArret();
 
 		assertEquals(2, arrets.size());
-		assertEquals(arret1,arrets.get(0));
-		assertEquals(arretDirection, arrets.get(1));
+		assertTrue(arrets.contains(arret1));
+		assertTrue(arrets.contains(arretDirection));
 	}
 
 	@Test
@@ -129,6 +129,23 @@ public class TestArretDAO {
 		}
 		em.getTransaction().commit();
 		assertNull(dao.getArretFromId(arret1.getId()));
+	}
+
+	@Test
+	public void testUpdateArret() {
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate = new ObjectFactory().createArret();
+		arretUpdate.setId(arret1.getId());
+		arretUpdate.setNom("Rouen");
+
+		Arret arretOriginalNonModif = arret1;
+
+		em.getTransaction().begin();
+		em.merge(dao.updateArret(arret1, arretUpdate));
+		em.getTransaction().commit();
+		arret1 = em.find(Arret.class, arret1.getId());
+		assertEquals(arret1.getNom(), arretUpdate.getNom());
+		assertEquals(arretOriginalNonModif.getListeHeureDePassage(), arret1.getListeHeureDePassage());
+		assertEquals(arretOriginalNonModif.getTrainsArrivants(), arret1.getTrainsArrivants());
 	}
 
 	@Test
