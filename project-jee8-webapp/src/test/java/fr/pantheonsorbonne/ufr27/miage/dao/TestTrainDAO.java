@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
@@ -57,7 +58,6 @@ public class TestTrainDAO {
 		train1.setStatut("enmarche");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
 		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
@@ -131,6 +131,49 @@ public class TestTrainDAO {
 		em.getTransaction().begin();
 		dao.removeArret(train1, arret1);
 		em.getTransaction().commit();
+	}
+
+	@Test
+	public void testUpdateTrain() {
+		ObjectFactory factory = new ObjectFactory();
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train trainUpdate = factory.createTrain();
+		trainUpdate.setId(train1.getId());
+		trainUpdate.setNom(train1.getNom());
+		trainUpdate.setNumeroTrain(train1.getNumero());
+		trainUpdate.setStatut(train1.getStatut());
+		trainUpdate.setReseau(train1.getReseau());
+		trainUpdate.setBaseDepartTemps(train1.getBaseDepartTemps());
+		trainUpdate.setBaseArriveeTemps(train1.getBaseArriveeTemps());
+		trainUpdate.setBaseDepartTemps(train1.getBaseDepartTemps());
+		trainUpdate.setReelArriveeTemps(LocalDateTime.now().plusMinutes(50));
+		trainUpdate.setReelDepartTemps(LocalDateTime.now().plusMinutes(50));
+
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate1 = factory.createArret();
+		arretUpdate1.setId(arret1.getId());
+		arretUpdate1.setNom(arret1.getNom());
+
+		trainUpdate.setDirection(arretUpdate1);
+
+		Train trainOriginalNonModif = train1;
+
+		em.getTransaction().begin();
+		em.merge(dao.updateTrain(train1, trainUpdate));
+		em.getTransaction().commit();
+		train1 = em.find(Train.class, train1.getId());
+		assertEquals(train1.getId(), trainUpdate.getId());
+		assertEquals(train1.getNom(), trainUpdate.getNom());
+		assertEquals(train1.getNumero(), trainUpdate.getNumeroTrain());
+		assertEquals(train1.getReseau(), trainUpdate.getReseau());
+		assertEquals(train1.getStatut(), trainUpdate.getStatut());
+		assertEquals(train1.getBaseDepartTemps(), trainUpdate.getBaseDepartTemps());
+		assertEquals(train1.getBaseArriveeTemps(), trainUpdate.getBaseArriveeTemps());
+		assertEquals(train1.getBaseDepartTemps(), trainUpdate.getBaseDepartTemps());
+		assertEquals(train1.getReelArriveeTemps(), trainUpdate.getReelArriveeTemps());
+		assertEquals(train1.getReelDepartTemps(), trainUpdate.getReelDepartTemps());
+		assertEquals(trainOriginalNonModif.getDirection(), train1.getDirection());
+		assertEquals(trainOriginalNonModif.getListeHeureDePassage(), train1.getListeHeureDePassage());
+		assertEquals(trainOriginalNonModif.getListePassagers(), train1.getListePassagers());
+
 	}
 
 	@Test

@@ -35,17 +35,12 @@ public class HeureDePassageDAO {
 		return hdp;
 	}
 
-	public HeureDePassage getHeureDePassageFromKey(HeureDePassageKey key) {
-		return em.find(HeureDePassage.class, key);
-	}
-
-	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
-		return (HeureDePassage) em.createNamedQuery("findHeureByTrainIdAndArretId").setParameter("trainId", trainId)
-				.setParameter("arretId", arretId).getSingleResult();
-	}
-
-	public List<HeureDePassage> getAllHeureDePassage() {
-		return em.createNamedQuery("getAllHeureDePassage").getResultList();
+	public HeureDePassage updateHeureDePassage(Train train, Arret arret, LocalDateTime newPassage) {
+		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
+		hdp.setArret(arret);
+		hdp.setTrain(train);
+		hdp.setPassage(newPassage);
+		return hdp;
 	}
 
 	public void deleteHeureDePassage(Train train, Arret arret) {
@@ -73,6 +68,19 @@ public class HeureDePassageDAO {
 				deleteHeureDePassage(hdp.getTrain(), arret);
 			}
 		}
+	}
+
+	public HeureDePassage getHeureDePassageFromKey(HeureDePassageKey key) {
+		return em.find(HeureDePassage.class, key);
+	}
+
+	public HeureDePassage getHdpFromTrainIdAndArretId(int trainId, int arretId) {
+		return (HeureDePassage) em.createNamedQuery("findHeureByTrainIdAndArretId").setParameter("trainId", trainId)
+				.setParameter("arretId", arretId).getSingleResult();
+	}
+
+	public List<HeureDePassage> getAllHeureDePassage() {
+		return em.createNamedQuery("getAllHeureDePassage").getResultList();
 	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {
