@@ -33,6 +33,10 @@ public class Arret {
 	@OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Set<Train> trainsArrivants;
 
+	public void setTrainsArrivants(Set<Train> trainsArrivants) {
+		this.trainsArrivants = trainsArrivants;
+	}
+
 	// ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
 	protected List<HeureDePassage> listeHeureDePassage;
