@@ -13,14 +13,23 @@ public class ArretMapper {
 
 		arretDTO.setId(arret.getId());
 		arretDTO.setNom(arret.getNom());
+
+		for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp : arret.getListeHeureDePassage()) {
+			arretDTO.getListeHeureDePassages().add(HeureDePassageMapper.heureDePassageDTOMapper(hdp));
+		}
+
+		for (fr.pantheonsorbonne.ufr27.miage.jpa.Train train : arret.getTrainsArrivants()) {
+			arretDTO.getTrainsArrivants().add(TrainMapper.trainDTOMapper(train));
+		}
+
 		return arretDTO;
 	}
 
 	public static List<Arret> arretAllDTOMapper(List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listeArrets) {
-		List<Arret> ListeArrets = new ArrayList<Arret>();
+		List<Arret> ListeArretsDTO = new ArrayList<Arret>();
 		for (fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret : listeArrets) {
-			ListeArrets.add(arretDTOMapper(arret));
+			ListeArretsDTO.add(arretDTOMapper(arret));
 		}
-		return ListeArrets;
+		return ListeArretsDTO;
 	}
 }
