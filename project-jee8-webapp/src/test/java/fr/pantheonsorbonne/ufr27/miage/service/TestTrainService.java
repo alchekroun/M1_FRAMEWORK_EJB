@@ -72,6 +72,7 @@ class TestTrainService {
 	ArretDAO dao2;
 	
 	Train train1;
+	Arret arret1;
 	Arret arretDirection;
 	int idArretDirection;
 	
@@ -98,6 +99,9 @@ class TestTrainService {
 	@BeforeEach
 	void setUp() throws Exception {
 		System.out.println("\n== SetUp");
+		
+		arret1 = factory.createArret();
+		arret1.setNom("Deauville");
 
 		arretDirection = factory.createArret();
 		arretDirection.setNom("Paris");
@@ -126,20 +130,23 @@ class TestTrainService {
 	@Test
 	void testCreateTrain() throws CantCreateException, NoSuchTrainException{
 		int idTrain= trainService.createTrain(train1);
-		assertEquals(dao.getTrainFromId(idTrain).getNom(),train1.getNom());
+		assertEquals(train1.getNom(),trainService.getTrainFromId(idTrain).getNom());
 		trainService.deleteTrain(idTrain);
 	}
 
 	@Test
 	void testGetTrainFromId() throws CantCreateException, NoSuchTrainException {
 		int idTrain= trainService.createTrain(train1);
-		assertEquals(dao.getTrainFromId(idTrain).getNom(),trainService.getTrainFromId(idTrain).getNom());
+		assertEquals(train1.getNom(),trainService.getTrainFromId(idTrain).getNom());
 		trainService.deleteTrain(idTrain);
 	}
 
 	@Test
-	void testDeleteTrain() {
-		fail("Not yet implemented");
+	void testDeleteTrain() throws CantCreateException, NoSuchTrainException {
+		int idTrain= trainService.createTrain(train1);
+		assertEquals(train1.getNom(),trainService.getTrainFromId(idTrain).getNom());
+		trainService.deleteTrain(idTrain);
+		assertNull(dao.getTrainFromId(idTrain));
 	}
 
 	@Test
@@ -148,18 +155,40 @@ class TestTrainService {
 	}
 
 	@Test
-	void testGetAllTrain() {
-		fail("Not yet implemented");
+	void testGetAllTrain() throws EmptyListException, CantCreateException, NoSuchTrainException {
+		List<Train> trains = trainService.getAllTrain();
+		assertEquals(trains.size(),0);
+		int idTrain= trainService.createTrain(train1);
+		assertFalse(trainService.getAllTrain().isEmpty());
+		assertEquals(trainService.getAllTrain().size(),1);
+		assertEquals(trainService.getAllTrain().get(0).getNom(),"Bordeaux - Paris");
+		trainService.deleteTrain(idTrain);
 	}
 
 	@Test
-	void testAddArret() {
-		fail("Not yet implemented");
+	void testAddArret() throws NoSuchTrainException, NoSuchArretException, CantCreateException, CantDeleteException {
+		int idTrain= trainService.createTrain(train1);
+		int idArret= arretService.createArret(arret1);
+		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(),0);
+		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),arretService.getArretFromId(idArret).getId(),LocalDateTime.now());
+		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(),1);
+		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),arretService.getArretFromId(idArret).getId());
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
+		
 	}
 
 	@Test
-	void testRemoveArret() {
-		fail("Not yet implemented");
+	void testRemoveArret() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
+		int idTrain= trainService.createTrain(train1);
+		int idArret= arretService.createArret(arret1);
+		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(),0);
+		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),arretService.getArretFromId(idArret).getId(),LocalDateTime.now());
+		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(),1);
+		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),arretService.getArretFromId(idArret).getId());
+		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(),0);
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
 	}
 
 }
