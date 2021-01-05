@@ -93,9 +93,9 @@ public class TrainEndPoint {
 	@Path("{trainId}/addarret/{arretId}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
-			@PathParam("terminus") boolean terminus, String passage) throws URISyntaxException {
+			@PathParam("terminus") String terminus, String passage) throws URISyntaxException {
 		try {
-			service.addArret(trainId, arretId, passage, terminus);
+			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(terminus));
 			return Response.status(200, "arret added to train").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);

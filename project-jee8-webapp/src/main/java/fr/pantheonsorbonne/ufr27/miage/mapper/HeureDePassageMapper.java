@@ -17,6 +17,7 @@ public class HeureDePassageMapper {
 		hdpDTO.setReelDepartTemps(heureDePassage.getReelDepartTemps());
 		hdpDTO.setBaseDepartTemps(heureDePassage.getBaseDepartTemps());
 		hdpDTO.setBaseArriveeTemps(heureDePassage.getBaseArriveeTemps());
+		hdpDTO.setTerminus(heureDePassage.isTerminus());
 
 		return hdpDTO;
 	}
