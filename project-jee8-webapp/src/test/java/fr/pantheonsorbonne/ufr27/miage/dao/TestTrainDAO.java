@@ -53,15 +53,10 @@ public class TestTrainDAO {
 
 		train1 = new Train();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretDirection);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		em.persist(train1);
 
 		arret1 = new Arret();
@@ -123,13 +118,21 @@ public class TestTrainDAO {
 	@Test
 	public void testAddArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		dao.addArret(train1, arretDirection, LocalDateTime.now().plusMinutes(10), LocalDateTime.now(), true);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(10), LocalDateTime.now().plusMinutes(20), false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
-		assertEquals(1, listHdp.size());
-		assertEquals(arret1, listHdp.get(0).getArret());
+		assertEquals(2, listHdp.size());
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.isTerminus()) {
+				assertEquals(hdp.getArret().getNom(), arretDirection.getNom());
+			} else {
+				assertEquals(hdp.getArret().getNom(), arret1.getNom());
+			}
+		}
 		em.getTransaction().begin();
 		dao.removeArret(train1, arret1);
+		dao.removeArret(train1, arretDirection);
 		em.getTransaction().commit();
 	}
 
@@ -142,17 +145,10 @@ public class TestTrainDAO {
 		trainUpdate.setNumeroTrain(train1.getNumero());
 		trainUpdate.setStatut(train1.getStatut());
 		trainUpdate.setReseau(train1.getReseau());
-		trainUpdate.setBaseDepartTemps(train1.getBaseDepartTemps());
-		trainUpdate.setBaseArriveeTemps(train1.getBaseArriveeTemps());
-		trainUpdate.setBaseDepartTemps(train1.getBaseDepartTemps());
-		trainUpdate.setReelArriveeTemps(LocalDateTime.now().plusMinutes(50));
-		trainUpdate.setReelDepartTemps(LocalDateTime.now().plusMinutes(50));
 
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate1 = factory.createArret();
 		arretUpdate1.setId(arret1.getId());
 		arretUpdate1.setNom(arret1.getNom());
-
-		trainUpdate.setDirection(arretUpdate1);
 
 		Train trainOriginalNonModif = train1;
 
@@ -165,28 +161,15 @@ public class TestTrainDAO {
 		assertEquals(train1.getNumero(), trainUpdate.getNumeroTrain());
 		assertEquals(train1.getReseau(), trainUpdate.getReseau());
 		assertEquals(train1.getStatut(), trainUpdate.getStatut());
-		assertEquals(train1.getBaseDepartTemps(), trainUpdate.getBaseDepartTemps());
-		assertEquals(train1.getBaseArriveeTemps(), trainUpdate.getBaseArriveeTemps());
-		assertEquals(train1.getBaseDepartTemps(), trainUpdate.getBaseDepartTemps());
-		assertEquals(train1.getReelArriveeTemps(), trainUpdate.getReelArriveeTemps());
-		assertEquals(train1.getReelDepartTemps(), trainUpdate.getReelDepartTemps());
-		assertEquals(trainOriginalNonModif.getDirection(), train1.getDirection());
 		assertEquals(trainOriginalNonModif.getListeHeureDePassage(), train1.getListeHeureDePassage());
 		assertEquals(trainOriginalNonModif.getListePassagers(), train1.getListePassagers());
 
 	}
 
 	@Test
-	public void testFindTrainByDirection() {
-		List<Train> trains = dao.findTrainByDirection(arretDirection.getId());
-		assertEquals(1, trains.size());
-		assertEquals(train1, trains.get(0));
-	}
-
-	@Test
 	public void testFindTrainByArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), false);
 		em.getTransaction().commit();
 		List<Train> trains = dao.findTrainByArret(arret1.getId());
 		assertEquals(1, trains.size());
@@ -200,7 +183,7 @@ public class TestTrainDAO {
 	@Test
 	public void testRemoveArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		em.getTransaction().begin();
@@ -238,15 +221,14 @@ public class TestTrainDAO {
 	@Test
 	public void testDeleteTrain() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
 		dao.addPassager(train1, passager1);
 		dao.deleteTrain(train1);
 		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
-		assertFalse(arretDirection.getTrainsArrivants().contains(train1));
-		assertFalse(passager1.getTrain() == train1);
+		assertFalse(passager1.getTrain().equals(train1));
 		for (HeureDePassage hdp : arret1.getListeHeureDePassage()) {
-			assertFalse(hdp.getTrain() == train1);
+			assertFalse(hdp.getTrain().equals(train1));
 		}
 	}
 

@@ -4,8 +4,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,9 +19,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
-import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
+import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassageWrapper;
 
 public class InfoCentrePublisher implements Closeable {
 
@@ -62,21 +60,20 @@ public class InfoCentrePublisher implements Closeable {
 		}
 	}
 
-	public String publishBulletinByArret(Set<Train> listTrains, Arret arret) throws JAXBException, JMSException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(TrainWrapper.class);
+	public String publishBulletinByArret(List<HeureDePassage> listHdpInput) throws JAXBException, JMSException {
+		JAXBContext jaxbContext = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
-		TrainWrapper listeTrain = new TrainWrapper();
+		HeureDePassageWrapper listHdp = new HeureDePassageWrapper();
 
-		for (Train t : listTrains) {
-			listeTrain.getTrains().add(TrainMapper.trainDTOMapper(t));
+		for (HeureDePassage hdp : listHdpInput) {
+			listHdp.getHdps().add(HeureDePassageMapper.heureDePassageDTOMapper(hdp));
 		}
 
 		StringWriter writer = new StringWriter();
-		jaxbMarshaller.marshal(listeTrain, writer);
+		jaxbMarshaller.marshal(listHdp, writer);
 		TextMessage message = session.createTextMessage(writer.toString());
 		message.setStringProperty("type", "info-bulletin");
-		message.setStringProperty("arret", arret.getNom());
 
 		this.messagePublisher.send(message);
 		return message.toString();
@@ -92,25 +89,5 @@ public class InfoCentrePublisher implements Closeable {
 		} catch (JMSException e) {
 			System.out.println("failed to close JMS resources");
 		}
-	}
-
-	public String prepareBulletinToPublish(List<Train> listTrains) {
-		StringBuilder message = new StringBuilder();
-		message.append("------------------------INFO TRAINS---------------------\n");
-		// this should be converted in DTO and sent as XML or Json through JMS
-		for (Train t : listTrains) {
-			message.append("Train n°: ");
-			message.append(t.getNumero());
-			message.append("\nDestination : ");
-			message.append(t.getDirection().getNom());
-			message.append("\n");
-		}
-		message.append("------------------------FIN INFO TRAINS---------------------");
-		return message.toString();
-	}
-
-	public void sendBulletin(List<Train> listTrains) {
-		String message = prepareBulletinToPublish(listTrains);
-		System.out.println("Bulletin sent : " + publish(message));
 	}
 }

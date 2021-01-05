@@ -20,8 +20,8 @@ import javax.jms.Connection;
 import org.jgroups.util.UUID;
 
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassageWrapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
 public class InfoGareSubscriber implements Closeable {
 
@@ -52,50 +52,73 @@ public class InfoGareSubscriber implements Closeable {
 		}
 	}
 
+	public boolean isInterest(List<HeureDePassage> listHdp) {
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.getArret().getNom().equals(this.arret)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Cette fonction ne devrait pas être là
+	public HeureDePassage getTerminus(List<HeureDePassage> listHdp, Train t) {
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.getTrain().equals(t) && hdp.isTerminus()) {
+				return hdp;
+			}
+		}
+		return null;
+	}
+
 	public void receiveBulletin(TextMessage message) throws JAXBException, JMSException {
-		JAXBContext context = JAXBContext.newInstance(TrainWrapper.class);
+		JAXBContext context = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		StringReader reader = new StringReader(message.getText());
 
-		if (this.arret.equals(message.getStringProperty("arret"))) {
+		HeureDePassageWrapper hdpWrapper = (HeureDePassageWrapper) context.createUnmarshaller().unmarshal(reader);
+		List<HeureDePassage> listHdp = hdpWrapper.getHdps();
 
-			TrainWrapper trainWrapper = (TrainWrapper) context.createUnmarshaller().unmarshal(reader);
-			List<Train> listTrains = trainWrapper.getTrains();
+		if (isInterest(listHdp)) {
 
 			StringBuilder toShow = new StringBuilder();
-			toShow.append("------------------------------------------------\n");
+			toShow.append("\nO = O = O = O\n");
 			toShow.append("Gare de : " + this.arret + "\n");
 			toShow.append("------------------------INFO TRAINS---------------------\n");
-			for (Train t : listTrains) {
-				toShow.append("##\nTrain n°: ");
-				toShow.append(t.getNumeroTrain() + " - " + t.getReseau() + "\n");
-				toShow.append("Destination : ");
-				toShow.append(t.getDirection().getNom() + "\n");
+			toShow.append("");
 
-				// Vérifie si le train a pour terminus cette gare
-				if (t.getDirection().getNom().equals(this.arret)) {
+			for (HeureDePassage hdp : listHdp) {
+				if (hdp.getArret().getNom().equals(this.arret)) {
+					Train t = hdp.getTrain();
+					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + " | ");
+					toShow.append(hdp.getReelArriveeTemps().toString() + "\t"); // A revoir
+					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\n##\n");
 
-					if (t.getBaseArriveeTemps().equals(t.getReelArriveeTemps())) {
-						toShow.append("A l'heure\n");
-					} else {
-						toShow.append("En retard\n");
-					}
-					toShow.append("Arrivée prévue à : ");
-					toShow.append(t.getReelArriveeTemps() + "\n##\n");
-				} else {
-					for (HeureDePassage hdp : t.getListeHeureDePassages()) {
-						if (hdp.getArret().getNom().equals(this.arret)) {
-							// TODO Meme logique de retard vue plus haut à impl ici
-
-							toShow.append("Arrivée prévue à : ");
-							toShow.append(hdp.getPassage() + "\n##\n");
-						}
-					}
 				}
-
 			}
+			/*
+			 * for (Train t : listTrains) { toShow.append("##\nTrain n°: ");
+			 * toShow.append(t.getNumeroTrain() + " - " + t.getReseau() + "\n");
+			 * toShow.append("Destination : "); toShow.append(t.getDirection().getNom() +
+			 * "\n");
+			 * 
+			 * // Vérifie si le train a pour terminus cette gare if
+			 * (t.getDirection().getNom().equals(this.arret)) {
+			 * 
+			 * if (t.getBaseArriveeTemps().equals(t.getReelArriveeTemps())) {
+			 * toShow.append("A l'heure\n"); } else { toShow.append("En retard\n"); }
+			 * toShow.append("Arrivée prévue à : "); toShow.append(t.getReelArriveeTemps() +
+			 * "\n##\n"); } else { for (HeureDePassage hdp : t.getListeHeureDePassages()) {
+			 * if (hdp.getArret().getNom().equals(this.arret)) { // TODO Meme logique de
+			 * retard vue plus haut à impl ici
+			 * 
+			 * toShow.append("Arrivée prévue à : "); toShow.append(hdp.getPassage() +
+			 * "\n##\n"); } } }
+			 */
 			toShow.append("------------------------FIN INFO TRAINS---------------------");
 			System.out.println(toShow);
+
 		}
+
 	}
 
 	public void consume() {

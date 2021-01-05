@@ -5,23 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.context.RequestScoped;
-import org.jboss.weld.junit5.EnableWeld;
-import org.jboss.weld.junit5.WeldInitiator;
-import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
-@EnableWeld
 class TestTrain extends Train {
-
-	@WeldSetup
-	private WeldInitiator weld = WeldInitiator
-			.from(Arret.class, HeureDePassage.class, HeureDePassageKey.class, InfoCentre.class, InfoGare.class,
-					Passager.class, Train.class, Perturbation.class, TestPersistenceProducer.class)
-			.activate(RequestScoped.class).build();
 
 	List<HeureDePassage> listeHeureDePassage;
 	List<Passager> listePassagers;
@@ -62,16 +50,11 @@ class TestTrain extends Train {
 		train1 = new Train();
 		train1.setId(indexTrain++);
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
-		train1.setNumeroTrain(8541);
+		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		train1.setListeHeureDePassage(listeHeureDePassage2);
 		train1.setListePassagers(listePassagers2);
 
@@ -82,11 +65,9 @@ class TestTrain extends Train {
 		passage1 = LocalDateTime.now().plusMinutes(5);
 
 		hdp = new HeureDePassage();
-		;
 		hdp.setId(hdpkey);
 		hdp.setTrain(train1);
 		hdp.setArret(arretDepart);
-		hdp.setPassage(passage1);
 
 		listeHeureDePassage = new ArrayList<HeureDePassage>();
 		listeHeureDePassage.add(hdp);

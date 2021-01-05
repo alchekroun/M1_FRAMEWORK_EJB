@@ -2,8 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage.ressource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -95,16 +93,11 @@ class TestTrainEndPoint {
 		train1 = factory.createTrainAvecResa();
 		train1.setId(indexTrain++);
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretDirection);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 
 		respTrain1 = target.path("train").request().accept(MediaType.APPLICATION_JSON).post(Entity.json(train1));
 	}

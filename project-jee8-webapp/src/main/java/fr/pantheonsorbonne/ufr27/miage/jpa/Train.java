@@ -1,6 +1,5 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,9 +16,8 @@ import javax.persistence.OneToMany;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
-		@NamedQuery(name = "findTrainByDirection", query = "SELECT t FROM Train t WHERE t.direction.id = :arretId"),
 		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId"),
-		@NamedQuery(name= "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp")})
+		@NamedQuery(name = "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp") })
 public class Train {
 
 	@Id
@@ -28,10 +26,6 @@ public class Train {
 
 	protected String nom;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "direction_arret_id", nullable = false)
-	protected Arret direction;
-
 	protected String directionType;
 
 	protected int numero;
@@ -39,14 +33,6 @@ public class Train {
 	protected String reseau;
 
 	protected String statut;
-
-	protected LocalDateTime baseDepartTemps;
-
-	protected LocalDateTime baseArriveeTemps;
-
-	protected LocalDateTime reelDepartTemps;
-
-	protected LocalDateTime reelArriveeTemps;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "train")
 	protected List<HeureDePassage> listeHeureDePassage;
@@ -80,52 +66,12 @@ public class Train {
 		this.statut = statut;
 	}
 
-	public LocalDateTime getBaseDepartTemps() {
-		return baseDepartTemps;
-	}
-
-	public void setBaseDepartTemps(LocalDateTime baseDepartTemps) {
-		this.baseDepartTemps = baseDepartTemps;
-	}
-
-	public LocalDateTime getBaseArriveeTemps() {
-		return baseArriveeTemps;
-	}
-
-	public void setBaseArriveeTemps(LocalDateTime baseArriveeTemps) {
-		this.baseArriveeTemps = baseArriveeTemps;
-	}
-
-	public LocalDateTime getReelDepartTemps() {
-		return reelDepartTemps;
-	}
-
-	public void setReelDepartTemps(LocalDateTime reelDepartTemps) {
-		this.reelDepartTemps = reelDepartTemps;
-	}
-
-	public LocalDateTime getReelArriveeTemps() {
-		return reelArriveeTemps;
-	}
-
-	public void setReelArriveeTemps(LocalDateTime reelArriveeTemps) {
-		this.reelArriveeTemps = reelArriveeTemps;
-	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
 
 	public int getId() {
 		return id;
-	}
-
-	public Arret getDirection() {
-		return direction;
-	}
-
-	public void setDirection(Arret direction) {
-		this.direction = direction;
 	}
 
 	public String getNom() {

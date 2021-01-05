@@ -26,8 +26,8 @@ public interface TrainService {
 
 	public List<Train> getAllTrain() throws EmptyListException;
 
-	public void addArret(int trainId, int arretId, LocalDateTime passage)
-			throws NoSuchTrainException, NoSuchArretException;
-
 	public void removeArret(int trainId, int arretId) throws NoSuchTrainException, NoSuchArretException;
+
+	void addArret(int trainId, int arretId, String passage, boolean terminus)
+			throws NoSuchTrainException, NoSuchArretException;
 }

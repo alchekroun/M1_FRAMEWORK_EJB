@@ -84,13 +84,13 @@ public class ArretServiceImpl implements ArretService {
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = dao.getArretFromId(arretId);
 		if (arret != null) {
-			if (arret.getTrainsArrivants().isEmpty()) {
-				dao.deleteArret(arret);
+			// if (arret.getTrainsArrivants().isEmpty()) {
+			dao.deleteArret(arret);
 
-				em.getTransaction().commit();
-			} else {
-				throw new CantDeleteException("L\'arret est la destination d\'un train");
-			}
+			em.getTransaction().commit();
+			// } else {
+			// throw new CantDeleteException("L\'arret est la destination d\'un train");
+
 		} else {
 			throw new NoSuchArretException();
 		}

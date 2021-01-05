@@ -1,10 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.persistence.EntityManager;
@@ -12,6 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.jms.InfoCentrePublisher;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -27,6 +24,9 @@ public class InfoCentreServiceImpl implements InfoCentreService {
 
 	@Inject
 	ArretDAO daoArret;
+
+	@Inject
+	HeureDePassageDAO daoHdp;
 
 	@Inject
 	InfoCentrePublisher infoCentrePublisher;
@@ -55,13 +55,7 @@ public class InfoCentreServiceImpl implements InfoCentreService {
 	@Override
 	public void periodicBulletin() {
 		try {
-			List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listArrets = daoArret.getAllArret();
-			for (fr.pantheonsorbonne.ufr27.miage.jpa.Arret a : listArrets) {
-				Set<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrains = new HashSet<fr.pantheonsorbonne.ufr27.miage.jpa.Train>();
-				listTrains.addAll(daoTrain.findTrainByArret(a.getId()));
-				listTrains.addAll(daoTrain.findTrainByDirection(a.getId()));
-				infoCentrePublisher.publishBulletinByArret(listTrains, a);
-			}
+			infoCentrePublisher.publishBulletinByArret(daoHdp.getAllHeureDePassage());
 		} catch (JAXBException | JMSException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

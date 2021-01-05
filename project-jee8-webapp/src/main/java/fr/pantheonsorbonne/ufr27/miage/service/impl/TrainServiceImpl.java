@@ -38,18 +38,13 @@ public class TrainServiceImpl implements TrainService {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
 
 			train.setNom(trainDTO.getNom());
-			train.setDirection(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainDTO.getDirection().getId()));
 			train.setDirectionType(trainDTO.getDirectionType());
 			train.setNumero(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
-			train.setBaseDepartTemps(trainDTO.getBaseDepartTemps());
-			train.setBaseArriveeTemps(trainDTO.getBaseArriveeTemps());
-			train.setReelDepartTemps(trainDTO.getReelDepartTemps());
-			train.setReelArriveeTemps(trainDTO.getReelArriveeTemps());
 
 			em.persist(train);
+
 			em.getTransaction().commit();
 
 			return train.getId();
@@ -110,19 +105,24 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void addArret(int trainId, int arretId, LocalDateTime passage)
+	public void addArret(int trainId, int arretId, String passage, boolean terminus)
 			throws NoSuchTrainException, NoSuchArretException {
 		em.getTransaction().begin();
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchTrainException();
 		}
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
 		if (arret == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchArretException();
 		}
 
-		dao.addArret(train, arret, passage);
+		String[] horraires = passage.split(" ");
+
+		dao.addArret(train, arret, LocalDateTime.parse(horraires[0]), LocalDateTime.parse(horraires[1]), terminus);
 
 		em.persist(train);
 		em.getTransaction().commit();
