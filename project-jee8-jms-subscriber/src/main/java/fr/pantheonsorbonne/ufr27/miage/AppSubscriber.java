@@ -22,7 +22,9 @@ public class AppSubscriber {
 			while (true) {
 				// check if arret is concerned by this message before printing it. Now
 				// everything is printed!
-				System.out.println(infoGareParis.getArret() + " :\t" + infoGareParis.consume());
+				infoGareParis.consume();
+				// System.out.println(infoGareParis.getArret() + " :\t" +
+				// infoGareParis.consume());
 			}
 			// infoGareParis.close();
 

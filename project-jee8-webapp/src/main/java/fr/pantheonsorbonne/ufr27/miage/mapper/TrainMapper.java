@@ -19,13 +19,14 @@ public class TrainMapper {
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());
 		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
+		/*
 		for (HeureDePassage hdp : HeureDePassageMapper.heureDePassageAllDTOMapper(train.getListeHeureDePassage())) {
 			trainDTO.getListeHeureDePassages().add(hdp);
 		}
 
 		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
 			trainDTO.getListePassagers().add(p);
-		}
+		}*/
 		trainDTO.setReelArriveeTemps(train.getReelArriveeTemps());
 		trainDTO.setReelDepartTemps(train.getReelDepartTemps());
 		trainDTO.setBaseDepartTemps(train.getBaseDepartTemps());

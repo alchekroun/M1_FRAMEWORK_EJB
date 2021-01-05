@@ -94,7 +94,7 @@ public class RestClientApp
 						TrainWrapper trains = new TrainWrapper();
 						trains.getTrains().add(train);
 						System.out.println("--------------Send Bulletin--------------");
-						Response responseSendBulletin = target.path("infoCentre/periodicBulletin").request()
+						Response responseSendBulletin = target.path("infoCentre/nhe").request()
 								.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
 						if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 							System.out.println("--------------Bulletin sended succesfully--------------");
