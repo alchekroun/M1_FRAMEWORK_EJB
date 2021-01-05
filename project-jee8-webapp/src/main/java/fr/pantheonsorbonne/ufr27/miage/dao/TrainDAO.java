@@ -65,6 +65,7 @@ public class TrainDAO {
 
 	public void addPassager(Train train, Passager p) {
 		p.setTrain(train);
+		em.merge(p);
 		train.addPassager(p);
 	}
 
