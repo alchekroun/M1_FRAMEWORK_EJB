@@ -12,7 +12,9 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p"),
-		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :id") })
+		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :id"),
+		@NamedQuery(name= "findPassagerByDepart", query = "SELECT p FROM Passager p WHERE p.depart.id= :idArretDepart"),
+		@NamedQuery(name= "findPassagerByArrive", query = "SELECT p FROM Passager p WHERE p.arrive.id= :idArretArrive")})
 public class Passager {
 
 	@Id

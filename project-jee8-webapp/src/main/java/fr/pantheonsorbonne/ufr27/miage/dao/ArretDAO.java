@@ -40,7 +40,7 @@ public class ArretDAO {
 	}
 
 	public List<Arret> getAllArretByTrain(int trainId) {
-		return em.createNamedQuery("findAllArretByTrain").setParameter("id", trainId).getResultList();
+		return em.createNamedQuery("findArretByTrain").setParameter("id", trainId).getResultList();
 	}
 
 	public boolean isArretCreated(int ArretId) {
