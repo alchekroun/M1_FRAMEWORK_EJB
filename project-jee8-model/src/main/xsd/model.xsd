@@ -180,8 +180,8 @@
 
 	<xsd:complexType name="heureDePassage">
 		<xsd:sequence>
-			<xsd:element name="arret_id" type="xsd:int"></xsd:element>
-			<xsd:element name="train_id" type="xsd:int"></xsd:element>
+			<xsd:element name="arret" type="arret"></xsd:element>
+			<xsd:element name="train" type="train"></xsd:element>
 			<xsd:element name="passage" type="SimpleDate"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>

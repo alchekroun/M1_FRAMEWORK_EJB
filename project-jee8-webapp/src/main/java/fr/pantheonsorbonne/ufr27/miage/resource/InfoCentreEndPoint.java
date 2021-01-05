@@ -38,7 +38,6 @@ public class InfoCentreEndPoint {
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response sendPeriodicBulletin(TrainWrapper trains) {
 		// try {
-		System.out.println("\n ###### inRessources #######");
 		service.periodicBulletin(trains.getTrains());
 		return Response.status(200, "bulletin sended").build();
 		// } catch() {

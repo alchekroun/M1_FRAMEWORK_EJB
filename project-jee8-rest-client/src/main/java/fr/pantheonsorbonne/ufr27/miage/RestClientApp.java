@@ -46,11 +46,8 @@ public class RestClientApp
 
 		Response responseCreationArret1Paris = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(arret1Paris));
-
-		// URI arret1ParisLocation = null;
 		if (responseCreationArret1Paris.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 			System.out.println("--------------Arret Created Successfully--------------");
-			// arret1ParisLocation = responseCreationArret1Paris.getLocation();
 
 			// Creation train
 			System.out.println("--------------Creation Train--------------");
@@ -74,38 +71,36 @@ public class RestClientApp
 			URI train1Location = null;
 			if (responseCreationTrain1.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 				System.out.println("--------------Train Created Successfully--------------");
+
 				System.out.println("--------------Add arret to train--------------");
+
+				// URI du train récupuré
 				train1Location = responseCreationTrain1.getLocation();
 
+				// On récupère le Train
 				Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
 				Arret arretLille = getArret("Lille", target);
+
+				// On ajoute l'arrêt au train sur son chemin
 				Response responseAddArret = target.path("train/" + train.getId() + "/addarret/" + arretLille.getId())
 						.request().accept(MediaType.APPLICATION_JSON)
 						.put(Entity.json(LocalDateTime.now().plusMinutes(20).toString()));
 
 				if (responseAddArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 					System.out.println("--------------Arret added successfully--------------");
-					System.out.println("--------------Remove arret to train--------------");
-					Response responseRemoveArret = target
-							.path("train/" + train.getId() + "/removearret/" + arretLille.getId()).request().delete();
 
-					if (responseRemoveArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-						System.out.println("--------------Arret removed successfully--------------");
-						TrainWrapper trains = new TrainWrapper();
-						trains.getTrains().add(train);
-						System.out.println("--------------Send Bulletin--------------");
-						Response responseSendBulletin = target.path("infoCentre/periodicBulletin").request()
-								.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
-						if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-							System.out.println("--------------Bulletin sended succesfully--------------");
-						} else {
-							throw new RuntimeException(
-									"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
-						}
+					TrainWrapper trains = new TrainWrapper();
+					trains.getTrains().add(train);
 
+					System.out.println("--------------Launch periodic bulletin--------------");
+
+					Response responseSendBulletin = target.path("infoCentre/nhe").request()
+							.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
+					if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+						System.out.println("--------------Periodic bulletin launched succesfully--------------");
 					} else {
 						throw new RuntimeException(
-								"failed to remove arret : " + responseRemoveArret.getStatusInfo().toString());
+								"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
 					}
 
 				} else {

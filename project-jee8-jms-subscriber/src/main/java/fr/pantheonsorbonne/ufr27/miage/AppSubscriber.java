@@ -19,10 +19,16 @@ public class AppSubscriber {
 
 			final InfoGareSubscriber infoGareParis = container.select(InfoGareSubscriber.class).get();
 			infoGareParis.setArret("Paris");
+
+			final InfoGareSubscriber infoGareLille = container.select(InfoGareSubscriber.class).get();
+			infoGareLille.setArret("Lille");
 			while (true) {
 				// check if arret is concerned by this message before printing it. Now
 				// everything is printed!
-				System.out.println(infoGareParis.getArret() + " :\t" + infoGareParis.consume());
+				infoGareParis.consume();
+				infoGareLille.consume();
+				// System.out.println(infoGareParis.getArret() + " :\t" +
+				// infoGareParis.consume());
 			}
 			// infoGareParis.close();
 
