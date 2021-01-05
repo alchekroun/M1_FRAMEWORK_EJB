@@ -1,7 +1,9 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -55,9 +57,10 @@ public class InfoCentreServiceImpl implements InfoCentreService {
 		try {
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listArrets = daoArret.getAllArret();
 			for (fr.pantheonsorbonne.ufr27.miage.jpa.Arret a : listArrets) {
-				System.out.println("in");
-				infoCentrePublisher.publishBulletinByArret(daoTrain.findTrainByArret(a.getId()), a);
-				infoCentrePublisher.publishBulletinByArret(daoTrain.findTrainByDirection(a.getId()), a);
+				Set<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrains = new HashSet<fr.pantheonsorbonne.ufr27.miage.jpa.Train>();
+				listTrains.addAll(daoTrain.findTrainByArret(a.getId()));
+				listTrains.addAll(daoTrain.findTrainByDirection(a.getId()));
+				infoCentrePublisher.publishBulletinByArret(listTrains, a);
 			}
 		} catch (JAXBException | JMSException e) {
 			// TODO Auto-generated catch block

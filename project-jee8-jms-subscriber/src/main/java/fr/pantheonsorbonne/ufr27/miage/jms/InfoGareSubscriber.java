@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import javax.jms.Connection;
 import org.jgroups.util.UUID;
 
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
@@ -69,13 +70,28 @@ public class InfoGareSubscriber implements Closeable {
 				toShow.append(t.getNumeroTrain() + " - " + t.getReseau() + "\n");
 				toShow.append("Destination : ");
 				toShow.append(t.getDirection().getNom() + "\n");
-				if (t.getBaseArriveeTemps().equals(t.getReelArriveeTemps())) {
-					toShow.append("A l'heure\n");
+
+				// Vérifie si le train a pour terminus cette gare
+				if (t.getDirection().getNom().equals(this.arret)) {
+
+					if (t.getBaseArriveeTemps().equals(t.getReelArriveeTemps())) {
+						toShow.append("A l'heure\n");
+					} else {
+						toShow.append("En retard\n");
+					}
+					toShow.append("Arrivée prévue à : ");
+					toShow.append(t.getReelArriveeTemps() + "\n##\n");
 				} else {
-					toShow.append("En retard\n");
+					for (HeureDePassage hdp : t.getListeHeureDePassages()) {
+						if (hdp.getArret().getNom().equals(this.arret)) {
+							// TODO Meme logique de retard vue plus haut à impl ici
+
+							toShow.append("Arrivée prévue à : ");
+							toShow.append(hdp.getPassage() + "\n##\n");
+						}
+					}
 				}
-				toShow.append("Arrivée prévue à : ");
-				toShow.append(t.getReelArriveeTemps() + "\n##\n");
+
 			}
 			toShow.append("------------------------FIN INFO TRAINS---------------------");
 			System.out.println(toShow);

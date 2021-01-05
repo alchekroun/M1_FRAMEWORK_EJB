@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ public class InfoCentrePublisher implements Closeable {
 		}
 	}
 
-	public String publishBulletinByArret(List<Train> listTrains, Arret arret) throws JAXBException, JMSException {
+	public String publishBulletinByArret(Set<Train> listTrains, Arret arret) throws JAXBException, JMSException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(TrainWrapper.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
