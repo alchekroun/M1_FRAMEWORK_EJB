@@ -92,6 +92,15 @@ public class HeureDePassageDAO {
 				.setParameter("arretId", arretId).getSingleResult();
 	}
 
+	public List<HeureDePassage> findHdpByTrain(int trainId) {
+		return em.createNamedQuery("findHeureByTrainId").setParameter("trainId", trainId).getResultList();
+	}
+
+	public List<HeureDePassage> findHdpByArret(int arretId) {
+		return em.createNamedQuery("findHeureByArretId").setParameter("arretId", arretId).getResultList();
+
+	}
+
 	public List<HeureDePassage> getAllHeureDePassage() {
 		return em.createNamedQuery("getAllHeureDePassage").getResultList();
 	}

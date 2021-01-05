@@ -53,7 +53,7 @@ public class RestClientApp
 			System.out.println("--------------Creation Train--------------");
 			Train train1 = factory.createTrainAvecResa();
 			train1.setId(1);
-			train1.setNom("Bordeaux - Paris");
+			train1.setNom("Paris - Lille");
 			train1.setDirectionType("forward");
 			train1.setStatut("enmarche");
 			train1.setNumeroTrain(8541);

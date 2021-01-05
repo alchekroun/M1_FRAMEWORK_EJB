@@ -118,13 +118,21 @@ public class TestTrainDAO {
 	@Test
 	public void testAddArret() {
 		em.getTransaction().begin();
+		dao.addArret(train1, arretDirection, LocalDateTime.now().plusMinutes(10), LocalDateTime.now(), true);
 		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(10), LocalDateTime.now().plusMinutes(20), false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
-		assertEquals(1, listHdp.size());
-		assertEquals(arret1, listHdp.get(0).getArret());
+		assertEquals(2, listHdp.size());
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.isTerminus()) {
+				assertEquals(hdp.getArret().getNom(), arretDirection.getNom());
+			} else {
+				assertEquals(hdp.getArret().getNom(), arret1.getNom());
+			}
+		}
 		em.getTransaction().begin();
 		dao.removeArret(train1, arret1);
+		dao.removeArret(train1, arretDirection);
 		em.getTransaction().commit();
 	}
 
@@ -218,9 +226,9 @@ public class TestTrainDAO {
 		dao.deleteTrain(train1);
 		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
-		assertFalse(passager1.getTrain() == train1);
+		assertFalse(passager1.getTrain().equals(train1));
 		for (HeureDePassage hdp : arret1.getListeHeureDePassage()) {
-			assertFalse(hdp.getTrain() == train1);
+			assertFalse(hdp.getTrain().equals(train1));
 		}
 	}
 
