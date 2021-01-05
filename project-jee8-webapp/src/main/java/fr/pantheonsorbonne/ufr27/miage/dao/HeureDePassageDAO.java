@@ -29,9 +29,11 @@ public class HeureDePassageDAO {
 		hdp.setArret(arret);
 		hdp.setTrain(train);
 		hdp.setPassage(passage);
-		em.persist(hdp);
 		train.addArretHeureDePassage(hdp);
 		arret.addArretHeureDePassage(hdp);
+		em.persist(hdp);
+		em.merge(train);
+		em.merge(arret);
 		return hdp;
 	}
 

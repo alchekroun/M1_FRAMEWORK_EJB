@@ -22,7 +22,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
@@ -51,56 +50,58 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 class TestPassagerService {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(ArretMapper.class, PassagerMapper.class, PassagerService.class, PassagerServiceImpl.class, PassagerEndPoint.class,TrainService.class, TrainEndPoint.class, TrainServiceImpl.class, ArretService.class, ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class).activate(RequestScoped.class).build();
-	
+	private WeldInitiator weld = WeldInitiator
+			.from(ArretMapper.class, PassagerMapper.class, PassagerService.class, PassagerServiceImpl.class,
+					PassagerEndPoint.class, TrainService.class, TrainEndPoint.class, TrainServiceImpl.class,
+					ArretService.class, ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,
+					HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
+			.activate(RequestScoped.class).build();
+
 	@Inject
 	EntityManager em;
-	
+
 	@Inject
 	PassagerService passagerService;
-	
+
 	@Inject
 	ArretService arretService;
-	
+
 	@Inject
 	TrainService trainService;
-	
+
 	@Inject
 	PassagerDAO dao;
-	
+
 	@Inject
 	ArretDAO arretDao;
-	
+
 	@Inject
 	TrainDAO trainDao;
-	
+
 	Passager passager1;
 	Arret arretDepart;
 	Arret arretArrivee;
-	
+
 	int idArretD;
 	int idArretA;
 	int idTrain;
-	
-    static ObjectFactory factory;
-	
+
+	static ObjectFactory factory;
+
 	Arret arret1;
 	Train train1;
+
 	
-	int indexTrain = 0;
-	int indexArret = 0;
-	int indexPassager = 0;
-	
+
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-		
 
 		factory = new ObjectFactory();
 	}
 
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
-		
+
 	}
 
 	@BeforeEach
@@ -109,11 +110,11 @@ class TestPassagerService {
 		arretArrivee.setNom("Marseille");
 		arretDepart = factory.createArret();
 		arretDepart.setNom("Paris");
-		idArretD= arretService.createArret(arretDepart);
-	    idArretA= arretService.createArret(arretArrivee);
-	    arretArrivee.setId(idArretA);
-	    arretDepart.setId(idArretD);
-	    train1 = factory.createTrainAvecResa();
+		idArretD = arretService.createArret(arretDepart);
+		idArretA = arretService.createArret(arretArrivee);
+		arretArrivee.setId(idArretA);
+		arretDepart.setId(idArretD);
+		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
@@ -127,12 +128,11 @@ class TestPassagerService {
 		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		idTrain = trainService.createTrain(train1);
 		train1.setId(idTrain);
-		passager1= factory.createPassager();
+		passager1 = factory.createPassager();
 		passager1.setNom("David Serruya");
 		passager1.setArrive(arretArrivee);
 		passager1.setDepart(arretDepart);
-		
-		
+
 	}
 
 	@AfterEach
@@ -144,63 +144,64 @@ class TestPassagerService {
 
 	@Test
 	void testCreatePassager() throws CantCreateException, NoSuchPassagerException {
-		int idPassager= passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(),passager1.getNom());
+		int idPassager = passagerService.createPassager(passager1);
+		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
 		passagerService.deletePassager(idPassager);
 	}
 
 	@Test
 	void testGetPassagerFromId() throws CantCreateException, NoSuchPassagerException {
-		int idPassager= passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(),passager1.getNom());
+		int idPassager = passagerService.createPassager(passager1);
+		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
 		passagerService.deletePassager(idPassager);
 	}
 
 	@Test
 	void testGetAllPassager() throws EmptyListException, CantCreateException, NoSuchPassagerException {
-		List <Passager> listP = passagerService.getAllPassager();
-		assertEquals(listP.size(),0);
+		List<Passager> listP = passagerService.getAllPassager();
+		assertEquals(listP.size(), 0);
 		assertTrue(listP.isEmpty());
-		int idPassager= passagerService.createPassager(passager1);
-	    listP = passagerService.getAllPassager();
-		assertEquals(listP.size(),1);
-		assertEquals(listP.get(0).getNom(),passager1.getNom());
+		int idPassager = passagerService.createPassager(passager1);
+		listP = passagerService.getAllPassager();
+		assertEquals(listP.size(), 1);
+		assertEquals(listP.get(0).getNom(), passager1.getNom());
 		passagerService.deletePassager(idPassager);
-		
+
 	}
 
 	@Test
 	void testDeletePassager() throws CantCreateException, NoSuchPassagerException {
-		int idPassager= passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(),passager1.getNom());
+		int idPassager = passagerService.createPassager(passager1);
+		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
 		passagerService.deletePassager(idPassager);
-        assertNull(dao.getPassagerFromId(idPassager));
-	}
-
-	/*@Test
-	void testGetAllPassagerByTrain() throws NoSuchTrainException, CantCreateException, NoSuchPassagerException {
-		List <Passager> listPassager = passagerService.getAllPassagerByTrain(train1.getId());
-		assertEquals(listPassager.size(),0);
-		assertTrue(listPassager.isEmpty());
-		int idPassager= passagerService.createPassager(passager1);
-		trainDao.addPassager(trainDao.getTrainFromId(idTrain), dao.getPassagerFromId(idPassager));
-		assertEquals(trainDao.getTrainFromId(idTrain).getListePassagers().size(),1);
-		assertEquals(dao.getAllPassagerByTrain(idTrain).size(),1);
-		List <Passager>listPassager = passagerService.getAllPassagerByTrain(idTrain);
-		assertEquals(listPassager.size(),1);
-		assertEquals(listPassager.get(0).getNom(),"David Serruya");
-		passagerService.deletePassager(idPassager);
+		assertNull(dao.getPassagerFromId(idPassager));
 	}
 
 	@Test
-	void testUpdatePassager() throws CantCreateException, NoSuchPassagerException, CantUpdateException {
-		int idPassager= passagerService.createPassager(passager1);
-        assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager).getNom());
-		passager1.setNom("Alexandre Chekroun");
-		assertNotEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager).getNom());
-		passagerService.updatePassager(passager1);
-        assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager).getNom());
-        passagerService.deletePassager(idPassager);
-	}*/
+	void testGetAllPassagerByTrain() throws NoSuchTrainException, CantCreateException, NoSuchPassagerException {
+		List<Passager> listPassager = passagerService.getAllPassagerByTrain(train1.getId());
+		assertEquals(listPassager.size(), 0);
+		assertTrue(listPassager.isEmpty());
+		int idPassager = passagerService.createPassager(passager1);
+		em.getTransaction().begin();
+		trainDao.addPassager(trainDao.getTrainFromId(idTrain), dao.getPassagerFromId(idPassager));
+		em.getTransaction().commit();
+		listPassager = passagerService.getAllPassagerByTrain(idTrain);
+		assertEquals(listPassager.size(), 1);
+		assertEquals(listPassager.get(0).getNom(), "David Serruya");
+		passagerService.deletePassager(idPassager);
+	}
+
+	/*
+	 * @Test void testUpdatePassager() throws CantCreateException,
+	 * NoSuchPassagerException, CantUpdateException { int idPassager=
+	 * passagerService.createPassager(passager1);
+	 * assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager)
+	 * .getNom()); passager1.setNom("Alexandre Chekroun");
+	 * assertNotEquals(passager1.getNom(),passagerService.getPassagerFromId(
+	 * idPassager).getNom()); passagerService.updatePassager(passager1);
+	 * assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager)
+	 * .getNom()); passagerService.deletePassager(idPassager); }
+	 */
 
 }
