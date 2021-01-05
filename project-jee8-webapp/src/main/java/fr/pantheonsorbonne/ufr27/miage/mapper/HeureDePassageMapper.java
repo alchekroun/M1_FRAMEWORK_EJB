@@ -11,9 +11,9 @@ public class HeureDePassageMapper {
 			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage) {
 		HeureDePassage hdpDTO = new ObjectFactory().createHeureDePassage();
 
-		hdpDTO.setArret(heureDePassage.getArret());
+		hdpDTO.setArret(ArretMapper.arretDTOMapper(heureDePassage.getArret()));
 		hdpDTO.setPassage(heureDePassage.getPassage());
-		hdpDTO.setTrain(heureDePassage.getTrain());
+		hdpDTO.setTrain(TrainMapper.trainDTOMapper(heureDePassage.getTrain()));
 
 		return hdpDTO;
 	}

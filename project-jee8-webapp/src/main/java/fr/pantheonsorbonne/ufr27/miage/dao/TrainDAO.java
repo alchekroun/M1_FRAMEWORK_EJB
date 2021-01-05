@@ -2,14 +2,12 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 

@@ -65,7 +65,7 @@ class TestTrain extends Train {
 		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
-		train1.setNumeroTrain(8541);
+		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
 		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));

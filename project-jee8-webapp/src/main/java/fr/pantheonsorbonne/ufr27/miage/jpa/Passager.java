@@ -27,7 +27,7 @@ public class Passager {
 	@ManyToOne
 	protected Arret arrive;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "train_id")
 	private Train train;
 
