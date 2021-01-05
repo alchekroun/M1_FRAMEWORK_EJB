@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -61,16 +60,11 @@ class TestPassagerDAO {
 
 		train1 = new Train();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		em.persist(train1);
 
 		passager1 = new Passager();
@@ -133,7 +127,7 @@ class TestPassagerDAO {
 		passagerUpdate.setDepart(arretUpdate1);
 		passagerUpdate.setArrive(arretUpdate2);
 		Passager passagerOriginalNonModif = passager1;
-		
+
 		em.getTransaction().begin();
 		em.merge(dao.updatePassager(passager1, passagerUpdate));
 		em.getTransaction().commit();

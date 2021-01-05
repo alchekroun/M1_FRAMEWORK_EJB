@@ -20,7 +20,8 @@ public class HeureDePassageDAO {
 
 	EntityManager em;
 
-	public HeureDePassage createHeureDePassage(Train train, Arret arret, LocalDateTime passage) {
+	public HeureDePassage createHeureDePassage(Train train, Arret arret, LocalDateTime departTemps,
+			LocalDateTime arriveeTemps, boolean terminus) {
 		HeureDePassageKey hdpKey = new HeureDePassageKey();
 		hdpKey.setArretId(arret.getId());
 		hdpKey.setTrainId(train.getId());
@@ -28,20 +29,30 @@ public class HeureDePassageDAO {
 		hdp.setId(hdpKey);
 		hdp.setArret(arret);
 		hdp.setTrain(train);
-		hdp.setPassage(passage);
+		hdp.setBaseDepartTemps(departTemps);
+		hdp.setReelDepartTemps(departTemps);
+		hdp.setBaseArriveeTemps(arriveeTemps);
+		hdp.setReelArriveeTemps(arriveeTemps);
+		hdp.setTerminus(terminus);
+		em.persist(hdp);
 		train.addArretHeureDePassage(hdp);
 		arret.addArretHeureDePassage(hdp);
-		em.persist(hdp);
 		em.merge(train);
 		em.merge(arret);
 		return hdp;
 	}
 
-	public HeureDePassage updateHeureDePassage(Train train, Arret arret, LocalDateTime newPassage) {
+	public HeureDePassage updateHeureDePassage(Train train, Arret arret, LocalDateTime newBaseDepartTemps,
+			LocalDateTime newBaseArriveeTemps, LocalDateTime newReelDepartTemps, LocalDateTime newReelArriveeTemps,
+			boolean newTerminus) {
 		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
 		hdp.setArret(arret);
 		hdp.setTrain(train);
-		hdp.setPassage(newPassage);
+		hdp.setBaseArriveeTemps(newBaseArriveeTemps);
+		hdp.setBaseDepartTemps(newBaseDepartTemps);
+		hdp.setReelArriveeTemps(newReelArriveeTemps);
+		hdp.setReelDepartTemps(newReelDepartTemps);
+		hdp.setTerminus(newTerminus);
 		return hdp;
 	}
 

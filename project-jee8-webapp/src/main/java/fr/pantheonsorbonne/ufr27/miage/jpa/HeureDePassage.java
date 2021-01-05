@@ -28,7 +28,15 @@ public class HeureDePassage {
 	@JoinColumn(name = "arret_id")
 	Arret arret;
 
-	protected LocalDateTime passage;
+	protected LocalDateTime baseDepartTemps;
+
+	protected LocalDateTime baseArriveeTemps;
+
+	protected LocalDateTime reelDepartTemps;
+
+	protected LocalDateTime reelArriveeTemps;
+
+	protected boolean terminus;
 
 	boolean isCreated;
 
@@ -56,12 +64,44 @@ public class HeureDePassage {
 		this.arret = arret;
 	}
 
-	public LocalDateTime getPassage() {
-		return passage;
+	public LocalDateTime getBaseDepartTemps() {
+		return baseDepartTemps;
 	}
 
-	public void setPassage(LocalDateTime passage) {
-		this.passage = passage;
+	public void setBaseDepartTemps(LocalDateTime baseDepartTemps) {
+		this.baseDepartTemps = baseDepartTemps;
+	}
+
+	public LocalDateTime getBaseArriveeTemps() {
+		return baseArriveeTemps;
+	}
+
+	public void setBaseArriveeTemps(LocalDateTime baseArriveeTemps) {
+		this.baseArriveeTemps = baseArriveeTemps;
+	}
+
+	public LocalDateTime getReelDepartTemps() {
+		return reelDepartTemps;
+	}
+
+	public void setReelDepartTemps(LocalDateTime reelDepartTemps) {
+		this.reelDepartTemps = reelDepartTemps;
+	}
+
+	public LocalDateTime getReelArriveeTemps() {
+		return reelArriveeTemps;
+	}
+
+	public void setReelArriveeTemps(LocalDateTime reelArriveeTemps) {
+		this.reelArriveeTemps = reelArriveeTemps;
+	}
+
+	public boolean isTerminus() {
+		return terminus;
+	}
+
+	public void setTerminus(boolean terminus) {
+		this.terminus = terminus;
 	}
 
 	public boolean isCreated() {

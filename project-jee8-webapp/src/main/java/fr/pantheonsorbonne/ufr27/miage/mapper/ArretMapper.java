@@ -14,14 +14,6 @@ public class ArretMapper {
 		arretDTO.setId(arret.getId());
 		arretDTO.setNom(arret.getNom());
 
-		for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp : arret.getListeHeureDePassage()) {
-			arretDTO.getListeHeureDePassages().add(HeureDePassageMapper.heureDePassageDTOMapper(hdp));
-		}
-
-		for (fr.pantheonsorbonne.ufr27.miage.jpa.Train train : arret.getTrainsArrivants()) {
-			arretDTO.getTrainsArrivants().add(TrainMapper.trainDTOMapper(train));
-		}
-
 		return arretDTO;
 	}
 

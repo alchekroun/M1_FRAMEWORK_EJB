@@ -20,7 +20,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 @NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a ORDER BY a.id ASC"),
 		@NamedQuery(name = "findArretByTrain", query = "SELECT a FROM Arret a  JOIN a.listeHeureDePassage h WHERE h.train.id = :idTrain"),
-		@NamedQuery(name = "findHdpByTrain", query = "SELECT h FROM Arret a LEFT JOIN a.trainsArrivants t JOIN t.listeHeureDePassage h WHERE h.train.id = :trainId")})
+		// @NamedQuery(name = "findHdpByTrain", query = "SELECT h FROM Arret a LEFT JOIN
+		// a.trainsArrivants t JOIN t.listeHeureDePassage h WHERE h.train.id =
+		// :trainId")
+})
 public class Arret {
 
 	@Id
@@ -29,14 +32,6 @@ public class Arret {
 	protected int id;
 
 	protected String nom;
-
-	// liste des trains qui ont pour terminus cet arret
-	@OneToMany(mappedBy = "direction", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Set<Train> trainsArrivants;
-
-	public void setTrainsArrivants(Set<Train> trainsArrivants) {
-		this.trainsArrivants = trainsArrivants;
-	}
 
 	// ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
@@ -78,18 +73,6 @@ public class Arret {
 
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
-	}
-
-	public Set<Train> getTrainsArrivants() {
-		return trainsArrivants;
-	}
-
-	public void addTrainArrivant(Train train) {
-		this.trainsArrivants.add(train);
-	}
-
-	public void removeTrainArrivant(Train train) {
-		this.trainsArrivants.remove(train);
 	}
 
 	public boolean isCreated() {
