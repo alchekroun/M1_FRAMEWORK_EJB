@@ -58,7 +58,6 @@ public class InfoCentreServiceImpl implements InfoCentreService {
 			for (fr.pantheonsorbonne.ufr27.miage.jpa.Arret a : listArrets) {
 				Set<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrains = new HashSet<fr.pantheonsorbonne.ufr27.miage.jpa.Train>();
 				listTrains.addAll(daoTrain.findTrainByArret(a.getId()));
-				listTrains.addAll(daoTrain.findTrainByDirection(a.getId()));
 				infoCentrePublisher.publishBulletinByArret(listTrains, a);
 			}
 		} catch (JAXBException | JMSException e) {

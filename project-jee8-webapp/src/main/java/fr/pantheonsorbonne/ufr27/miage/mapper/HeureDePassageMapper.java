@@ -12,8 +12,11 @@ public class HeureDePassageMapper {
 		HeureDePassage hdpDTO = new ObjectFactory().createHeureDePassage();
 
 		hdpDTO.setArret(ArretMapper.arretDTOMapper(heureDePassage.getArret()));
-		hdpDTO.setPassage(heureDePassage.getPassage());
 		hdpDTO.setTrain(TrainMapper.trainDTOMapper(heureDePassage.getTrain()));
+		hdpDTO.setReelArriveeTemps(heureDePassage.getReelArriveeTemps());
+		hdpDTO.setReelDepartTemps(heureDePassage.getReelDepartTemps());
+		hdpDTO.setBaseDepartTemps(heureDePassage.getBaseDepartTemps());
+		hdpDTO.setBaseArriveeTemps(heureDePassage.getBaseArriveeTemps());
 
 		return hdpDTO;
 	}

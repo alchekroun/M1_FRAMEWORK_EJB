@@ -54,16 +54,11 @@ public class RestClientApp
 			Train train1 = factory.createTrainAvecResa();
 			train1.setId(1);
 			train1.setNom("Bordeaux - Paris");
-			train1.setDirection(arret1Paris);
 			train1.setDirectionType("forward");
 			train1.setStatut("enmarche");
 			train1.setNumeroTrain(8541);
 			train1.setReseau("SNCF");
 			train1.setStatut("en marche");
-			train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-			train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-			train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-			train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 
 			Response responseCreationTrain1 = target.path("train").request().accept(MediaType.APPLICATION_JSON)
 					.post(Entity.json(train1));
@@ -82,9 +77,13 @@ public class RestClientApp
 				Arret arretLille = getArret("Lille", target);
 
 				// On ajoute l'arrêt au train sur son chemin
-				Response responseAddArret = target.path("train/" + train.getId() + "/addarret/" + arretLille.getId())
-						.request().accept(MediaType.APPLICATION_JSON)
-						.put(Entity.json(LocalDateTime.now().plusMinutes(20).toString()));
+
+				String tempsDepartArrive = LocalDateTime.now().plusMinutes(10).toString() + " "
+						+ LocalDateTime.now().plusMinutes(30).toString();
+
+				Response responseAddArret = target
+						.path("train/" + train.getId() + "/addarret/" + arretLille.getId() + "/true").request()
+						.accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
 
 				if (responseAddArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 					System.out.println("--------------Arret added successfully--------------");

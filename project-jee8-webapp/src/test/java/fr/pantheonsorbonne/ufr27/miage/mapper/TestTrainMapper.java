@@ -61,11 +61,6 @@ class TestTrainMapper {
 		trainJPA1.setDirectionType("forward");
 		trainJPA1.setReseau("SNCF");
 		trainJPA1.setStatut("En marche");
-		trainJPA1.setDirection(arretJPA2);
-		trainJPA1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		trainJPA1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		trainJPA1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		trainJPA1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		trainJPA1.addPassager(passagerJPA1);
 		em.persist(trainJPA1);
 		listTrain.add(trainJPA1);
@@ -92,11 +87,6 @@ class TestTrainMapper {
 		assertEquals(trainJAXBtest.getNom(), trainJPA1.getNom());
 		assertEquals(trainJAXBtest.getDirectionType(), trainJPA1.getDirectionType());
 		assertEquals(trainJAXBtest.getReseau(), trainJPA1.getReseau());
-		assertEquals(trainJAXBtest.getDirection().getNom(), trainJPA1.getDirection().getNom());
-		assertEquals(trainJAXBtest.getReelArriveeTemps(), trainJPA1.getReelArriveeTemps());
-		assertEquals(trainJAXBtest.getReelDepartTemps(), trainJPA1.getReelDepartTemps());
-		assertEquals(trainJAXBtest.getBaseArriveeTemps(), trainJPA1.getBaseArriveeTemps());
-		assertEquals(trainJAXBtest.getBaseDepartTemps(), trainJPA1.getBaseDepartTemps());
 		assertEquals(trainJAXBtest.getListePassagers().get(0).getNom(), trainJPA1.getListePassagers().get(0).getNom());
 
 	}
@@ -111,11 +101,6 @@ class TestTrainMapper {
 			assertEquals(listTrainJAXBtest.get(i).getNom(), listTrain.get(i).getNom());
 			assertEquals(listTrainJAXBtest.get(i).getDirectionType(), listTrain.get(i).getDirectionType());
 			assertEquals(listTrainJAXBtest.get(i).getReseau(), listTrain.get(i).getReseau());
-			assertEquals(listTrainJAXBtest.get(i).getDirection().getNom(), listTrain.get(i).getDirection().getNom());
-			assertEquals(listTrainJAXBtest.get(i).getReelArriveeTemps(), listTrain.get(i).getReelArriveeTemps());
-			assertEquals(listTrainJAXBtest.get(i).getReelDepartTemps(), listTrain.get(i).getReelDepartTemps());
-			assertEquals(listTrainJAXBtest.get(i).getBaseArriveeTemps(), listTrain.get(i).getBaseArriveeTemps());
-			assertEquals(listTrainJAXBtest.get(i).getBaseDepartTemps(), listTrain.get(i).getBaseDepartTemps());
 			assertEquals(listTrainJAXBtest.get(i).getListePassagers().get(0).getNom(),
 					listTrain.get(i).getListePassagers().get(0).getNom());
 		}

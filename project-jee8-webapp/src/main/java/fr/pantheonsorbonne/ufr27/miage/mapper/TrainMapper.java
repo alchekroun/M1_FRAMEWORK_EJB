@@ -17,15 +17,9 @@ public class TrainMapper {
 		trainDTO.setDirectionType(train.getDirectionType());
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());
-		trainDTO.setDirection(ArretMapper.arretDTOMapper(train.getDirection()));
-
 		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
 			trainDTO.getListePassagers().add(p);
 		}
-		trainDTO.setReelArriveeTemps(train.getReelArriveeTemps());
-		trainDTO.setReelDepartTemps(train.getReelDepartTemps());
-		trainDTO.setBaseDepartTemps(train.getBaseDepartTemps());
-		trainDTO.setBaseArriveeTemps(train.getBaseArriveeTemps());
 
 		return trainDTO;
 	}

@@ -59,16 +59,11 @@ class TestHeureDePassageDAO {
 
 		train1 = new Train();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		em.persist(train1);
 
 		key = new HeureDePassageKey();
@@ -79,7 +74,10 @@ class TestHeureDePassageDAO {
 		heureDePassage1.setId(key);
 		heureDePassage1.setArret(arretArrivee);
 		heureDePassage1.setTrain(train1);
-		heureDePassage1.setPassage(LocalDateTime.now().plusMinutes(30));
+		heureDePassage1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(10));
+		heureDePassage1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(10));
+		heureDePassage1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(30));
+		heureDePassage1.setReelDepartTemps(LocalDateTime.now().plusMinutes(30));
 		em.persist(heureDePassage1);
 
 		em.getTransaction().commit();
@@ -123,7 +121,7 @@ class TestHeureDePassageDAO {
 	@Test
 	public void testCreateHeureDePassage() {
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
-				LocalDateTime.now().plusMinutes(30));
+				LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
 		assertNotNull(heureDePassage2);
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);

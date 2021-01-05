@@ -64,15 +64,10 @@ public class TestArretDAO {
 		train1 = new Train();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
-		train1.setDirection(arretDirection);
 		train1.setStatut("enmarche");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		em.persist(train1);
 		em.getTransaction().commit();
 
@@ -145,13 +140,13 @@ public class TestArretDAO {
 		arret1 = em.find(Arret.class, arret1.getId());
 		assertEquals(arret1.getNom(), arretUpdate.getNom());
 		assertEquals(arretOriginalNonModif.getListeHeureDePassage(), arret1.getListeHeureDePassage());
-		assertEquals(arretOriginalNonModif.getTrainsArrivants(), arret1.getTrainsArrivants());
 	}
 
 	@Test
 	public void testGetAllArretByTrain() {
 		em.getTransaction().begin();
-		daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30));
+		daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10),
+				false);
 		em.getTransaction().commit();
 		List<Arret> Arrets = dao.getAllArretByTrain(train1.getId());
 		assertEquals(1, Arrets.size());
