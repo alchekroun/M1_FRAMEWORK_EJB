@@ -91,8 +91,6 @@ class TestPassagerService {
 	Arret arret1;
 	Train train1;
 
-	
-
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
 
@@ -192,16 +190,17 @@ class TestPassagerService {
 		passagerService.deletePassager(idPassager);
 	}
 
-	/*
-	 * @Test void testUpdatePassager() throws CantCreateException,
-	 * NoSuchPassagerException, CantUpdateException { int idPassager=
-	 * passagerService.createPassager(passager1);
-	 * assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager)
-	 * .getNom()); passager1.setNom("Alexandre Chekroun");
-	 * assertNotEquals(passager1.getNom(),passagerService.getPassagerFromId(
-	 * idPassager).getNom()); passagerService.updatePassager(passager1);
-	 * assertEquals(passager1.getNom(),passagerService.getPassagerFromId(idPassager)
-	 * .getNom()); passagerService.deletePassager(idPassager); }
-	 */
+	@Test
+	void testUpdatePassager() throws CantCreateException, NoSuchPassagerException, CantUpdateException {
+		int idPassager = passagerService.createPassager(passager1);
+		passager1.setId(idPassager);
+		assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+		passager1.setNom("Alexandre Chekroun");
+		assertNotEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+		passagerService.updatePassager(passager1);
+		assertEquals("Alexandre Chekroun", passagerService.getPassagerFromId(idPassager).getNom());
+		assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+		passagerService.deletePassager(idPassager);
+	}
 
 }

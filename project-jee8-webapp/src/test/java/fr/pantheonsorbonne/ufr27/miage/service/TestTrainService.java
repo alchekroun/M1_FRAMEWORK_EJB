@@ -1,10 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -146,10 +142,18 @@ class TestTrainService {
 		assertNull(dao.getTrainFromId(idTrain));
 	}
 
-	/*@Test
-	void testUpdateTrain() {
-		fail("Not yet implemented");
-	}*/
+	@Test
+	void testUpdateTrain() throws NoSuchTrainException, CantCreateException, CantUpdateException {
+		int idTrain = trainService.createTrain(train1);
+		train1.setId(idTrain);
+		assertEquals(train1.getNom(), trainService.getTrainFromId(idTrain).getNom());
+		train1.setNom("Orleans");
+		assertNotEquals(train1.getNom(), trainService.getTrainFromId(train1.getId()).getNom());
+		trainService.updateTrain(train1);
+		assertEquals("Orleans", trainService.getTrainFromId(idTrain).getNom());
+		assertEquals(train1.getNom(), trainService.getTrainFromId(idTrain).getNom());
+		trainService.deleteTrain(idTrain);
+	}
 
 	@Test
 	void testGetAllTrain() throws EmptyListException, CantCreateException, NoSuchTrainException {
