@@ -147,19 +147,18 @@ class TestArrretService {
 
 	}
 
-	/*
-	 * @Test void testUpdateArret() throws CantCreateException,
-	 * NoSuchArretException, CantUpdateException, CantDeleteException { int idTrain=
-	 * arretService.createArret(arret1);
-	 * assertEquals(arret1.getNom(),arretService.getArretFromId(idTrain).getNom());
-	 * arret1.setNom("Lyon");
-	 * assertNotEquals(arret1.getNom(),arretService.getArretFromId(idTrain).getNom()
-	 * ); arretService.updateArret(arret1);
-	 * assertEquals(arret1.getNom(),arretService.getArretFromId(idTrain).getNom());
-	 * arretService.deleteArret(idTrain);
-	 * 
-	 * }
-	 */
+	@Test
+	void testUpdateArret() throws CantCreateException, NoSuchArretException, CantUpdateException, CantDeleteException {
+		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
+		assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+		arret1.setNom("Lyon");
+		assertNotEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+		arretService.updateArret(arret1);
+		assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+		arretService.deleteArret(idArret);
+
+	}
 
 	@Test
 	void testDeleteArret() throws CantCreateException, NoSuchArretException, CantDeleteException {
@@ -175,11 +174,12 @@ class TestArrretService {
 	void testGetAllArretByTrain()
 			throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
 		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
 		em.getTransaction().begin();
 		trainDao.addArret(trainDao.getTrainFromId(idTrain), dao.getArretFromId(idArret),
 				LocalDateTime.now().plusMinutes(30));
 		em.getTransaction().commit();
-		List<Arret> arrets = arretService.getAllArretByTrain(idTrain);
+		List<Arret> arrets = arretService.getAllArretByTrain(train1.getId());
 		assertEquals(arrets.size(), 1);
 		assertEquals(arrets.get(0).getNom(), "Deauville");
 		arretService.deleteArret(idArret);
