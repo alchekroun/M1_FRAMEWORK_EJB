@@ -172,7 +172,7 @@ class TestArrretService {
 		arret1.setId(idArret);
 		em.getTransaction().begin();
 		trainDao.addArret(trainDao.getTrainFromId(idTrain), dao.getArretFromId(idArret), LocalDateTime.now(),
-				LocalDateTime.now().plusMinutes(10), false);
+				LocalDateTime.now().plusMinutes(10), true, false);
 		em.getTransaction().commit();
 		List<Arret> arrets = arretService.getAllArretByTrain(train1.getId());
 		assertEquals(arrets.size(), 1);
