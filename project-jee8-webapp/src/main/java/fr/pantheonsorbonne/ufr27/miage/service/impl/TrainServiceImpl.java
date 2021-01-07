@@ -126,7 +126,7 @@ public class TrainServiceImpl implements TrainService {
 
 		em.persist(train);
 		em.getTransaction().commit();
-	}
+	} 
 
 	@Override
 	public void removeArret(int trainId, int arretId) throws NoSuchTrainException, NoSuchArretException {

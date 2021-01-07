@@ -19,10 +19,10 @@ import javax.persistence.PrimaryKeyJoinColumn;
 @Entity
 
 @NamedQueries({ @NamedQuery(name = "getAllArret", query = "SELECT a FROM Arret a ORDER BY a.id ASC"),
-		@NamedQuery(name = "findArretByTrain", query = "SELECT a FROM Arret a  JOIN a.listeHeureDePassage h WHERE h.train.id = :id"),
-		@NamedQuery(name = "findHdpByTrain", query = "SELECT h FROM Arret a LEFT JOIN a.trainsArrivants t JOIN t.listeHeureDePassage h WHERE h.train.id = :trainId")})
+		@NamedQuery(name = "findArretByTrain", query = "SELECT a FROM Arret a  JOIN a.listeHeureDePassage h WHERE h.train.id = :id")/*,
+	@NamedQuery(name = "findHdpByTrain", query = "SELECT h FROM Arret a LEFT JOIN a.trainArrivants t JOIN t.listeHeureDePassage h WHERE h.train.id = :trainId")*/})
+//findHdpByTrain à revoir 
 
-})
 public class Arret {
 
 	@Id

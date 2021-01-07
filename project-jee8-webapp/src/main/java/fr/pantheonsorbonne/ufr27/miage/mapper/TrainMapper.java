@@ -17,6 +17,7 @@ public class TrainMapper {
 		trainDTO.setDirectionType(train.getDirectionType());
 		trainDTO.setReseau(train.getReseau());
 		trainDTO.setStatut(train.getStatut());
+		trainDTO.setNumeroTrain(train.getNumero());
 		for (Passager p : PassagerMapper.passagerAllDTOMapper(train.getListePassagers())) {
 			trainDTO.getListePassagers().add(p);
 		}
