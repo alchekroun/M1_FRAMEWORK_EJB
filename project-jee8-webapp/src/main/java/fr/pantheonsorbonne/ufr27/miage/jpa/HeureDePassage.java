@@ -40,6 +40,8 @@ public class HeureDePassage {
 
 	protected boolean terminus;
 
+	protected boolean desservi;
+
 	boolean isCreated;
 
 	public HeureDePassageKey getId() {
@@ -104,6 +106,14 @@ public class HeureDePassage {
 
 	public void setTerminus(boolean terminus) {
 		this.terminus = terminus;
+	}
+
+	public boolean isDesservi() {
+		return desservi;
+	}
+
+	public void setDesservi(boolean desservi) {
+		this.desservi = desservi;
 	}
 
 	public boolean isCreated() {

@@ -146,7 +146,7 @@ public class TestArretDAO {
 	public void testGetAllArretByTrain() {
 		em.getTransaction().begin();
 		daoTrain.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10),
-				false);
+				true, false);
 		em.getTransaction().commit();
 		List<Arret> Arrets = dao.getAllArretByTrain(train1.getId());
 		assertEquals(1, Arrets.size());

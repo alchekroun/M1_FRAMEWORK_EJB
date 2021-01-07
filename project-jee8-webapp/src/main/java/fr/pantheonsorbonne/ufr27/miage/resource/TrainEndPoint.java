@@ -2,8 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
-
 import javax.inject.Inject;
 
 import javax.ws.rs.Consumes;
@@ -22,6 +20,7 @@ import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -90,12 +89,13 @@ public class TrainEndPoint {
 	}
 
 	@PUT
-	@Path("{trainId}/addarret/{arretId}/{terminus}")
+	@Path("{trainId}/addarret/{arretId}/{desservi}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
-			@PathParam("terminus") String terminus, String passage) throws URISyntaxException {
+			@PathParam("terminus") String desservi, @PathParam("terminus") String terminus, String passage)
+			throws URISyntaxException {
 		try {
-			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(terminus));
+			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(desservi), Boolean.parseBoolean(terminus));
 			return Response.status(200, "arret added to train").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
@@ -129,6 +129,22 @@ public class TrainEndPoint {
 			throw new WebApplicationException("No train yet", 404);
 		}
 
+	}
+
+	@PUT
+	@Path("/changeParameterDesservi/{traindId}/{arretId}/{newDesservi}")
+	public Response changeParamaterDesservi(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
+			@PathParam("newDesservi") String newDesservi) {
+		try {
+			service.changeParamaterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
+			return Response.status(200, "arret removed from train").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
+		} catch (NoSuchHdpException e) {
+			throw new WebApplicationException("There is no link between train & arret", 404);
+		}
 	}
 
 }
