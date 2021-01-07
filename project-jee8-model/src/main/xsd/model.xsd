@@ -161,8 +161,9 @@
 	<xsd:complexType name="perturbation">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
-			<xsd:element name="type" type="xsd:string"></xsd:element>
-			<xsd:element name="perturbation_temps" type="SimpleDate"></xsd:element>
+			<xsd:element name="train" type="train"></xsd:element>
+			<xsd:element name="motif" type="xsd:string"></xsd:element>
+			<xsd:element name="dureeEnPlus" type="xsd:int"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 

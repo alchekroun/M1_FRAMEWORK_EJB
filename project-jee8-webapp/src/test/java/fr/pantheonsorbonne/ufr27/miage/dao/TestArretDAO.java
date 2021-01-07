@@ -48,8 +48,6 @@ public class TestArretDAO {
 	public void setup() {
 		System.out.println("\n== SetUp");
 
-		System.out.println("****************** " + dao.toString());
-
 		em.getTransaction().begin();
 
 		arret1 = new Arret();

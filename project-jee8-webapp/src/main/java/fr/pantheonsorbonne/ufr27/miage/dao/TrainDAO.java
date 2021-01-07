@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 
 public class TrainDAO {
 
