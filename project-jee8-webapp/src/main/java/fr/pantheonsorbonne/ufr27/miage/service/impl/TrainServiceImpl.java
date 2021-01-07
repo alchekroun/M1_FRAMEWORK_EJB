@@ -179,7 +179,7 @@ public class TrainServiceImpl implements TrainService {
 			throw new NoSuchHdpException();
 		}
 
-		hdpDAO.changeParameterDesservi(train, arret, newDesservi);
+		hdpDAO.changeParameterDesservi(hdp, newDesservi);
 
 		em.merge(hdp);
 		em.merge(train);

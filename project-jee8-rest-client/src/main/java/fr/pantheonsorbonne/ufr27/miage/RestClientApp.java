@@ -23,13 +23,12 @@ public class RestClientApp
 
 {
 
-	private static Arret getArret(String nom, WebTarget target) {
+	private static Arret getArret(String nom, Client client, WebTarget target) {
 		ObjectFactory factory = new ObjectFactory();
 		Arret arretLille = factory.createArret();
-		arretLille.setId(2);
 		arretLille.setNom(nom);
-		target.path("arret").request().accept(MediaType.APPLICATION_JSON).post(Entity.json(arretLille));
-		return arretLille;
+		Response resp = target.path("arret").request().accept(MediaType.APPLICATION_JSON).post(Entity.json(arretLille));
+		return client.target(resp.getLocation()).request().get(Response.class).readEntity(Arret.class);
 	}
 
 	public static void main(String[] args) throws InterruptedException {
@@ -74,38 +73,71 @@ public class RestClientApp
 
 				// On récupère le Train
 				Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
-				Arret arretLille = getArret("Lille", target);
+				Arret arretLille = getArret("Lille", client, target);
 
 				// On ajoute l'arrêt au train sur son chemin
 
-				String tempsDepartArrive = LocalDateTime.now().plusMinutes(10).toString() + " "
-						+ LocalDateTime.now().plusMinutes(30).toString();
+				String tempsDepartArrive = LocalDateTime.now().plusMinutes(0).toString() + " "
+						+ LocalDateTime.now().plusMinutes(60).toString();
 
-				Response responseAddArret = target
-						.path("train/" + train.getId() + "/addarret/" + arretLille.getId() + "/true").request()
+				Response responseAddArretTerminus = target
+						.path("train/" + train.getId() + "/addarret/" + arretLille.getId() + "/true/true").request()
 						.accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
 
-				if (responseAddArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-					System.out.println("--------------Arret added successfully--------------");
+				if (responseAddArretTerminus.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 
-					TrainWrapper trains = new TrainWrapper();
-					trains.getTrains().add(train);
+					Arret arretChantilly = getArret("Chantilly", client, target);
 
-					System.out.println("--------------Launch periodic bulletin--------------");
+					tempsDepartArrive = LocalDateTime.now().plusMinutes(30).toString() + " "
+							+ LocalDateTime.now().plusMinutes(30).toString();
 
-					Response responseSendBulletin = target.path("infoCentre/nhe").request()
-							.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
-					if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-						System.out.println("--------------Periodic bulletin launched succesfully--------------");
+					Response responseAddArretNonDesservi = target
+							.path("train/" + train.getId() + "/addarret/" + arretChantilly.getId() + "/false/false")
+							.request().accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
+
+					if (responseAddArretNonDesservi.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+
+						Arret arretArras = getArret("Arras", client, target);
+
+						tempsDepartArrive = LocalDateTime.now().plusMinutes(45).toString() + " "
+								+ LocalDateTime.now().plusMinutes(40).toString();
+
+						Response responseAddArretDesservi = target
+								.path("train/" + train.getId() + "/addarret/" + arretArras.getId() + "/true/false")
+								.request().accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
+
+						if (responseAddArretDesservi.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+
+							System.out.println("--------------Arret added successfully--------------");
+
+							TrainWrapper trains = new TrainWrapper();
+							trains.getTrains().add(train);
+
+							System.out.println("--------------Launch periodic bulletin--------------");
+
+							Response responseSendBulletin = target.path("infoCentre/nhe").request()
+									.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
+							if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+								System.out
+										.println("--------------Periodic bulletin launched succesfully--------------");
+							} else {
+								throw new RuntimeException(
+										"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
+							}
+						} else {
+							throw new RuntimeException(
+									"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
+
+						}
 					} else {
 						throw new RuntimeException(
-								"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
+								"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
+
 					}
 
 				} else {
 					throw new RuntimeException(
-							"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString() + "\nURI :\t"
-									+ "train/" + train.getId() + "/addarret/" + arretLille.getId());
+							"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
 				}
 			} else {
 				throw new RuntimeException(

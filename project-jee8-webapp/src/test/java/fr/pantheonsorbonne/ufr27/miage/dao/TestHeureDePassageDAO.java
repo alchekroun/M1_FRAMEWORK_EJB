@@ -1,6 +1,7 @@
 
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -145,13 +146,18 @@ class TestHeureDePassageDAO {
 				LocalDateTime.now().plusMinutes(10), desserviTest, false);
 		assertEquals(desserviTest, hdp.isDesservi());
 		em.getTransaction().begin();
-		dao.changeParameterDesservi(train1, arretDepart, !desserviTest);
+		dao.changeParameterDesservi(hdp, !desserviTest);
 		em.merge(hdp);
 		em.merge(train1);
 		em.merge(arretDepart);
 		em.getTransaction().commit();
 		assertEquals(!desserviTest, hdp.isDesservi());
 
+	}
+
+	@Test
+	public void testRetarderHdp() {
+		fail("todo");
 	}
 
 }

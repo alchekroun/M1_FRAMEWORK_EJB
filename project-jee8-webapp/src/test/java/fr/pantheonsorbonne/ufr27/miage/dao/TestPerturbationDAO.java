@@ -2,6 +2,8 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -52,7 +54,7 @@ class TestPerturbationDAO {
 	void setUp() throws Exception {
 		em.getTransaction().begin();
 
-		train1 = new TrainAvecResa();
+		train1 = new Train(); // TrainAvecResa
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
@@ -66,7 +68,7 @@ class TestPerturbationDAO {
 		perturbationTmp.setId(1);
 		perturbationTmp.setMotif("chevreuil");
 		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
-		perturbationTmp.setDureeEnPlus();
+		perturbationTmp.setDureeEnPlus(10);
 
 		dao.createPerturbation(perturbationTmp);
 
@@ -76,7 +78,10 @@ class TestPerturbationDAO {
 	@AfterEach
 	void tearDown() throws Exception {
 		em.getTransaction().begin();
-
+		em.remove(train1);
+		train1 = null;
+		em.remove(perturbation1);
+		perturbation1 = null;
 		em.getTransaction().commit();
 	}
 
@@ -87,21 +92,40 @@ class TestPerturbationDAO {
 
 	@Test
 	void testGetPerturbationFromId() {
-		fail("Not yet implemented");
+		Perturbation p = dao.getPerturbationFromId(perturbation1.getId());
+		assertEquals(p.getId(), perturbation1.getId());
+		assertEquals(p.getMotif(), perturbation1.getMotif());
+		assertEquals(p.getTrain(), perturbation1.getTrain());
+		assertEquals(p.getDureeEnPlus(), perturbation1.getDureeEnPlus());
 	}
 
 	@Test
 	void testUpdatePerturbation() {
-		fail("Not yet implemented");
+		em.getTransaction().begin();
+		Perturbation p = dao.getPerturbationFromId(perturbation1.getId());
+		assertEquals(p.getMotif(), perturbation1.getMotif());
+		p.setMotif("covid");
+		em.merge(p);
+		em.getTransaction().commit();
+		p = dao.getPerturbationFromId(perturbation1.getId());
+		assertEquals(p.getMotif(), "covid");
+		assertEquals(p.getDureeEnPlus(), perturbation1.getDureeEnPlus());
+		assertEquals(p.getTrain(), perturbation1.getTrain());
 	}
 
 	@Test
 	void testGetAllPerturbation() {
-		fail("Not yet implemented");
+		List<Perturbation> listPerturbations = dao.getAllPerturbation();
+		assertTrue(listPerturbations.contains(perturbation1));
 	}
 
 	@Test
 	void testDeletePerturbation() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	void testImpacterTrafic() {
 		fail("Not yet implemented");
 	}
 
