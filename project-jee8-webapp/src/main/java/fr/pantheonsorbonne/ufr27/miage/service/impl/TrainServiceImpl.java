@@ -155,7 +155,7 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void changeParamaterDesservi(int trainId, int arretId, boolean newDesservi)
+	public void changeParameterDesservi(int trainId, int arretId, boolean newDesservi)
 			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException {
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);

@@ -31,6 +31,6 @@ public interface TrainService {
 	void addArret(int trainId, int arretId, String passage, boolean desservi, boolean terminus)
 			throws NoSuchTrainException, NoSuchArretException;
 
-	void changeParamaterDesservi(int trainId, int arretId, boolean newDesservi)
+	void changeParameterDesservi(int trainId, int arretId, boolean newDesservi)
 			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException;
 }
