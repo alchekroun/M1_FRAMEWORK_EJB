@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
@@ -58,7 +59,7 @@ class TestPassagerDAO {
 		arretArrivee.setNom("Paris");
 		em.persist(arretArrivee);
 
-		train1 = new Train();
+		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");

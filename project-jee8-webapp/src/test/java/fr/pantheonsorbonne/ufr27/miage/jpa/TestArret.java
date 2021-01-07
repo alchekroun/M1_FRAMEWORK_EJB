@@ -51,7 +51,7 @@ class TestArret {
 		arretDirection.setId(indexArret++);
 		arretDirection.setNom("Paris");
 
-		train1 = new Train();
+		train1 = new TrainAvecResa();
 		train1.setId(indexTrain++);
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");

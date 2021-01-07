@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
@@ -56,7 +57,7 @@ class TestTrainMapper {
 		passagerJPA1.setArrive(arretJPA2);
 		em.persist(passagerJPA1);
 
-		trainJPA1 = new Train();
+		trainJPA1 = new TrainAvecResa();
 		trainJPA1.setNom("Nom");
 		trainJPA1.setDirectionType("forward");
 		trainJPA1.setReseau("SNCF");

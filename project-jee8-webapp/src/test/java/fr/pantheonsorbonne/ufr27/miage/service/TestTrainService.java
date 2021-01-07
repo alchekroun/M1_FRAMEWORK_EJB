@@ -103,16 +103,12 @@ class TestTrainService {
 		arretDirection.setId(idArretDirection);
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretDirection);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
+
 	}
 
 	@AfterEach
@@ -166,34 +162,34 @@ class TestTrainService {
 		trainService.deleteTrain(idTrain);
 	}
 
-	@Test
-	void testAddArret() throws NoSuchTrainException, NoSuchArretException, CantCreateException, CantDeleteException {
-		int idTrain = trainService.createTrain(train1);
-		int idArret = arretService.createArret(arret1);
-		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
-				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
-		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
-		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
-				arretService.getArretFromId(idArret).getId());
-		arretService.deleteArret(idArret);
-		trainService.deleteTrain(idTrain);
+//	@Test
+//	void testAddArret() throws NoSuchTrainException, NoSuchArretException, CantCreateException, CantDeleteException {
+//		int idTrain = trainService.createTrain(train1);
+//		int idArret = arretService.createArret(arret1);
+//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
+//		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
+//				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
+//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
+//		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
+//				arretService.getArretFromId(idArret).getId());
+//		arretService.deleteArret(idArret);
+//		trainService.deleteTrain(idTrain);
+//
+//	}
 
-	}
-
-	@Test
-	void testRemoveArret() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
-		int idTrain = trainService.createTrain(train1);
-		int idArret = arretService.createArret(arret1);
-		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
-				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
-		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
-		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
-				arretService.getArretFromId(idArret).getId());
-		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-		arretService.deleteArret(idArret);
-		trainService.deleteTrain(idTrain);
-	}
+//	@Test
+//	void testRemoveArret() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
+//		int idTrain = trainService.createTrain(train1);
+//		int idArret = arretService.createArret(arret1);
+//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
+//		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
+//				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
+//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
+//		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
+//				arretService.getArretFromId(idArret).getId());
+//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
+//		arretService.deleteArret(idArret);
+//		trainService.deleteTrain(idTrain);
+//	}
 
 }

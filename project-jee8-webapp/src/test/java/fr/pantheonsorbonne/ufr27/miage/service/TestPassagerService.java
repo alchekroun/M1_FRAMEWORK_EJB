@@ -114,16 +114,11 @@ class TestPassagerService {
 		arretDepart.setId(idArretD);
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arretArrivee);
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
 		idTrain = trainService.createTrain(train1);
 		train1.setId(idTrain);
 		passager1 = factory.createPassager();
