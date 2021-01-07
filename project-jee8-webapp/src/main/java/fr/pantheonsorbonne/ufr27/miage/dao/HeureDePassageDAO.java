@@ -21,7 +21,7 @@ public class HeureDePassageDAO {
 	EntityManager em;
 
 	public HeureDePassage createHeureDePassage(Train train, Arret arret, LocalDateTime departTemps,
-			LocalDateTime arriveeTemps, boolean terminus) {
+			LocalDateTime arriveeTemps, boolean desservi, boolean terminus) {
 		HeureDePassageKey hdpKey = new HeureDePassageKey();
 		hdpKey.setArretId(arret.getId());
 		hdpKey.setTrainId(train.getId());
@@ -33,6 +33,7 @@ public class HeureDePassageDAO {
 		hdp.setReelDepartTemps(departTemps);
 		hdp.setBaseArriveeTemps(arriveeTemps);
 		hdp.setReelArriveeTemps(arriveeTemps);
+		hdp.setDesservi(desservi);
 		hdp.setTerminus(terminus);
 		em.persist(hdp);
 		train.addArretHeureDePassage(hdp);
@@ -44,7 +45,7 @@ public class HeureDePassageDAO {
 
 	public HeureDePassage updateHeureDePassage(Train train, Arret arret, LocalDateTime newBaseDepartTemps,
 			LocalDateTime newBaseArriveeTemps, LocalDateTime newReelDepartTemps, LocalDateTime newReelArriveeTemps,
-			boolean newTerminus) {
+			boolean newDesservi, boolean newTerminus) {
 		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
 		hdp.setArret(arret);
 		hdp.setTrain(train);
@@ -52,6 +53,7 @@ public class HeureDePassageDAO {
 		hdp.setBaseDepartTemps(newBaseDepartTemps);
 		hdp.setReelArriveeTemps(newReelArriveeTemps);
 		hdp.setReelDepartTemps(newReelDepartTemps);
+		hdp.setDesservi(newDesservi);
 		hdp.setTerminus(newTerminus);
 		return hdp;
 	}
@@ -103,6 +105,12 @@ public class HeureDePassageDAO {
 
 	public List<HeureDePassage> getAllHeureDePassage() {
 		return em.createNamedQuery("getAllHeureDePassage").getResultList();
+	}
+
+	public void changeParameterDesservi(Train train, Arret arret, boolean newDesservi) {
+		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
+		updateHeureDePassage(train, arret, hdp.getBaseArriveeTemps(), hdp.getBaseDepartTemps(),
+				hdp.getReelDepartTemps(), hdp.getReelArriveeTemps(), newDesservi, hdp.isTerminus());
 	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {

@@ -55,7 +55,7 @@ public class InfoCentreEndPoint {
 				while (true) {
 					service.periodicBulletin();
 					try {
-						Thread.sleep(10000);
+						Thread.sleep(60000); // 1mn
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
