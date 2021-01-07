@@ -54,7 +54,7 @@ public class InfoGareSubscriber implements Closeable {
 
 	public boolean isInterest(List<HeureDePassage> listHdp) {
 		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getArret().getNom().equals(this.arret)) {
+			if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 				return true;
 			}
 		}
@@ -84,15 +84,13 @@ public class InfoGareSubscriber implements Closeable {
 			toShow.append("\nO = O = O = O\n");
 			toShow.append("Gare de : " + this.arret + "\n");
 			toShow.append("------------------------INFO TRAINS---------------------\n");
-			toShow.append("");
 
 			for (HeureDePassage hdp : listHdp) {
-				if (hdp.getArret().getNom().equals(this.arret)) {
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + " | ");
 					toShow.append(hdp.getReelArriveeTemps().toString() + "\t"); // A revoir
 					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\n##\n");
-
 				}
 			}
 			/*
