@@ -84,34 +84,36 @@ public class InfoGareSubscriber implements Closeable {
 			toShow.append("\nO = O = O = O\n");
 			toShow.append("Gare de : " + this.arret + "\n");
 			toShow.append("------------------------INFO TRAINS---------------------\n");
-
+			toShow.append("DEPARTS\n");
+			for (HeureDePassage hdp : listHdp) {
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()) {
+					Train t = hdp.getTrain();
+					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
+					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
+					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
+					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
+						toShow.append("A l'heure");
+					} else {
+						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
+					}
+					toShow.append("\n##\n");
+				}
+			}
+			toShow.append("ARRIVEES\n");
 			for (HeureDePassage hdp : listHdp) {
 				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 					Train t = hdp.getTrain();
-					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + " | ");
-					toShow.append(hdp.getReelArriveeTemps().toString() + "\t"); // A revoir
-					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\n##\n");
+					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
+					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
+					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
+					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
+						toShow.append("A l'heure");
+					} else {
+						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
+					}
+					toShow.append("\n##\n");
 				}
 			}
-			/*
-			 * for (Train t : listTrains) { toShow.append("##\nTrain n°: ");
-			 * toShow.append(t.getNumeroTrain() + " - " + t.getReseau() + "\n");
-			 * toShow.append("Destination : "); toShow.append(t.getDirection().getNom() +
-			 * "\n");
-			 * 
-			 * // Vérifie si le train a pour terminus cette gare if
-			 * (t.getDirection().getNom().equals(this.arret)) {
-			 * 
-			 * if (t.getBaseArriveeTemps().equals(t.getReelArriveeTemps())) {
-			 * toShow.append("A l'heure\n"); } else { toShow.append("En retard\n"); }
-			 * toShow.append("Arrivée prévue à : "); toShow.append(t.getReelArriveeTemps() +
-			 * "\n##\n"); } else { for (HeureDePassage hdp : t.getListeHeureDePassages()) {
-			 * if (hdp.getArret().getNom().equals(this.arret)) { // TODO Meme logique de
-			 * retard vue plus haut à impl ici
-			 * 
-			 * toShow.append("Arrivée prévue à : "); toShow.append(hdp.getPassage() +
-			 * "\n##\n"); } } }
-			 */
 			toShow.append("------------------------FIN INFO TRAINS---------------------");
 			System.out.println(toShow);
 

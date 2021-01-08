@@ -24,7 +24,8 @@
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare</class>
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage</class>
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey</class>
-		
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation</class>
+
 
 
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>

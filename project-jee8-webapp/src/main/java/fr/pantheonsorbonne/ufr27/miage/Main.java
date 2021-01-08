@@ -30,6 +30,7 @@ import fr.pantheonsorbonne.ufr27.miage.dao.InfoGareDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.ExceptionMapper;
 import fr.pantheonsorbonne.ufr27.miage.jms.InfoCentrePublisher;
@@ -40,6 +41,7 @@ import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
@@ -89,6 +91,7 @@ public class Main {
 						bind(ArretDAO.class).to(ArretDAO.class);
 						bind(HeureDePassageDAO.class).to(HeureDePassageDAO.class);
 						bind(InfoGareDAO.class).to(InfoGareDAO.class);
+						bind(PerturbationDAO.class).to(PerturbationDAO.class);
 						bind(PaymentDAO.class).to(PaymentDAO.class);
 						bind(InvoiceDAO.class).to(InvoiceDAO.class);
 

@@ -22,6 +22,7 @@ import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
@@ -137,13 +138,27 @@ public class TrainEndPoint {
 			@PathParam("newDesservi") String newDesservi) {
 		try {
 			service.changeParamaterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
-			return Response.status(200, "arret removed from train").build();
+			return Response.status(200, "desservi parameter changed").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
 		} catch (NoSuchArretException e) {
 			throw new WebApplicationException("No such arret", 404);
 		} catch (NoSuchHdpException e) {
 			throw new WebApplicationException("There is no link between train & arret", 404);
+		}
+	}
+
+	@POST
+	@Path("/createPerturbation")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response createPerturbation(Perturbation perturbation) {
+		try {
+			service.createPerturbation(perturbation);
+			return Response.status(200, "arret removed from train").build();
+		} catch (
+
+		NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
 		}
 	}
 

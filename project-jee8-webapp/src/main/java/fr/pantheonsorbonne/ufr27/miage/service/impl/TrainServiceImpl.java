@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
@@ -16,6 +17,7 @@ import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -33,6 +35,9 @@ public class TrainServiceImpl implements TrainService {
 
 	@Inject
 	HeureDePassageDAO hdpDAO;
+
+	@Inject
+	PerturbationDAO perturbationDAO;
 
 	// Create
 	@Override
@@ -130,7 +135,6 @@ public class TrainServiceImpl implements TrainService {
 		dao.addArret(train, arret, LocalDateTime.parse(horraires[0]), LocalDateTime.parse(horraires[1]), desservi,
 				terminus);
 
-		em.persist(train);
 		em.getTransaction().commit();
 	} 
 
@@ -175,13 +179,27 @@ public class TrainServiceImpl implements TrainService {
 			throw new NoSuchHdpException();
 		}
 
-		hdpDAO.changeParameterDesservi(train, arret, newDesservi);
+		hdpDAO.changeParameterDesservi(hdp, newDesservi);
 
 		em.merge(hdp);
 		em.merge(train);
 		em.merge(arret);
 		em.getTransaction().commit();
 
+	}
+
+	@Override
+	public void createPerturbation(Perturbation perturbation) throws NoSuchTrainException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(perturbation.getTrain().getId());
+		if (train == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchTrainException();
+		}
+
+		perturbationDAO.impacterTrafic(perturbationDAO.createPerturbation(perturbation));
+
+		em.getTransaction().commit();
 	}
 
 }

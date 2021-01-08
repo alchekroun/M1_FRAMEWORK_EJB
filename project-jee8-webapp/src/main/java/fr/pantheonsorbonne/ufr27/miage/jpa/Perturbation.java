@@ -1,13 +1,13 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
-import java.time.LocalDateTime;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p") })
@@ -17,9 +17,12 @@ public class Perturbation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	protected int id;
 
-	protected String type;
+	@OneToOne(cascade = CascadeType.ALL)
+	protected Train train;
 
-	protected LocalDateTime perturbationTemps;
+	protected String motif;
+
+	protected int dureeEnPlus;
 
 	public int getId() {
 		return id;
@@ -29,19 +32,28 @@ public class Perturbation {
 		this.id = id;
 	}
 
-	public String getType() {
-		return type;
+	public Train getTrain() {
+		return train;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTrain(Train train) {
+		this.train = train;
 	}
 
-	public LocalDateTime getPerturbationTemps() {
-		return perturbationTemps;
+	public String getMotif() {
+		return motif;
 	}
 
-	public void setPerturbationTemps(LocalDateTime perturbationTemps) {
-		this.perturbationTemps = perturbationTemps;
+	public void setMotif(String motif) {
+		this.motif = motif;
 	}
+
+	public int getDureeEnPlus() {
+		return dureeEnPlus;
+	}
+
+	public void setDureeEnPlus(int dureeEnPlus) {
+		this.dureeEnPlus = dureeEnPlus;
+	}
+
 }

@@ -107,10 +107,15 @@ public class HeureDePassageDAO {
 		return em.createNamedQuery("getAllHeureDePassage").getResultList();
 	}
 
-	public void changeParameterDesservi(Train train, Arret arret, boolean newDesservi) {
-		HeureDePassage hdp = getHdpFromTrainIdAndArretId(train.getId(), arret.getId());
-		updateHeureDePassage(train, arret, hdp.getBaseArriveeTemps(), hdp.getBaseDepartTemps(),
+	public void changeParameterDesservi(HeureDePassage hdp, boolean newDesservi) {
+		updateHeureDePassage(hdp.getTrain(), hdp.getArret(), hdp.getBaseDepartTemps(), hdp.getBaseArriveeTemps(),
 				hdp.getReelDepartTemps(), hdp.getReelArriveeTemps(), newDesservi, hdp.isTerminus());
+	}
+
+	public void retarderHdp(HeureDePassage hdp, int dureeEnPlus) {
+		updateHeureDePassage(hdp.getTrain(), hdp.getArret(), hdp.getBaseDepartTemps(), hdp.getBaseArriveeTemps(),
+				hdp.getReelDepartTemps().plusMinutes(dureeEnPlus), hdp.getReelArriveeTemps().plusMinutes(dureeEnPlus),
+				hdp.isDesservi(), hdp.isTerminus());
 	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {
