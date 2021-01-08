@@ -55,8 +55,8 @@ public class TrainDAO {
 	}
 
 	public void addArret(Train train, Arret arret, LocalDateTime departTemps, LocalDateTime arriveeTemps,
-			boolean terminus) {
-		hdpDAO.createHeureDePassage(train, arret, departTemps, arriveeTemps, terminus);
+			boolean desservi, boolean terminus) {
+		hdpDAO.createHeureDePassage(train, arret, departTemps, arriveeTemps, desservi, terminus);
 	}
 
 	public void removeArret(Train train, Arret arret) {

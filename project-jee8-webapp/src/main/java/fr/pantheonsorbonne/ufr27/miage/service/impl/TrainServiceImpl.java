@@ -7,11 +7,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
@@ -28,6 +30,9 @@ public class TrainServiceImpl implements TrainService {
 
 	@Inject
 	ArretDAO arretDAO;
+
+	@Inject
+	HeureDePassageDAO hdpDAO;
 
 	// Create
 	@Override
@@ -105,7 +110,7 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void addArret(int trainId, int arretId, String passage, boolean terminus)
+	public void addArret(int trainId, int arretId, String passage, boolean desservi, boolean terminus)
 			throws NoSuchTrainException, NoSuchArretException {
 		em.getTransaction().begin();
 
@@ -122,26 +127,59 @@ public class TrainServiceImpl implements TrainService {
 
 		String[] horraires = passage.split(" ");
 
-		dao.addArret(train, arret, LocalDateTime.parse(horraires[0]), LocalDateTime.parse(horraires[1]), terminus);
+		dao.addArret(train, arret, LocalDateTime.parse(horraires[0]), LocalDateTime.parse(horraires[1]), desservi,
+				terminus);
 
 		em.persist(train);
 		em.getTransaction().commit();
-	}
+	} 
 
 	@Override
 	public void removeArret(int trainId, int arretId) throws NoSuchTrainException, NoSuchArretException {
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchTrainException();
 		}
 		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
 		if (arret == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchArretException();
 		}
 
 		dao.removeArret(train, arret);
 
+		em.getTransaction().commit();
+
+	}
+
+	@Override
+	public void changeParameterDesservi(int trainId, int arretId, boolean newDesservi)
+			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
+		if (train == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchTrainException();
+		}
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchArretException();
+		}
+
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp = hdpDAO.getHdpFromTrainIdAndArretId(trainId, arretId);
+		if (hdp == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchHdpException();
+		}
+
+		hdpDAO.changeParameterDesservi(train, arret, newDesservi);
+
+		em.merge(hdp);
+		em.merge(train);
+		em.merge(arret);
 		em.getTransaction().commit();
 
 	}

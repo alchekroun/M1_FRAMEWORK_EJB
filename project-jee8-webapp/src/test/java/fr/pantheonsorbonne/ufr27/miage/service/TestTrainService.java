@@ -3,6 +3,7 @@ package fr.pantheonsorbonne.ufr27.miage.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -27,6 +28,7 @@ import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
@@ -42,6 +44,8 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.PassagerServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.TrainServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
+import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
+import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 
 @EnableWeld
 class TestTrainService {
@@ -70,6 +74,9 @@ class TestTrainService {
 
 	@Inject
 	ArretDAO dao2;
+
+	@Inject
+	HeureDePassageDAO hdpDao;
 
 	Train train1;
 	Arret arret1;
@@ -162,34 +169,80 @@ class TestTrainService {
 		trainService.deleteTrain(idTrain);
 	}
 
-//	@Test
-//	void testAddArret() throws NoSuchTrainException, NoSuchArretException, CantCreateException, CantDeleteException {
-//		int idTrain = trainService.createTrain(train1);
-//		int idArret = arretService.createArret(arret1);
-//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-//		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
-//				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
-//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
-//		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
-//				arretService.getArretFromId(idArret).getId());
-//		arretService.deleteArret(idArret);
-//		trainService.deleteTrain(idTrain);
-//
-//	}
+	@Test
+	void testAddArret() throws NoSuchTrainException, NoSuchArretException, CantCreateException, CantDeleteException {
+		int idTrain = trainService.createTrain(train1);
+		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
+		train1.setId(idTrain);
+		String passage = LocalDateTime.now().toString() + " " + LocalDateTime.now().plusMinutes(10).toString();
+		trainService.addArret(train1.getId(), arret1.getId(), passage, true, false);
+		String[] passages = passage.split(" ");
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
+				arret1.getId());
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret2 = hdp1.getArret();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train2 = hdp1.getTrain();
+		assertEquals(arret1.getId(), arret2.getId());
+		assertEquals(train1.getId(), train2.getId());
+		assertEquals(arret1.getNom(), arret2.getNom());
+		assertEquals(train1.getDirectionType(), train2.getDirectionType());
+		assertEquals(train1.getNumeroTrain(), train2.getNumero());
+		assertEquals(passages[0], hdp1.getBaseDepartTemps().toString());
+		assertEquals(passages[1], hdp1.getBaseArriveeTemps().toString());
+		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
+				arretService.getArretFromId(idArret).getId());
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
 
-//	@Test
-//	void testRemoveArret() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
-//		int idTrain = trainService.createTrain(train1);
-//		int idArret = arretService.createArret(arret1);
-//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-//		trainService.addArret(trainService.getTrainFromId(idTrain).getId(),
-//				arretService.getArretFromId(idArret).getId(), LocalDateTime.now());
-//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 1);
-//		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
-//				arretService.getArretFromId(idArret).getId());
-//		assertEquals(trainService.getTrainFromId(idTrain).getListeHeureDePassages().size(), 0);
-//		arretService.deleteArret(idArret);
-//		trainService.deleteTrain(idTrain);
-//	}
+	}
+
+	@Test
+	void testRemoveArret() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
+		int idTrain = trainService.createTrain(train1);
+		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
+		train1.setId(idTrain);
+		String passage = LocalDateTime.now().toString() + " " + LocalDateTime.now().plusMinutes(10).toString();
+		trainService.addArret(train1.getId(), arret1.getId(), passage, true, false);
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> hdps = hdpDao.getAllHeureDePassage();
+		int arret = 0;
+		for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp : hdps) {
+			if (hdp.getArret().getId() == idArret && hdp.getTrain().getId() == idTrain) {
+				arret++;
+			}
+		}
+		assertEquals(arret, 1);
+		trainService.removeArret(trainService.getTrainFromId(idTrain).getId(),
+				arretService.getArretFromId(idArret).getId());
+		hdps.clear();
+		arret = 0;
+		for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp : hdps) {
+			if (hdp.getArret().getId() == idArret && hdp.getTrain().getId() == idTrain) {
+				arret++;
+			}
+		}
+		assertEquals(arret, 0);
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
+	}
+
+	@Test
+	void testChangeParameterDesservi() throws CantCreateException, NoSuchTrainException, NoSuchArretException,
+			NoSuchHdpException, CantDeleteException {
+		int idTrain = trainService.createTrain(train1);
+		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
+		train1.setId(idTrain);
+		String passage = LocalDateTime.now().toString() + " " + LocalDateTime.now().plusMinutes(10).toString();
+		trainService.addArret(train1.getId(), arret1.getId(), passage, false, false);
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
+				arret1.getId());
+		assertEquals(hdp1.isDesservi(), false);
+		trainService.changeParameterDesservi(train1.getId(), arret1.getId(), true);
+		hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(), arret1.getId());
+		assertEquals(hdp1.isDesservi(), true);
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
+	}
 
 }

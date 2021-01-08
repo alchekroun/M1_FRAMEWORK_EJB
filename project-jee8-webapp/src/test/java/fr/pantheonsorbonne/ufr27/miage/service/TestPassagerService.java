@@ -131,8 +131,9 @@ class TestPassagerService {
 	@AfterEach
 	void tearDown() throws Exception {
 		trainService.deleteTrain(idTrain);
-		arretService.deleteArret(idArretA);
-		arretService.deleteArret(idArretD);
+		/*
+		 * arretService.deleteArret(idArretA); arretService.deleteArret(idArretD);
+		 */
 	}
 
 	@Test

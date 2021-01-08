@@ -79,6 +79,8 @@ class TestHeureDePassageDAO {
 		heureDePassage1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(10));
 		heureDePassage1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(30));
 		heureDePassage1.setReelDepartTemps(LocalDateTime.now().plusMinutes(30));
+		heureDePassage1.setDesservi(true);
+		heureDePassage1.setTerminus(true);
 		em.persist(heureDePassage1);
 
 		em.getTransaction().commit();
@@ -122,7 +124,7 @@ class TestHeureDePassageDAO {
 	@Test
 	public void testCreateHeureDePassage() {
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
-				LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
+				LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), true, false);
 		assertNotNull(heureDePassage2);
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
@@ -135,6 +137,22 @@ class TestHeureDePassageDAO {
 		assertEquals(
 				dao.getHdpFromTrainIdAndArretId(heureDePassage1.getTrain().getId(), heureDePassage1.getArret().getId()),
 				heureDePassage1);
+	}
+
+	@Test
+	public void testChangeParameterDesservi() {
+		Boolean desserviTest = false;
+		HeureDePassage hdp = dao.createHeureDePassage(train1, arretDepart, LocalDateTime.now().plusMinutes(30),
+				LocalDateTime.now().plusMinutes(10), desserviTest, false);
+		assertEquals(desserviTest, hdp.isDesservi());
+		em.getTransaction().begin();
+		dao.changeParameterDesservi(train1, arretDepart, !desserviTest);
+		em.merge(hdp);
+		em.merge(train1);
+		em.merge(arretDepart);
+		em.getTransaction().commit();
+		assertEquals(!desserviTest, hdp.isDesservi());
+
 	}
 
 }

@@ -119,8 +119,9 @@ public class TestTrainDAO {
 	@Test
 	public void testAddArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arretDirection, LocalDateTime.now().plusMinutes(10), LocalDateTime.now(), true);
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(10), LocalDateTime.now().plusMinutes(20), false);
+		dao.addArret(train1, arretDirection, LocalDateTime.now().plusMinutes(10), LocalDateTime.now(), true, true);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(10), LocalDateTime.now().plusMinutes(20), true,
+				false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		assertEquals(2, listHdp.size());
@@ -170,7 +171,8 @@ public class TestTrainDAO {
 	@Test
 	public void testFindTrainByArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), false);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true,
+				false);
 		em.getTransaction().commit();
 		List<Train> trains = dao.findTrainByArret(arret1.getId());
 		assertEquals(1, trains.size());
@@ -184,7 +186,8 @@ public class TestTrainDAO {
 	@Test
 	public void testRemoveArret() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), true,
+				false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
 		em.getTransaction().begin();
@@ -222,7 +225,8 @@ public class TestTrainDAO {
 	@Test
 	public void testDeleteTrain() {
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), false);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), true,
+				false);
 		dao.addPassager(train1, passager1);
 		dao.deleteTrain(train1);
 		em.getTransaction().commit();
