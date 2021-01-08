@@ -115,6 +115,7 @@ class TestTrainService {
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
+
 	}
 
 	@AfterEach

@@ -22,6 +22,7 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -57,7 +58,7 @@ class TestHeureDePassageDAO {
 		arretArrivee.setNom("Paris");
 		em.persist(arretArrivee);
 
-		train1 = new Train();
+		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");

@@ -40,7 +40,7 @@ public class TrainServiceImpl implements TrainService {
 		em.getTransaction().begin();
 		try {
 
-			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa();
 
 			train.setNom(trainDTO.getNom());
 			train.setDirectionType(trainDTO.getDirectionType());
