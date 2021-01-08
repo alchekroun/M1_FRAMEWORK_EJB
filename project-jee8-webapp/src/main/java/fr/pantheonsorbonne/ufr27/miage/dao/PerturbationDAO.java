@@ -22,10 +22,12 @@ public class PerturbationDAO {
 		Perturbation perturbation = new Perturbation();
 
 		perturbation.setMotif(perturbationDTO.getMotif());
-		perturbation.setTrain(em.find(Train.class, perturbation.getTrain().getId()));
+		perturbation.setTrain(em.find(Train.class, perturbationDTO.getTrain().getId()));
 		perturbation.setDureeEnPlus(perturbationDTO.getDureeEnPlus());
 
-		return null;
+		em.persist(perturbation);
+
+		return perturbation;
 	}
 
 	public Perturbation getPerturbationFromId(int perturbationId) {

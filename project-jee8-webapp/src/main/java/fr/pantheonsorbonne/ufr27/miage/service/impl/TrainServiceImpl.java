@@ -191,13 +191,14 @@ public class TrainServiceImpl implements TrainService {
 	@Override
 	public void createPerturbation(Perturbation perturbation) throws NoSuchTrainException {
 		em.getTransaction().begin();
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(perturbation.getId());
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(perturbation.getTrain().getId());
 		if (train == null) {
 			em.getTransaction().rollback();
 			throw new NoSuchTrainException();
 		}
 
-		perturbationDAO.createPerturbation(perturbation);
+		perturbationDAO.impacterTrafic(perturbationDAO.createPerturbation(perturbation));
+
 		em.getTransaction().commit();
 	}
 
