@@ -158,6 +158,13 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testRetarderHdp() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	public void testGetHdpByTrainAndDateNow() {
+		// TODO
 		fail("todo");
 	}
 

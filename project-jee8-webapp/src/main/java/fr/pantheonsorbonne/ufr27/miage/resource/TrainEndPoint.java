@@ -137,7 +137,7 @@ public class TrainEndPoint {
 	public Response changeParamaterDesservi(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
 			@PathParam("newDesservi") String newDesservi) {
 		try {
-			service.changeParamaterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
+			service.changeParameterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
 			return Response.status(200, "desservi parameter changed").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
@@ -155,11 +155,41 @@ public class TrainEndPoint {
 		try {
 			service.createPerturbation(perturbation);
 			return Response.status(200, "arret removed from train").build();
-		} catch (
-
-		NoSuchTrainException e) {
+		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
 		}
+	}
+
+	@POST
+	@Path("/enmarche")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response enMarche(Train train) {
+		
+		// TODO Voir comment on peut exploiter les erreurs qui remontent d'un thread
+		
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						service.enMarche(train);
+						Thread.sleep(60000); // 1mn
+					} catch (NoSuchTrainException e) {
+						break;
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchArretException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						break;
+					}
+				}
+			}
+		}).start();
+
+		return Response.accepted().build();
 	}
 
 }

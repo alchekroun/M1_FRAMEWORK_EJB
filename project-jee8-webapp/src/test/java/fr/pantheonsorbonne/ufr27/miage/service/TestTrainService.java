@@ -245,4 +245,31 @@ class TestTrainService {
 		trainService.deleteTrain(idTrain);
 	}
 
+	@Test
+	public void testEnMarche() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	public void testDescendreListPassager() {
+		// TODO
+		fail("todo");
+
+	}
+
+	@Test
+	public void testMonterListPassager() {
+		// TODO
+		fail("todo");
+
+	}
+
+	@Test
+	public void testVerifIfExistArretNow() {
+		// TODO
+		fail("todo");
+
+	}
+
 }

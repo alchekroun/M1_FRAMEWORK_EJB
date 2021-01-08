@@ -14,7 +14,8 @@ import javax.persistence.NamedQuery;
 @NamedQueries({ @NamedQuery(name = "getAllHeureDePassage", query = "SELECT h FROM HeureDePassage h"),
 		@NamedQuery(name = "findHeureByTrainIdAndArretId", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId"),
 		@NamedQuery(name = "findHeureByTrainId", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId"),
-		@NamedQuery(name = "findHeureByArretId", query = "SELECT h FROM HeureDePassage h WHERE h.arret.id = :arretId") })
+		@NamedQuery(name = "findHeureByArretId", query = "SELECT h FROM HeureDePassage h WHERE h.arret.id = :arretId"),
+		@NamedQuery(name = "findHeureByDateNowAndTrain", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelDepartTemps < :temps AND h.reelArriveeTemps > :temps") })
 public class HeureDePassage {
 
 	@EmbeddedId

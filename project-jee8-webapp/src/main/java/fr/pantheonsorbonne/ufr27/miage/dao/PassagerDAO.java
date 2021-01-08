@@ -42,7 +42,15 @@ public class PassagerDAO {
 	}
 
 	public List<Passager> getAllPassagerByTrain(int trainId) {
-		return em.createNamedQuery("findAllPassagerByTrain").setParameter("id", trainId).getResultList();
+		return em.createNamedQuery("findAllPassagerByTrain").setParameter("trainId", trainId).getResultList();
+	}
+
+	public List<Passager> getAllPassagerByDepart(int arretId) {
+		return em.createNamedQuery("findAllPassagerByTrain").setParameter("idArretDepart", arretId).getResultList();
+	}
+
+	public List<Passager> getAllPassagerByArrivee(int arretId) {
+		return em.createNamedQuery("findAllPassagerByTrain").setParameter("idArretArrivee", arretId).getResultList();
 	}
 
 	public boolean isPassagerCreated(int passagerId) {

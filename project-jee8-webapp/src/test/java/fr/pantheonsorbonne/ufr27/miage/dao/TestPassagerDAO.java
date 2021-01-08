@@ -1,6 +1,7 @@
 
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -159,6 +160,19 @@ class TestPassagerDAO {
 		List<Passager> passagers = dao.getAllPassagerByTrain(train1.getId());
 		assertEquals(1, passagers.size());
 		assertEquals(passager1, passagers.get(0));
+	}
+
+	@Test
+	void testgetAllPassagerByDepart() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	void testGetAllPassagerByArrivee() {
+		// TODO
+		fail("todo");
+
 	}
 
 }
