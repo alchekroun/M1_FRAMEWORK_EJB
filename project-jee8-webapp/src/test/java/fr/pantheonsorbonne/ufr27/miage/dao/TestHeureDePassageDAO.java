@@ -124,8 +124,10 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testCreateHeureDePassage() {
+		em.getTransaction().begin();
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
 				LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
 		assertNotNull(heureDePassage2);
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
@@ -164,8 +166,16 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testGetHdpByTrainAndDateNow() {
-		// TODO
-		fail("todo");
+		em.getTransaction().begin();
+		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
+				LocalDateTime.now().minusMinutes(10), LocalDateTime.now().plusMinutes(30), true, false);
+		em.getTransaction().commit();
+		HeureDePassage heureDePassage3= dao.getHdpByTrainAndDateNow(train1.getId());
+		assertEquals(heureDePassage2,heureDePassage3);
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2 = null;
+		em.getTransaction().commit();
 	}
 
 }
