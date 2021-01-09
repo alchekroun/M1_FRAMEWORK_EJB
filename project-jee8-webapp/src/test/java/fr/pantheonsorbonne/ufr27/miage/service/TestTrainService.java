@@ -366,19 +366,20 @@ class TestTrainService {
 		assertEquals(hdp1.getTrain().getId(), train1.getId());
 		
 		Perturbation perturbation1 = new Perturbation();
-		assertNull(pertuDao.getPerturbationFromId(1));
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(idTrain);
 		
-		perturbation1.setId(1);
+		assertTrue(pertuDao.getPerturbationByTrain(train).isEmpty());
+		
 		perturbation1.setMotif("chevreuil");
 		perturbation1.setTrain(train1);
 		perturbation1.setDureeEnPlus(10);
 		trainService.createPerturbation(perturbation1);
 		
-		assertEquals(1,pertuDao.getPerturbationFromId(1).getId());
-		assertEquals("chevreuil",pertuDao.getPerturbationFromId(1).getMotif());
-		assertEquals(10, pertuDao.getPerturbationFromId(1).getDureeEnPlus());
-		assertEquals(idTrain, pertuDao.getPerturbationFromId(1).getTrain().getId());
-		
+		assertEquals(pertuDao.getPerturbationByTrain(train).get(0).getId(),pertuDao.getPerturbationFromId(pertuDao.getPerturbationByTrain(train).get(0).getId()).getId());
+		assertEquals("chevreuil",pertuDao.getPerturbationFromId(pertuDao.getPerturbationByTrain(train).get(0).getId()).getMotif());
+		assertEquals(10, pertuDao.getPerturbationFromId(pertuDao.getPerturbationByTrain(train).get(0).getId()).getDureeEnPlus());
+		assertEquals(idTrain, pertuDao.getPerturbationFromId(pertuDao.getPerturbationByTrain(train).get(0).getId()).getTrain().getId());
+
 		assertEquals(dt1,hdp1.getBaseDepartTemps());
 		assertEquals(dt2,hdp1.getBaseArriveeTemps());
 		assertEquals(dt1.plusMinutes(10), hdp1.getReelDepartTemps());
