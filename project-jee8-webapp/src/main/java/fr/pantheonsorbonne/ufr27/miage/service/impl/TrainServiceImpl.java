@@ -100,10 +100,10 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDAO.getPerturbationByTrain(train);
+		/*List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDAO.getPerturbationByTrain(train);
 		for(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation pertu : listePerturbations) {
 			perturbationDAO.deletePerturbation(pertu);
-		}
+		}*/
 		dao.deleteTrain(train);
 
 		em.getTransaction().commit();

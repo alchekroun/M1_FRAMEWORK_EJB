@@ -16,6 +16,9 @@ public class TrainDAO {
 
 	@Inject
 	EntityManager em;
+	
+	@Inject
+	PerturbationDAO perturbationDao;
 
 	@Inject
 	HeureDePassageDAO hdpDAO;
@@ -48,6 +51,12 @@ public class TrainDAO {
 		if (!train.getListeHeureDePassage().isEmpty()) {
 			hdpDAO.deleteHeureDePassageByTrain(train);
 		}
+		if (!perturbationDao.getPerturbationByTrain(train).isEmpty()) {
+			List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDao.getPerturbationByTrain(train);
+			for ( fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation perturbation : listePerturbations) {
+		    perturbationDao.deletePerturbation(perturbation);
+		}
+	 }
 		em.remove(train);
 	}
 

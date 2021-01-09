@@ -30,7 +30,7 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 class TestPassagerDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator.from(PassagerDAO.class, TestPersistenceProducer.class, TrainDAO.class,
-			HeureDePassageDAO.class, ArretDAO.class).activate(RequestScoped.class).build();
+			HeureDePassageDAO.class, ArretDAO.class, PerturbationDAO.class).activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;

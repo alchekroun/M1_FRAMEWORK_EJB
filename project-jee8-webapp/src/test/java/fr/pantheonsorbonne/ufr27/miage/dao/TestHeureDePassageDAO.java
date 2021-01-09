@@ -157,7 +157,13 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testRetarderHdp() {
-		//fail("todo");
+		LocalDateTime heureDepart = heureDePassage1.getReelDepartTemps();
+		LocalDateTime heureArrivee = heureDePassage1.getReelArriveeTemps();
+		dao.retarderHdp(heureDePassage1, 10);
+		HeureDePassage hdp=dao.getHdpFromTrainIdAndArretId(train1.getId(), arretArrivee.getId());
+		assertEquals(heureDepart.plusMinutes(10), hdp.getReelDepartTemps());
+		assertEquals(heureArrivee.plusMinutes(10),hdp.getReelArriveeTemps());
+		
 	}
 
 }
