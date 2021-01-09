@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
@@ -31,8 +32,10 @@ import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
+import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.resource.ArretEndPoint;
 import fr.pantheonsorbonne.ufr27.miage.resource.PassagerEndPoint;
@@ -49,7 +52,7 @@ class TestTrainService {
 			.from(ArretMapper.class, PassagerMapper.class, PassagerService.class, PassagerServiceImpl.class,
 					PassagerEndPoint.class, TrainService.class, TrainEndPoint.class, TrainServiceImpl.class,
 					ArretService.class, ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,
-					HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
+					HeureDePassageDAO.class, PassagerDAO.class, PerturbationDAO.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -72,11 +75,15 @@ class TestTrainService {
 
 	@Inject
 	HeureDePassageDAO hdpDao;
+	
+	@Inject
+	PerturbationDAO pertuDao;
 
 	Train train1;
 	Arret arret1;
 	Arret arretDirection;
 	int idArretDirection;
+	
 
 	static ObjectFactory factory;
 
@@ -340,8 +347,48 @@ class TestTrainService {
 	}
 
 	@Test
-	void testCreatePertubation() {
-		fail("not implementated yet");
+	void testCreatePertubation() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
+		
+		int idTrain = trainService.createTrain(train1);
+		int idArret = arretService.createArret(arret1);
+		arret1.setId(idArret);
+		train1.setId(idTrain);
+		LocalDateTime dt1 =LocalDateTime.now();
+		LocalDateTime dt2 =LocalDateTime.now().plusMinutes(10);
+		String passage = dt1.toString() + " " + dt2.toString();
+		trainService.addArret(train1.getId(), arret1.getId(), passage, true, false);
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
+				arret1.getId());
+		assertEquals(dt1,hdp1.getBaseDepartTemps());
+		assertEquals(dt2,hdp1.getBaseArriveeTemps());
+		assertEquals(dt1,hdp1.getReelDepartTemps());
+		assertEquals(dt2,hdp1.getReelArriveeTemps());
+		assertEquals(hdp1.getTrain().getId(), train1.getId());
+		
+		Perturbation perturbation1 = new Perturbation();
+		assertNull(pertuDao.getPerturbationFromId(1));
+		
+		perturbation1.setId(1);
+		perturbation1.setMotif("chevreuil");
+		perturbation1.setTrain(train1);
+		perturbation1.setDureeEnPlus(10);
+		trainService.createPerturbation(perturbation1);
+		
+		assertEquals(1,pertuDao.getPerturbationFromId(1).getId());
+		assertEquals("chevreuil",pertuDao.getPerturbationFromId(1).getMotif());
+		assertEquals(10, pertuDao.getPerturbationFromId(1).getDureeEnPlus());
+		assertEquals(idTrain, pertuDao.getPerturbationFromId(1).getTrain().getId());
+		
+		assertEquals(dt1,hdp1.getBaseDepartTemps());
+		assertEquals(dt2,hdp1.getBaseArriveeTemps());
+		assertEquals(dt1.plusMinutes(10), hdp1.getReelDepartTemps());
+		assertEquals(dt2.plusMinutes(10), hdp1.getReelArriveeTemps());
+		assertEquals(hdp1.getTrain().getId(), train1.getId());
+		
+		arretService.deleteArret(idArret);
+		trainService.deleteTrain(idTrain);
+		
+		
 	}
 
 }
