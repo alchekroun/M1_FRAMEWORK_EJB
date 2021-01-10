@@ -66,7 +66,7 @@ class TestPerturbationDAO {
 	void setUp() throws Exception {
 		em.getTransaction().begin();
 
-		train1 = new TrainAvecResa(); // TrainAvecResa
+		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
 		train1.setDirectionType("forward");
 		train1.setStatut("enmarche");

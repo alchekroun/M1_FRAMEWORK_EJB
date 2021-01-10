@@ -57,7 +57,11 @@ public class PerturbationDAO {
 	public List<Perturbation> getAllPerturbation() {
 		return em.createNamedQuery("getAllPerturbation").getResultList();
 	}
-
+	
+	public List<Perturbation> getPerturbationByTrain(Train t){
+		return em.createNamedQuery("getPerturbationByTrain").setParameter("idTrain", t.getId()).getResultList();
+	}
+	
 	public void deletePerturbation(Perturbation perturbation) {
 		em.remove(perturbation);
 	}
