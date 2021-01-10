@@ -245,7 +245,9 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
-	protected void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
+
+	@Override
+	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		for (Passager p : listPassager) {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
 					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
@@ -255,7 +257,9 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
-	protected void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
+	
+	@Override
+	public void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		for (Passager p : listPassager) {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
 					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
@@ -265,7 +269,8 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
-	protected HeureDePassage verifIfExistArretNow(int trainId) {
+	@Override
+	public HeureDePassage verifIfExistArretNow(int trainId) {
 		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
 	}
 

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
@@ -28,7 +29,7 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 class TestTrainMapper {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(Passager.class,Train.class,TrainDAO.class,HeureDePassageDAO.class, TrainMapper.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator.from(Passager.class,Train.class,TrainDAO.class,PerturbationDAO.class,HeureDePassageDAO.class, TrainMapper.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
