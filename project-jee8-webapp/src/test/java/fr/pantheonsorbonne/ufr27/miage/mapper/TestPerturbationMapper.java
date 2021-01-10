@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
@@ -39,7 +40,7 @@ class TestPerturbationMapper {
 	void setUp() throws Exception {
 		em.getTransaction().begin();
 
-		trainJPA = new Train(); // A changer
+		trainJPA = new TrainAvecResa();
 		trainJPA.setNom("Nom");
 		trainJPA.setDirectionType("forward");
 		trainJPA.setReseau("SNCF");

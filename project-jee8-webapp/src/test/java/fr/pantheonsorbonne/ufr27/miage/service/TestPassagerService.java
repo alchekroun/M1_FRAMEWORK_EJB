@@ -2,11 +2,9 @@ package fr.pantheonsorbonne.ufr27.miage.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -27,10 +25,8 @@ import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
-import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
-import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchPassagerException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
@@ -137,66 +133,123 @@ class TestPassagerService {
 	}
 
 	@Test
-	void testCreatePassager() throws CantCreateException, NoSuchPassagerException {
-		int idPassager = passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
-		passagerService.deletePassager(idPassager);
+	void testCreatePassager() {
+		try {
+			int idPassager = passagerService.createPassager(passager1);
+			assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
+			passagerService.deletePassager(idPassager);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	void testGetPassagerFromId() throws CantCreateException, NoSuchPassagerException {
-		int idPassager = passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
-		passagerService.deletePassager(idPassager);
+		try {
+			int idPassager = passagerService.createPassager(passager1);
+			assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
+			passagerService.deletePassager(idPassager);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	void testGetAllPassager() throws EmptyListException, CantCreateException, NoSuchPassagerException {
-		List<Passager> listP = passagerService.getAllPassager();
-		assertEquals(listP.size(), 0);
-		assertTrue(listP.isEmpty());
-		int idPassager = passagerService.createPassager(passager1);
-		listP = passagerService.getAllPassager();
-		assertEquals(listP.size(), 1);
-		assertEquals(listP.get(0).getNom(), passager1.getNom());
-		passagerService.deletePassager(idPassager);
+	void testGetAllPassager() {
+		try {
+			List<Passager> listP = passagerService.getAllPassager();
+			assertEquals(listP.size(), 0);
+			assertTrue(listP.isEmpty());
+			int idPassager = passagerService.createPassager(passager1);
+			listP = passagerService.getAllPassager();
+			assertEquals(listP.size(), 1);
+			assertEquals(listP.get(0).getNom(), passager1.getNom());
+			passagerService.deletePassager(idPassager);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (EmptyListException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Test
-	void testDeletePassager() throws CantCreateException, NoSuchPassagerException {
-		int idPassager = passagerService.createPassager(passager1);
-		assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
-		passagerService.deletePassager(idPassager);
-		assertNull(dao.getPassagerFromId(idPassager));
+	void testDeletePassager() {
+		try {
+			int idPassager = passagerService.createPassager(passager1);
+			assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
+			passagerService.deletePassager(idPassager);
+			assertNull(dao.getPassagerFromId(idPassager));
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	void testGetAllPassagerByTrain() throws NoSuchTrainException, CantCreateException, NoSuchPassagerException {
-		List<Passager> listPassager = passagerService.getAllPassagerByTrain(train1.getId());
-		assertEquals(listPassager.size(), 0);
-		assertTrue(listPassager.isEmpty());
-		int idPassager = passagerService.createPassager(passager1);
-		em.getTransaction().begin();
-		trainDao.addPassager(trainDao.getTrainFromId(idTrain), dao.getPassagerFromId(idPassager));
-		em.getTransaction().commit();
-		listPassager = passagerService.getAllPassagerByTrain(idTrain);
-		assertEquals(listPassager.size(), 1);
-		assertEquals(listPassager.get(0).getNom(), "David Serruya");
-		passagerService.deletePassager(idPassager);
+	void testGetAllPassagerByTrain() {
+		try {
+			List<Passager> listPassager = passagerService.getAllPassagerByTrain(train1.getId());
+			assertEquals(listPassager.size(), 0);
+			assertTrue(listPassager.isEmpty());
+			int idPassager = passagerService.createPassager(passager1);
+			em.getTransaction().begin();
+			trainDao.addPassager(trainDao.getTrainFromId(idTrain), dao.getPassagerFromId(idPassager));
+			em.getTransaction().commit();
+			listPassager = passagerService.getAllPassagerByTrain(idTrain);
+			assertEquals(listPassager.size(), 1);
+			assertEquals(listPassager.get(0).getNom(), "David Serruya");
+			passagerService.deletePassager(idPassager);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchTrainException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
-	void testUpdatePassager() throws CantCreateException, NoSuchPassagerException, CantUpdateException {
-		int idPassager = passagerService.createPassager(passager1);
-		passager1.setId(idPassager);
-		assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
-		passager1.setNom("Alexandre Chekroun");
-		assertNotEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
-		passagerService.updatePassager(passager1);
-		assertEquals("Alexandre Chekroun", passagerService.getPassagerFromId(idPassager).getNom());
-		assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
-		passagerService.deletePassager(idPassager);
+	void testUpdatePassager() {
+		try {
+			int idPassager = passagerService.createPassager(passager1);
+			passager1.setId(idPassager);
+			assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+			passager1.setNom("Alexandre Chekroun");
+			assertNotEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+			passagerService.updatePassager(passager1);
+			assertEquals("Alexandre Chekroun", passagerService.getPassagerFromId(idPassager).getNom());
+			assertEquals(passager1.getNom(), passagerService.getPassagerFromId(idPassager).getNom());
+			passagerService.deletePassager(idPassager);
+		} catch (CantCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchPassagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CantUpdateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

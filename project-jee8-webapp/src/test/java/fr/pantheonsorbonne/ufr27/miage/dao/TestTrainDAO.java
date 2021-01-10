@@ -21,20 +21,30 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
+import fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
 public class TestTrainDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
-			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class).activate(RequestScoped.class).build();
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class, PerturbationDAO.class).activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
 
 	@Inject
 	TrainDAO dao;
-
+	
+	@Inject
+	PassagerDAO passagerDao;
+	
+	@Inject
+	HeureDePassageDAO hpdDao;
+	
+	@Inject
+	PerturbationDAO perturbationDao;
+	
 	Train train1;
 	Arret arret1;
 	Arret arretDirection;
@@ -235,6 +245,17 @@ public class TestTrainDAO {
 		for (HeureDePassage hdp : arret1.getListeHeureDePassage()) {
 			assertFalse(hdp.getTrain().equals(train1));
 		}
+		for (Passager passager : passagerDao.getAllPassager()) {
+			assertEquals(passager.getTrain(),train1);
+		}
+		for (Passager passager : passagerDao.getAllPassager()) {
+			assertEquals(passager.getTrain(),train1);
+		}
+		
+		for (Perturbation perturbation : perturbationDao.getAllPerturbation()) {
+			assertEquals(perturbation.getTrain(),train1);
+		}
+		
 	}
 
 }

@@ -10,7 +10,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p") })
+@NamedQueries({ @NamedQuery(name = "getAllPerturbation", query = "SELECT p FROM Perturbation p"),
+	@NamedQuery(name = "getPerturbationByTrain", query = "SELECT p FROM Perturbation p WHERE p.train.id =:idTrain")})
 public class Perturbation {
 
 	@Id

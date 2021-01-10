@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
+import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
@@ -30,7 +31,7 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 public class TestArretDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
-			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class).activate(RequestScoped.class).build();
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class,PerturbationDAO.class).activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
@@ -123,6 +124,9 @@ public class TestArretDAO {
 		}
 		em.getTransaction().commit();
 		assertNull(dao.getArretFromId(arret1.getId()));
+		for (HeureDePassage hdp : train1.getListeHeureDePassage()) {
+			assertFalse(hdp.getArret().equals(arret1));
+		}
 	}
 
 	@Test

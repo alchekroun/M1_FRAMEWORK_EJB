@@ -137,7 +137,7 @@ public class TrainEndPoint {
 	public Response changeParamaterDesservi(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
 			@PathParam("newDesservi") String newDesservi) {
 		try {
-			service.changeParamaterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
+			service.changeParameterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
 			return Response.status(200, "desservi parameter changed").build();
 		} catch (NoSuchTrainException e) {
 			throw new WebApplicationException("No such train", 404);
