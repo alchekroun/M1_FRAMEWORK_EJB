@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 
 public class TrainDAO {
 
@@ -94,11 +93,4 @@ public class TrainDAO {
 
 	}
 
-//	public void addNewDirection(Train train, int arretId) {
-//		train.setDirection()
-//	}
-//	
-//	public findTrainByArret(Train train, int arretId) {
-//		train.getListeHeureDePassage
-//	}
 }

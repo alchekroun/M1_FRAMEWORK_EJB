@@ -241,7 +241,7 @@ public class TestTrainDAO {
 		dao.deleteTrain(train1);
 		em.getTransaction().commit();
 		assertNull(dao.getTrainFromId(train1.getId()));
-		//assertFalse(passager1.getTrain().equals(train1));
+		// assertFalse(passager1.getTrain().equals(train1));
 		for (HeureDePassage hdp : arret1.getListeHeureDePassage()) {
 			assertFalse(hdp.getTrain().equals(train1));
 		}

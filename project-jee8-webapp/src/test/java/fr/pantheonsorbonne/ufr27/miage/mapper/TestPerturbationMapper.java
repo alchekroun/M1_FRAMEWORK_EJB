@@ -66,6 +66,7 @@ class TestPerturbationMapper {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		listPerturbation.clear();
 		em.getTransaction().begin();
 		em.remove(perturbationJPA1);
 		em.remove(perturbationJPA2);

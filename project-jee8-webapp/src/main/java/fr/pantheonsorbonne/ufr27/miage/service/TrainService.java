@@ -36,4 +36,6 @@ public interface TrainService {
 			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException;
 
 	public void createPerturbation(Perturbation perturbation) throws NoSuchTrainException;
+
+	public void enMarche(Train train) throws NoSuchTrainException, NoSuchArretException;
 }

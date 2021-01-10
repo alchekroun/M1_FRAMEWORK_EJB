@@ -133,4 +133,9 @@ public class HeureDePassageDAO {
 		return em.find(Train.class, train.getId()).getListeHeureDePassage().stream()
 				.filter(hdp -> hdp.getArret().equals(arret)).findFirst().orElseThrow(null);
 	}
+
+	public HeureDePassage getHdpByTrainAndDateNow(int trainId) {
+		return (HeureDePassage) em.createNamedQuery("findHeureByDateNowAndTrain")
+				.setParameter("temps", LocalDateTime.now()).setParameter("trainId", trainId).getSingleResult();
+	}
 }

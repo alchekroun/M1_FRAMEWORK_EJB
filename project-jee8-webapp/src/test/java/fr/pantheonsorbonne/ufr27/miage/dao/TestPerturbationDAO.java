@@ -119,13 +119,18 @@ class TestPerturbationDAO {
 		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
 		perturbationTmp.setDureeEnPlus(10);
 
-		perturbation1 = dao.createPerturbation(perturbationTmp);
+		Perturbation perturbation2 = dao.createPerturbation(perturbationTmp);
 		em.getTransaction().commit();
 
-		Perturbation p = em.find(Perturbation.class, perturbation1.getId());
+		Perturbation p = em.find(Perturbation.class, perturbation2.getId());
 		assertEquals(p.getMotif(), perturbationTmp.getMotif());
 		assertEquals(p.getTrain().getId(), perturbationTmp.getTrain().getId());
 		assertEquals(p.getDureeEnPlus(), perturbationTmp.getDureeEnPlus());
+		
+		em.getTransaction().begin();
+		dao.deletePerturbation(p);
+		perturbationTmp=null;
+		em.getTransaction().commit();
 	}
 
 	@Test
@@ -156,7 +161,26 @@ class TestPerturbationDAO {
 
 	@Test
 	void testDeletePerturbation() {
-		fail("Not yet implemented");
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
+		perturbationTmp.setMotif("chevreuil");
+		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
+		perturbationTmp.setDureeEnPlus(10);
+
+		Perturbation perturbation2 = dao.createPerturbation(perturbationTmp);
+		em.getTransaction().commit();
+		Perturbation p = dao.getPerturbationFromId(perturbation2.getId());
+		assertEquals(p.getMotif(), perturbationTmp.getMotif());
+		assertEquals(p.getTrain().getId(), perturbationTmp.getTrain().getId());
+		assertEquals(p.getDureeEnPlus(), perturbationTmp.getDureeEnPlus());
+		
+		em.getTransaction().begin();
+		dao.deletePerturbation(p);
+		perturbationTmp=null;
+		em.getTransaction().commit();
+		p = dao.getPerturbationFromId(perturbation2.getId());
+		assertNull(p);
+		
 	}
 
 	@Test
