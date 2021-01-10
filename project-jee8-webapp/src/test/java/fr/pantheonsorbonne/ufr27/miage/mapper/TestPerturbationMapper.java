@@ -40,7 +40,7 @@ class TestPerturbationMapper {
 	void setUp() throws Exception {
 		em.getTransaction().begin();
 
-		trainJPA = new TrainAvecResa(); // A changer
+		trainJPA = new TrainAvecResa();
 		trainJPA.setNom("Nom");
 		trainJPA.setDirectionType("forward");
 		trainJPA.setReseau("SNCF");
