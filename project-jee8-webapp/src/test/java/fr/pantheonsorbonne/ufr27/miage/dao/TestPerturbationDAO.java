@@ -83,6 +83,8 @@ class TestPerturbationDAO {
 		arret2 = new Arret();
 		arret2.setNom("Bordeaux");
 		em.persist(arret2);
+		em.getTransaction().commit();
+		em.getTransaction().begin();
 
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
 
@@ -92,8 +94,8 @@ class TestPerturbationDAO {
 		perturbationTmp.setDureeEnPlus(10);
 
 		perturbation1 = dao.createPerturbation(perturbationTmp);
-
 		em.getTransaction().commit();
+		
 
 	}
 
