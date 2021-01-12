@@ -251,7 +251,7 @@ public class TrainServiceImpl implements TrainService {
 		for (Passager p : listPassager) {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
 					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
-			if (!train.getListePassagers().contains(pJPA)) {
+			if (train.getListePassagers().contains(pJPA)) {
 				dao.removePassager(train, pJPA);
 			}
 		}

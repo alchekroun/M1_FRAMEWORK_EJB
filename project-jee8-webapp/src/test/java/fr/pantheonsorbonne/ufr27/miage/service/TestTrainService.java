@@ -96,6 +96,8 @@ class TestTrainService {
 	int idPassager1;
 	int idPassager2;
 	
+	List<Passager> listePassagers;
+	
 
 	static ObjectFactory factory;
 
@@ -114,6 +116,8 @@ class TestTrainService {
 	@BeforeEach
 	void setUp() throws Exception {
 		System.out.println("\n== SetUp");
+		
+		listePassagers = new ArrayList<Passager>();
 
 		arret1 = factory.createArret();
 		arret1.setNom("Bordeaux");
@@ -133,8 +137,16 @@ class TestTrainService {
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
 
+		passager1 = factory.createPassager();
+		passager1.setNom("Hanna");
+		passager1.setArrive(arret1);
+		passager1.setDepart(arretDirection);
 		
-
+		passager2 = factory.createPassager();
+		passager2.setNom("David");
+		passager2.setArrive(arret1);
+		passager2.setDepart(arretDirection);
+		
 	}
 
 	@AfterEach
@@ -416,25 +428,40 @@ class TestTrainService {
 	}
 
 	@Test
-	public void testDescendreListPassager() {
+	public void testDescendreListPassager() throws CantCreateException, NoSuchPassagerException, NoSuchTrainException {
 		// TODO
-		fail("todo");
+		
+		idPassager1=passagerService.createPassager(passager1);
+		idPassager2=passagerService.createPassager(passager2);
+		int idTrain = trainService.createTrain(train1);
+		
+		train1.setId(idTrain);
+		
+		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),0 );
+		
+		List<Passager> passagers = new ArrayList();
+		passagers.add(passager1);
+		passagers.add(passager2);
+		
+		passagerDao.getAllPassagerByTrain(idTrain).add(passagerDao.getPassagerFromId(idPassager1));
+	
+		trainService.descendreListPassager(passagers, dao.getTrainFromId(idTrain));
+		
+		assertEquals(passagers.size(),1);
+		assertEquals(passagers.get(0),passager2);
+		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).get(0).getId(),idPassager2 );
+		
+		passagerService.deletePassager(idPassager1);
+		passagerService.deletePassager(idPassager2);
+		trainService.deleteTrain(idTrain);
 
 	}
 
 	@Test
 	public void testMonterListPassager() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException, NoSuchPassagerException {
 		
-		passager1 = factory.createPassager();
-		passager1.setNom("David Serruya");
-		passager1.setArrive(arret1);
-		passager1.setDepart(arretDirection);
+	
 		idPassager1=passagerService.createPassager(passager1);
-		
-		passager2 = factory.createPassager();
-		passager2.setNom("David Serruya");
-		passager2.setArrive(arret1);
-		passager2.setDepart(arretDirection);
 		idPassager2=passagerService.createPassager(passager2);
 		int idTrain = trainService.createTrain(train1);
 		
@@ -443,6 +470,7 @@ class TestTrainService {
 		List<Passager> passagers = new ArrayList();
 		passagers.add(passager1);
 		passagers.add(passager2);
+		
 		
 		trainService.monterListPassager(passagers, dao.getTrainFromId(train1.getId()));
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(),2 );
