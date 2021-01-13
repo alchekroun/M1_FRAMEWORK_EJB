@@ -228,6 +228,7 @@ public class TestTrainDAO {
 		dao.removePassager(train1, passager1);
 		assertTrue(train1.getListePassagers().isEmpty());
 		assertNull(passager1.getTrain());
+		
 	}
 
 	// Vérifier bcp plus de chsoe sur la méthode :

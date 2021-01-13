@@ -429,27 +429,36 @@ class TestTrainService {
 
 	@Test
 	public void testDescendreListPassager() throws CantCreateException, NoSuchPassagerException, NoSuchTrainException {
-		// TODO
 		
 		idPassager1=passagerService.createPassager(passager1);
 		idPassager2=passagerService.createPassager(passager2);
 		int idTrain = trainService.createTrain(train1);
 		
 		train1.setId(idTrain);
+		passager1.setId(idPassager1);
+		passager2.setId(idPassager2);
 		
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),0 );
 		
 		List<Passager> passagers = new ArrayList();
 		passagers.add(passager1);
 		passagers.add(passager2);
+
+		em.getTransaction().begin();
+		dao.addPassager(dao.getTrainFromId(idTrain), passagerDao.getPassagerFromId(idPassager1));
+		dao.addPassager(dao.getTrainFromId(idTrain), passagerDao.getPassagerFromId(idPassager2));
+		em.getTransaction().commit();
 		
-		passagerDao.getAllPassagerByTrain(idTrain).add(passagerDao.getPassagerFromId(idPassager1));
-	
-		trainService.descendreListPassager(passagers, dao.getTrainFromId(idTrain));
+		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(),2 );
+		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),2 );
+
 		
-		assertEquals(passagers.size(),1);
-		assertEquals(passagers.get(0),passager2);
-		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).get(0).getId(),idPassager2 );
+		em.getTransaction().begin();
+		trainService.descendreListPassager(passagers,dao.getTrainFromId(idTrain) );
+		em.getTransaction().commit();
+		
+		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),0 );
+		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(),0 );
 		
 		passagerService.deletePassager(idPassager1);
 		passagerService.deletePassager(idPassager2);
@@ -460,26 +469,34 @@ class TestTrainService {
 	@Test
 	public void testMonterListPassager() throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException, NoSuchPassagerException {
 		
-	
 		idPassager1=passagerService.createPassager(passager1);
 		idPassager2=passagerService.createPassager(passager2);
 		int idTrain = trainService.createTrain(train1);
 		
 		train1.setId(idTrain);
+		passager1.setId(idPassager1);
+		passager2.setId(idPassager2);
+		
+		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),0 );
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(),0 );
+		
 		List<Passager> passagers = new ArrayList();
 		passagers.add(passager1);
 		passagers.add(passager2);
+
+		em.getTransaction().begin();
+		trainService.monterListPassager(passagers, dao.getTrainFromId(idTrain));
+		em.getTransaction().commit();
 		
-		
-		trainService.monterListPassager(passagers, dao.getTrainFromId(train1.getId()));
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(),2 );
-		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).get(0).getId(),idPassager1 );
-		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).get(1).getId(),idPassager2 );
+		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(),2 );
+
 		
 		passagerService.deletePassager(idPassager1);
 		passagerService.deletePassager(idPassager2);
 		trainService.deleteTrain(idTrain);
+	
+		
 
 	}
 

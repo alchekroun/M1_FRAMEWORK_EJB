@@ -80,6 +80,7 @@ public class TrainDAO {
 
 	public void removePassager(Train train, Passager p) {
 		p.setTrain(null);
+		em.merge(p);
 		train.removePassager(p);
 	}
 
