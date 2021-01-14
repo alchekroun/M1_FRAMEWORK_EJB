@@ -17,11 +17,9 @@ import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
-import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
@@ -110,10 +108,12 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		/*List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDAO.getPerturbationByTrain(train);
-		for(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation pertu : listePerturbations) {
-			perturbationDAO.deletePerturbation(pertu);
-		}*/
+		/*
+		 * List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations =
+		 * perturbationDAO.getPerturbationByTrain(train);
+		 * for(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation pertu :
+		 * listePerturbations) { perturbationDAO.deletePerturbation(pertu); }
+		 */
 		dao.deleteTrain(train);
 
 		em.getTransaction().commit();
@@ -232,19 +232,24 @@ public class TrainServiceImpl implements TrainService {
 
 				if (!hdpActuel.isTerminus()) {
 					// Fait monter les gens qui attendent sur le quai
+
+					// TODO Rajouter une fonction qui vérifie que les gens qui montent dans le train
+					// ont bien leur arret qui soit desservi par ce même train
+
 					monterListPassager(PassagerMapper.passagerAllDTOMapper(
 							passagerDAO.getAllPassagerByDepart(hdpActuel.getArret().getId())), trainJPA);
 
 				} else {
-					// arreter le thread
+					// interupt le thread car nous sommes arriver au terminus
 				}
+			} else {
+				// Le train n'a plus d'arrêt à desservir. Il faut interupt le thread.
 			}
 		} else {
 			// Le train n'a aucun arrêt à desservir
 			throw new NoSuchArretException();
 		}
 	}
-
 
 	@Override
 	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
@@ -257,7 +262,6 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
-	
 	@Override
 	public void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		for (Passager p : listPassager) {
