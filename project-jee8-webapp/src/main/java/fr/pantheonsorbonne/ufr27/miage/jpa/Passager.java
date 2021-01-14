@@ -26,6 +26,8 @@ public class Passager {
 	protected Arret depart;
 	@ManyToOne
 	protected Arret arrive;
+	@ManyToOne
+	protected Arret correspondance;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "train_id")
@@ -59,6 +61,14 @@ public class Passager {
 
 	public Arret getArrive() {
 		return arrive;
+	}
+	
+	public Arret getCorrespondance() {
+		return correspondance;
+	}
+	
+	public void setCorrespondance(Arret correspondance) {
+		this.correspondance=correspondance;
 	}
 
 	public void setArrive(Arret arrive) {

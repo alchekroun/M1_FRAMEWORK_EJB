@@ -138,4 +138,21 @@ public class HeureDePassageDAO {
 		return (HeureDePassage) em.createNamedQuery("findHeureByDateNowAndTrain")
 				.setParameter("temps", LocalDateTime.now()).setParameter("trainId", trainId).getSingleResult();
 	}
+	
+	//voir si liste ou non selon si on détruit les hdp déjà parcouru
+	public List<HeureDePassage> getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(int trainId, int arretId, LocalDateTime date1, LocalDateTime date2) {
+		return em.createNamedQuery("findHeureTrainIdAndArretIdAndBetweenDate1AndDate2")
+				.setParameter("trainId", trainId).setParameter("arretId", arretId).setParameter("date1", date1).setParameter("date2", date2).getResultList();
+	}
+	
+	public List<HeureDePassage> findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(int trainId, int arretId, LocalDateTime date){
+		return em.createNamedQuery("findHeureByDateNowAndTrainIdAndArretIdAndSorted")
+				.setParameter("trainId", trainId).setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+	}
+	
+	public List<HeureDePassage> findHdpByTrainAfterDateAndSorted(int trainId, LocalDateTime date){
+		return em.createNamedQuery("findHdpByTrainAfterDateAndSorted")
+				.setParameter("trainId", trainId).setParameter("temps", date).getResultList();
+	}
+	
 }

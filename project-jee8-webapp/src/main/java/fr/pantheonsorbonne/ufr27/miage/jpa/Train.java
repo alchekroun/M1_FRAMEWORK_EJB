@@ -18,7 +18,8 @@ import javax.persistence.OneToMany;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
 		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId"),
-		@NamedQuery(name = "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp") })
+		@NamedQuery(name = "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp"),
+		@NamedQuery(name = "findTrainByArretAndDepartAfterDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps")})
 
 public abstract class Train {
 
