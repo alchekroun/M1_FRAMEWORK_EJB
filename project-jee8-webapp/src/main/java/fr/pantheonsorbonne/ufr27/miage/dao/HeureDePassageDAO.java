@@ -146,7 +146,7 @@ public class HeureDePassageDAO {
 	}
 	
 	public List<HeureDePassage> findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(int trainId, int arretId, LocalDateTime date){
-		return em.createNamedQuery("findHeureByDateNowAndTrainIdAndArretIdAndSorted")
+		return em.createNamedQuery("findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted")
 				.setParameter("trainId", trainId).setParameter("arretId", arretId).setParameter("temps", date).getResultList();
 	}
 	
@@ -154,5 +154,11 @@ public class HeureDePassageDAO {
 		return em.createNamedQuery("findHdpByTrainAfterDateAndSorted")
 				.setParameter("trainId", trainId).setParameter("temps", date).getResultList();
 	}
+	
+	//retourne une liste des hdp des trains partant de arretId au plus tôt juste après une date
+//	public List<HeureDePassage> findHeureMoreRecentByArretIdAfterDate(int arretId, LocalDateTime date){
+//		return em.createNamedQuery("findHeureMoreRecentByArretIdAfterDate")
+//				.setParameter("arretId", arretId).setParameter("temps",date).getResultList();
+//	}
 	
 }

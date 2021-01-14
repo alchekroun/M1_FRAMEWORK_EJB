@@ -357,13 +357,13 @@ class TestPassagerDAO {
 	void testFindTrajet(){
 
 		
-//		Train trainAttribue =  dao.findTrajet(passager1.getId());
-//		assertEquals(train1.getId(),trainAttribue.getId());
+		Train trainAttribue =  dao.findTrajet(passager1.getId());
+		assertEquals(train1.getId(),trainAttribue.getId());
 //		
 		// prend le train1 Bordeaux - Paris pour ensuite prendre train2 Paris-Tours-Lille
-		Train trainCorrespondance= dao.findTrajet(passager2.getId());
-		assertEquals(train1.getId(),trainCorrespondance.getId());
-		
+//		Train trainCorrespondance= dao.findTrajet(passager2.getId());
+//		assertEquals(train1.getId(),trainCorrespondance.getId());
+//		
 		
 	}
 

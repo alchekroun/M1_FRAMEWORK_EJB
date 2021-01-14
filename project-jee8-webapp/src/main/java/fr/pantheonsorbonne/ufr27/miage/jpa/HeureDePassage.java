@@ -19,6 +19,9 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "findHdpByTrainAfterDateAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps > :temps ORDER BY h.reelArriveeTemps"),
 		@NamedQuery(name = "findHeureTrainIdAndArretIdAndBetweenDate1AndDate2", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelArriveeTemps > :date1 AND h.reelArriveeTemps < :date2"),
 		@NamedQuery(name = "findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelDepartTemps > :temps ORDER BY h.reelDepartTemps")})
+		//@NamedQuery(name = "findHeureMoreRecentByArretIdAfterDate", query = "SELECT t1.hdpPlusRecente FROM (SELECT h.train.id, MIN(h.reelDepartTemps) as hdpPlusRecente FROM HeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps GROUP BY h.train.id) t1")
+
+
 public class HeureDePassage {
 
 	@EmbeddedId

@@ -142,6 +142,7 @@ public class PassagerDAO {
 		//List<Train> listeTrainEtatChemin;
 		List<Train> listeTrainByArretDepartPassager;
 		List<HeureDePassage> listeHdpAfterDepartByTrain;
+		List<HeureDePassage> listeHdpAfterDepartArretEnCoursByTrain;
 		//List<Train> listeTrainDirectPossible;
 		//List<Train> listeTrainPossible;
 		
@@ -165,6 +166,17 @@ public class PassagerDAO {
 				return et1.getActuel().getReelArriveeTemps().compareTo(et2.getActuel().getReelArriveeTemps());
 			}
 		});
+		
+		TreeSet<Etat> listeEtatCalculCorrespondance = new TreeSet<>(new Comparator<Etat>() {
+			@Override
+			public int compare(Etat et1, Etat et2) {
+				if(et1== null || et2 == null) {
+					return 0;
+				}
+				return et1.getActuel().getReelArriveeTemps().compareTo(et2.getActuel().getReelArriveeTemps());
+			}
+		});
+		
 		
 		TreeSet<Etat> listeEtatsFinaux = new TreeSet<>(new Comparator<Etat>() {
 			@Override
@@ -223,11 +235,47 @@ public class PassagerDAO {
 				}
 			}*/
 			HeureDePassage hdpSuivante=null;
+			boolean dernierArret = false;
 			if(!listeHdpAfterDepartByTrain.isEmpty()) {
 				hdpSuivante = listeHdpAfterDepartByTrain.get(0);
-				listeEtatPossible.add(new Etat(depart.getActuel(),hdpSuivante, depart));
-				if(hdpSuivante.getArret().getId() == p.getArrive().getId()) {
-					listeEtatDirectPossible.add(new Etat(depart.getActuel(),hdpSuivante, depart));
+				//if(hdpSuivante.getArret() != p.getDepart()) {
+						listeEtatPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
+						//on ajoute à la liste des calculs pour les correspondances pour la suite de l'algo si pas de chemin direct trouve
+						listeEtatCalculCorrespondance.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
+						if(hdpSuivante.getArret().getId() == p.getArrive().getId()) {
+							listeEtatDirectPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
+							dernierArret=true;
+						}
+				//}
+			}
+			
+			boolean tousLesCheminsParcourus=false;
+			//int tailleListePrecedente=listeEtatPossible.size();
+			while(((!listeEtatPossible.isEmpty()) && (!tousLesCheminsParcourus)) && (!dernierArret)) {
+				//tailleListePrecedente=listeEtatPossible.size();
+				Etat etatEnCours = listeEtatPossible.pollFirst();
+				//on veut recup la liste des hdp du train partant de l'arret et on garde la plus recente par rapport à l'heure d'arrivee
+				/*List<HeureDePassage> listHdpDepartArretEnCours = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
+				HeureDePassage hdpDepartArretEnCours = null;
+				if(!listHdpDepartArretEnCours.isEmpty()) {
+					hdpDepartArretEnCours = listHdpDepartArretEnCours.get(0);
+				}
+				*/
+				//récup les hdp des arrets parcouru par le train juste après le départ de l'arrêt en cours
+				listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelArriveeTemps());
+				HeureDePassage hdpSuivanteFromArretEnCours=null;
+				if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
+					hdpSuivanteFromArretEnCours = listeHdpAfterDepartArretEnCoursByTrain.get(0);
+					if(hdpSuivanteFromArretEnCours.getArret() != p.getDepart()) {
+						listeEtatPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours));
+						if(hdpSuivanteFromArretEnCours.getArret().getId() == p.getArrive().getId()) {
+							listeEtatDirectPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours));
+							dernierArret=true;
+						}
+					}
+				}
+				else {
+					tousLesCheminsParcourus=true;
 				}
 			}
 			// faire la boucle for ici pour developper le train en cours et tout son chemin et ne pas mélanger ses etats avec ceux des autres train qui partent du départ aussi
