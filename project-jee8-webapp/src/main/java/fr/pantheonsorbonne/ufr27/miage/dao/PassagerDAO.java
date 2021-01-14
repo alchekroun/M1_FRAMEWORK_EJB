@@ -273,6 +273,9 @@ public class PassagerDAO {
 							dernierArret=true;
 						}
 					}
+					else {
+						tousLesCheminsParcourus=true;
+					}
 				}
 				else {
 					tousLesCheminsParcourus=true;
