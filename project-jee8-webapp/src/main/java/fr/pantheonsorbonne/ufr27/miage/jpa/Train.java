@@ -1,5 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -117,6 +118,9 @@ public abstract class Train {
 	}
 
 	public void addPassager(Passager p) {
+		if (this.listePassagers==null) {
+			this.listePassagers= new ArrayList<Passager>();
+		}
 		this.listePassagers.add(p);
 	}
 

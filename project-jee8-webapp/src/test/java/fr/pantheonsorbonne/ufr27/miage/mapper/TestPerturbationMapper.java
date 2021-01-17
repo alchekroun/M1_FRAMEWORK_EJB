@@ -24,7 +24,7 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 class TestPerturbationMapper {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(PerturbationMapper.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator.from(TrainMapper.class, PerturbationMapper.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -46,7 +46,7 @@ class TestPerturbationMapper {
 		trainJPA.setReseau("SNCF");
 		trainJPA.setStatut("En marche");
 		em.persist(trainJPA);
-
+		
 		perturbationJPA1 = new Perturbation();
 		perturbationJPA1.setMotif("covid");
 		perturbationJPA1.setDureeEnPlus(10);
@@ -55,13 +55,15 @@ class TestPerturbationMapper {
 		listPerturbation.add(perturbationJPA1);
 
 		perturbationJPA2 = new Perturbation();
-		perturbationJPA1.setMotif("chevrueil");
-		perturbationJPA1.setDureeEnPlus(20);
-		perturbationJPA1.setTrain(trainJPA);
+		perturbationJPA2.setMotif("chevreuil");
+		perturbationJPA2.setDureeEnPlus(20);
+		perturbationJPA2.setTrain(trainJPA);
 		em.persist(perturbationJPA2);
 		listPerturbation.add(perturbationJPA2);
 
 		em.getTransaction().commit();
+		
+		
 	}
 
 	@AfterEach
@@ -69,7 +71,11 @@ class TestPerturbationMapper {
 		listPerturbation.clear();
 		em.getTransaction().begin();
 		em.remove(perturbationJPA1);
+		perturbationJPA1=null;
 		em.remove(perturbationJPA2);
+		perturbationJPA2=null;
+		em.remove(trainJPA);
+		trainJPA=null;
 		em.getTransaction().commit();
 	}
 

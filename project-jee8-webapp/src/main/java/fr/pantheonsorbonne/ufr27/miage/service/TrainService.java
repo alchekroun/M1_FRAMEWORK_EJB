@@ -8,6 +8,8 @@ import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
@@ -38,4 +40,10 @@ public interface TrainService {
 	public void createPerturbation(Perturbation perturbation) throws NoSuchTrainException;
 
 	public void enMarche(Train train) throws NoSuchTrainException, NoSuchArretException;
+
+	public HeureDePassage verifIfExistArretNow(int trainId);
+
+	public void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train);
+
+	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train);
 }
