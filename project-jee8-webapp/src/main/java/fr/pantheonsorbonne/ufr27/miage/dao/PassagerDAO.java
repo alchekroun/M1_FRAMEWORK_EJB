@@ -79,6 +79,10 @@ public class PassagerDAO {
 
 	}
 	
+	public List<Passager> findPassagerByCorrespondance(int arretId){
+		return em.createNamedQuery("findPassagerByCorrespondance").setParameter("arretId", arretId).getResultList();
+	}
+	
 	
 	public Train findTrajet(int passagerId) {
 		

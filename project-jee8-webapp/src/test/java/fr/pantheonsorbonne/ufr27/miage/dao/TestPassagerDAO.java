@@ -423,7 +423,7 @@ class TestPassagerDAO {
 		// prend le train1 Bordeaux - Paris - Bretagne pour ensuite prendre train4 Bretagne - Lille plutôt que Paris-Tours-Lille qui est plus long
 		Train trainCorrespondance =  dao.findTrajet(passager2.getId());
 		assertEquals(train1.getId(),trainCorrespondance.getId());
-		assertEquals(arretBretagne.getNom(),passager2.getCorrespondance().getNom());
+		assertEquals(arretBretagne.getId(),passager2.getCorrespondance().getId());
 		
 		assertEquals(train1.getId(),dao.findTrajet(passager3.getId()).getId());
 		//Correspondance a Paris pour aller a Tours
@@ -434,6 +434,28 @@ class TestPassagerDAO {
 		
 		
 		
+	}
+	
+	@Test 
+	void testFindPassagerByCorrespondance() {
+		assertTrue(dao.findPassagerByCorrespondance(arretBretagne.getId()).isEmpty());
+		assertTrue( dao.findPassagerByCorrespondance(arretArrivee.getId()).isEmpty());
+		
+		em.getTransaction().begin();
+		em.merge(dao.findTrajet(passager2.getId()));
+		em.getTransaction().commit();
+		em.getTransaction().begin();
+		dao.findTrajet(passager3.getId());
+		em.getTransaction().commit();
+		 
+		List<Passager> list1 = dao.findPassagerByCorrespondance(arretBretagne.getId());
+		List<Passager> list2 = dao.findPassagerByCorrespondance(arretArrivee.getId());
+		 
+		assertEquals(1,list1.size());
+		assertEquals(passager2.getId(),list1.get(0).getId());
+		 
+		assertEquals(1,list2.size());
+		assertEquals(passager3.getId(),list2.get(0).getId());
 	}
 
 	
