@@ -134,6 +134,7 @@
 			<xsd:element name="nom" type="xsd:string"></xsd:element>
 			<xsd:element name="depart" type="arret"></xsd:element>
 			<xsd:element name="arrive" type="arret"></xsd:element>
+			<xsd:element name="correspondance" type="arret"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 

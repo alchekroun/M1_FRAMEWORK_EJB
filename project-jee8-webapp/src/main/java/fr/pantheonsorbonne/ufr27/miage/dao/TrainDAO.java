@@ -62,6 +62,10 @@ public class TrainDAO {
 	public List<Train> findTrainByArret(int arretId) {
 		return em.createNamedQuery("findTrainByArret").setParameter("arretId", arretId).getResultList();
 	}
+	
+	public List<Train> findTrainByArretAndDepartAfterDate(int arretId, LocalDateTime date) {
+		return em.createNamedQuery("findTrainByArretAndDepartAfterDate").setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+	}
 
 	public void addArret(Train train, Arret arret, LocalDateTime departTemps, LocalDateTime arriveeTemps,
 			boolean desservi, boolean terminus) {
