@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
@@ -45,7 +46,7 @@ class TestArrretService {
 	private WeldInitiator weld = WeldInitiator
 			.from(TrainService.class, TrainServiceImpl.class, TrainEndPoint.class, ArretService.class,
 					ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,
-					HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
+					HeureDePassageDAO.class, PerturbationDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject

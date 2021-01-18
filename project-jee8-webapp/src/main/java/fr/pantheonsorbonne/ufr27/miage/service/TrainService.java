@@ -41,9 +41,5 @@ public interface TrainService {
 
 	public void enMarche(Train train) throws NoSuchTrainException, NoSuchArretException;
 
-	public HeureDePassage verifIfExistArretNow(int trainId);
-
-	public void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train);
-
-	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train);
+	
 }
