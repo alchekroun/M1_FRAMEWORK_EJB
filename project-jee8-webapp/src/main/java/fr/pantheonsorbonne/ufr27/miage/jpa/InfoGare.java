@@ -2,10 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.jpa;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -14,8 +11,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i"),
-		@NamedQuery(name = "deleteInfoGare", query = "DELETE FROM InfoGare i WHERE i.id = :id") })
+@NamedQueries({ @NamedQuery(name = "getAllInfoGare", query = "SELECT i FROM InfoGare i") })
 public class InfoGare implements Serializable {
 
 	/**
@@ -31,6 +27,8 @@ public class InfoGare implements Serializable {
 	@JoinColumn(name = "localisation_arret_id")
 	protected Arret localisation;
 
+	boolean isCreated;
+
 	public int getId() {
 		return id;
 	}
@@ -45,5 +43,13 @@ public class InfoGare implements Serializable {
 
 	public void setLocalisation(Arret localisation) {
 		this.localisation = localisation;
+	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
 	}
 }

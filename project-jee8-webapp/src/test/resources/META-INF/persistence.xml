@@ -16,6 +16,16 @@
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Payment</class>
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.BillingInfo</class>
 		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Card</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Train</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.TrainSansResa</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Arret</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Passager</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey</class>
+		<class>fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation</class>
+
 
 
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>

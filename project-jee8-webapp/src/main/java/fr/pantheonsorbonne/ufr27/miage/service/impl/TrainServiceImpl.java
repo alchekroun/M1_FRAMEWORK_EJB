@@ -1,20 +1,28 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
+import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
+import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
@@ -30,40 +38,41 @@ public class TrainServiceImpl implements TrainService {
 	@Inject
 	ArretDAO arretDAO;
 
-	private static Date getDate(LocalDateTime adate) {
+	@Inject
+	HeureDePassageDAO hdpDAO;
 
-		Date out = Date.from(adate.atZone(ZoneId.systemDefault()).toInstant());
-		return out;
-	}
+	@Inject
+	PerturbationDAO perturbationDAO;
 
+	@Inject
+	PassagerDAO passagerDAO;
+
+	// Create
 	@Override
 	public int createTrain(Train trainDTO) throws CantCreateException {
+		em.getTransaction().begin();
 		try {
-			em.getTransaction().begin();
 
-			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.Train();
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa();
 
-			train.setNomTrain(trainDTO.getNom());
-			train.setDirection(
-					em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class, trainDTO.getDirection().getId()));
+			train.setNom(trainDTO.getNom());
 			train.setDirectionType(trainDTO.getDirectionType());
-			train.setNumeroTrain(trainDTO.getNumeroTrain());
+			train.setNumero(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
-			train.setBaseDepartTemps(getDate(trainDTO.getBaseDepartTemps()));
-			train.setBaseArriveeTemps(getDate(trainDTO.getBaseArriveeTemps()));
-			train.setReelDepartTemps(getDate(trainDTO.getReelDepartTemps()));
-			train.setReelArriveeTemps(getDate(trainDTO.getReelArriveeTemps()));
 
 			em.persist(train);
+
 			em.getTransaction().commit();
 
 			return train.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
 			throw new CantCreateException();
 		}
 	}
 
+	// Read
 	@Override
 	public Train getTrainFromId(int trainId) throws NoSuchTrainException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
@@ -73,39 +82,41 @@ public class TrainServiceImpl implements TrainService {
 		return TrainMapper.trainDTOMapper(train);
 	}
 
+	// Update
+	@Override
+	public void updateTrain(Train trainUpdate) throws NoSuchTrainException, CantUpdateException {
+		em.getTransaction().begin();
+		try {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
+			if (trainOriginal == null) {
+				throw new NoSuchTrainException();
+			}
+
+			em.merge(dao.updateTrain(trainOriginal, trainUpdate));
+			em.getTransaction().commit();
+		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
+			em.getTransaction().rollback();
+			throw new CantUpdateException();
+		}
+	}
+
+	// Delete
 	@Override
 	public void deleteTrain(int trainId) throws NoSuchTrainException {
 		em.getTransaction().begin();
-
-		// Redondance pour vérifier que le train existe bien
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		dao.deleteTrain(train.getId());
+		/*
+		 * List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations =
+		 * perturbationDAO.getPerturbationByTrain(train);
+		 * for(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation pertu :
+		 * listePerturbations) { perturbationDAO.deletePerturbation(pertu); }
+		 */
+		dao.deleteTrain(train);
 
 		em.getTransaction().commit();
-	}
-
-	@Override
-	public void updateTrain(Train trainUpdate) throws NoSuchTrainException {
-		em.getTransaction().begin();
-
-		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainOriginal = dao.getTrainFromId(trainUpdate.getId());
-		if (trainOriginal == null) {
-			throw new NoSuchTrainException();
-		}
-		trainOriginal.setNomTrain(trainUpdate.getNom());
-		// trainOriginal.setDirection(trainUpdate.getDirection());
-		// trainOriginal.setDirectionType(trainUpdate.getDirectionType());
-		trainOriginal.setNumeroTrain(trainUpdate.getNumeroTrain());
-		trainOriginal.setReseau(trainUpdate.getReseau());
-		trainOriginal.setReelDepartTemps(getDate(trainUpdate.getReelDepartTemps()));
-		trainOriginal.setReelArriveeTemps(getDate(trainUpdate.getReelArriveeTemps()));
-
-		em.merge(trainOriginal);
-		em.getTransaction().commit();
-
 	}
 
 	@Override
@@ -118,21 +129,153 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void addArret(int trainId, int arretId, LocalDateTime passage)
+	public void addArret(int trainId, int arretId, String passage, boolean desservi, boolean terminus)
 			throws NoSuchTrainException, NoSuchArretException {
 		em.getTransaction().begin();
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
 		if (train == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchTrainException();
 		}
-		if (arretDAO.getArretFromId(arretId) == null) {
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
+			em.getTransaction().rollback();
 			throw new NoSuchArretException();
 		}
 
-		dao.addArret(train, arretId, passage);
+		String[] horraires = passage.split(" ");
 
-		em.persist(train);
+		dao.addArret(train, arret, LocalDateTime.parse(horraires[0]), LocalDateTime.parse(horraires[1]), desservi,
+				terminus);
+
 		em.getTransaction().commit();
+	}
+
+	@Override
+	public void removeArret(int trainId, int arretId) throws NoSuchTrainException, NoSuchArretException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
+		if (train == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchTrainException();
+		}
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchArretException();
+		}
+
+		dao.removeArret(train, arret);
+
+		em.getTransaction().commit();
+
+	}
+
+	@Override
+	public void changeParameterDesservi(int trainId, int arretId, boolean newDesservi)
+			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(trainId);
+		if (train == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchTrainException();
+		}
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = arretDAO.getArretFromId(arretId);
+		if (arret == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchArretException();
+		}
+
+		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp = hdpDAO.getHdpFromTrainIdAndArretId(trainId, arretId);
+		if (hdp == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchHdpException();
+		}
+
+		hdpDAO.changeParameterDesservi(hdp, newDesservi);
+
+		em.merge(hdp);
+		em.merge(train);
+		em.merge(arret);
+		em.getTransaction().commit();
+
+	}
+
+	@Override
+	public void createPerturbation(Perturbation perturbation) throws NoSuchTrainException {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train train = dao.getTrainFromId(perturbation.getTrain().getId());
+		if (train == null) {
+			em.getTransaction().rollback();
+			throw new NoSuchTrainException();
+		}
+
+		perturbationDAO.impacterTrafic(perturbationDAO.createPerturbation(perturbation));
+
+		em.getTransaction().commit();
+	}
+
+	@Override
+	public void enMarche(Train train) throws NoSuchTrainException, NoSuchArretException {
+		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainJPA = dao.getTrainFromId(train.getId());
+		if (trainJPA == null) {
+			throw new NoSuchTrainException();
+		}
+		// TODO vérifier qu'il reste des arrêts
+		if (hdpDAO.findHdpByTrain(trainJPA.getId()) != null) {
+			HeureDePassage hdpActuel = verifIfExistArretNow(trainJPA.getId());
+			if (hdpActuel != null) {
+				// Fait descendre les gens qui doivent descendre
+				descendreListPassager(PassagerMapper.passagerAllDTOMapper(
+						passagerDAO.getAllPassagerByArrivee(hdpActuel.getArret().getId())), trainJPA);
+
+				if (!hdpActuel.isTerminus()) {
+					// Fait monter les gens qui attendent sur le quai
+
+					// TODO Rajouter une fonction qui vérifie que les gens qui montent dans le train
+					// ont bien leur arret qui soit desservi par ce même train
+
+					monterListPassager(PassagerMapper.passagerAllDTOMapper(
+							passagerDAO.getAllPassagerByDepart(hdpActuel.getArret().getId())), trainJPA);
+
+				} else {
+					// interupt le thread car nous sommes arriver au terminus
+				}
+			} else {
+				// Le train n'a plus d'arrêt à desservir. Il faut interupt le thread.
+			}
+		} else {
+			// Le train n'a aucun arrêt à desservir
+			throw new NoSuchArretException();
+		}
+	}
+
+	@Override
+	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
+		for (Passager p : listPassager) {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
+					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
+			if (train.getListePassagers().contains(pJPA)) {
+				dao.removePassager(train, pJPA);
+			}
+		}
+	}
+
+	@Override
+	public void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
+		for (Passager p : listPassager) {
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
+					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
+			if (!train.getListePassagers().contains(pJPA)) {
+				dao.addPassager(train, pJPA);
+			}
+		}
+	}
+
+	@Override
+	public HeureDePassage verifIfExistArretNow(int trainId) {
+		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
 	}
 
 }

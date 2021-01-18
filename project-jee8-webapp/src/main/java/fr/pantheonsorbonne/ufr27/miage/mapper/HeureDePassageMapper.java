@@ -7,12 +7,24 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 
 public class HeureDePassageMapper {
-	public static HeureDePassage heureDePassageDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage) {
+	public static HeureDePassage heureDePassageDTOMapper(
+			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage) {
+		HeureDePassage hdpDTO = new ObjectFactory().createHeureDePassage();
 
-		return new ObjectFactory().createHeureDePassage();
+		hdpDTO.setArret(ArretMapper.arretDTOMapper(heureDePassage.getArret()));
+		hdpDTO.setTrain(TrainMapper.trainDTOMapper(heureDePassage.getTrain()));
+		hdpDTO.setReelArriveeTemps(heureDePassage.getReelArriveeTemps());
+		hdpDTO.setReelDepartTemps(heureDePassage.getReelDepartTemps());
+		hdpDTO.setBaseDepartTemps(heureDePassage.getBaseDepartTemps());
+		hdpDTO.setBaseArriveeTemps(heureDePassage.getBaseArriveeTemps());
+		hdpDTO.setDesservi(heureDePassage.isDesservi());
+		hdpDTO.setTerminus(heureDePassage.isTerminus());
+
+		return hdpDTO;
 	}
 
-	public static List<HeureDePassage> heureDePassageAllDTOMapper(List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listeHeureDePassages) {
+	public static List<HeureDePassage> heureDePassageAllDTOMapper(
+			List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listeHeureDePassages) {
 		List<HeureDePassage> ListeHeureDePassages = new ArrayList<HeureDePassage>();
 		for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage : listeHeureDePassages) {
 			ListeHeureDePassages.add(heureDePassageDTOMapper(heureDePassage));

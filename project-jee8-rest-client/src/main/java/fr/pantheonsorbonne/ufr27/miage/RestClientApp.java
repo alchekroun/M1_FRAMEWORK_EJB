@@ -2,8 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -13,9 +11,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
 /**
  * Hello world!
@@ -25,13 +23,12 @@ public class RestClientApp
 
 {
 
-	private static Arret getArret(String nom, WebTarget target) {
+	private static Arret getArret(String nom, Client client, WebTarget target) {
 		ObjectFactory factory = new ObjectFactory();
 		Arret arretLille = factory.createArret();
-		arretLille.setId(2);
 		arretLille.setNom(nom);
-		target.path("arret").request().accept(MediaType.APPLICATION_JSON).post(Entity.json(arretLille));
-		return arretLille;
+		Response resp = target.path("arret").request().accept(MediaType.APPLICATION_JSON).post(Entity.json(arretLille));
+		return client.target(resp.getLocation()).request().get(Response.class).readEntity(Arret.class);
 	}
 
 	public static void main(String[] args) throws InterruptedException {
@@ -41,93 +38,120 @@ public class RestClientApp
 		ObjectFactory factory = new ObjectFactory();
 
 		// Creation arret
-		System.out.println("#\t#Creation Arret#\t#");
+		System.out.println("--------------Creation Arret--------------");
 		Arret arret1Paris = factory.createArret();
 		arret1Paris.setId(1);
 		arret1Paris.setNom("Paris");
 
 		Response responseCreationArret1Paris = target.path("arret").request().accept(MediaType.APPLICATION_JSON)
 				.post(Entity.json(arret1Paris));
-
-		URI arret1ParisLocation = null;
 		if (responseCreationArret1Paris.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("Arret Created Successfully");
-			arret1ParisLocation = responseCreationArret1Paris.getLocation();
+			System.out.println("--------------Arret Created Successfully--------------");
+
+			// Creation train
+			System.out.println("--------------Creation Train--------------");
+			Train train1 = factory.createTrainAvecResa();
+			train1.setId(1);
+			train1.setNom("Paris - Lille");
+			train1.setDirectionType("forward");
+			train1.setStatut("enmarche");
+			train1.setNumeroTrain(8541);
+			train1.setReseau("SNCF");
+			train1.setStatut("en marche");
+
+			Response responseCreationTrain1 = target.path("train").request().accept(MediaType.APPLICATION_JSON)
+					.post(Entity.json(train1));
+
+			URI train1Location = null;
+			if (responseCreationTrain1.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+				System.out.println("--------------Train Created Successfully--------------");
+
+				System.out.println("--------------Add arret to train--------------");
+
+				// URI du train récupuré
+				train1Location = responseCreationTrain1.getLocation();
+
+				// On récupère le Train
+				Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
+				Arret arretLille = getArret("Lille", client, target);
+
+				// On ajoute l'arrêt au train sur son chemin
+
+				String tempsDepartArrive = LocalDateTime.now().plusMinutes(0).toString() + " "
+						+ LocalDateTime.now().plusMinutes(60).toString();
+
+				Response responseAddArretTerminus = target
+						.path("train/" + train.getId() + "/addarret/" + arretLille.getId() + "/true/true").request()
+						.accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
+
+				if (responseAddArretTerminus.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+
+					Arret arretChantilly = getArret("Chantilly", client, target);
+
+					tempsDepartArrive = LocalDateTime.now().plusMinutes(30).toString() + " "
+							+ LocalDateTime.now().plusMinutes(30).toString();
+
+					Response responseAddArretNonDesservi = target
+							.path("train/" + train.getId() + "/addarret/" + arretChantilly.getId() + "/false/false")
+							.request().accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
+
+					if (responseAddArretNonDesservi.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+
+						Arret arretArras = getArret("Arras", client, target);
+
+						tempsDepartArrive = LocalDateTime.now().plusMinutes(45).toString() + " "
+								+ LocalDateTime.now().plusMinutes(40).toString();
+
+						Response responseAddArretDesservi = target
+								.path("train/" + train.getId() + "/addarret/" + arretArras.getId() + "/true/false")
+								.request().accept(MediaType.APPLICATION_JSON).put(Entity.json(tempsDepartArrive));
+
+						if (responseAddArretDesservi.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+
+							System.out.println("--------------Arret added successfully--------------");
+
+							TrainWrapper trains = new TrainWrapper();
+							trains.getTrains().add(train);
+
+							System.out.println("--------------Launch periodic bulletin--------------");
+
+							Response responseSendBulletin = target.path("infoCentre/nhe").request()
+									.accept(MediaType.APPLICATION_JSON).post(Entity.json(trains));
+							if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+								System.out
+										.println("--------------Periodic bulletin launched succesfully--------------");
+							} else {
+								throw new RuntimeException(
+										"failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
+							}
+						} else {
+							throw new RuntimeException(
+									"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
+
+						}
+					} else {
+						throw new RuntimeException(
+								"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
+
+					}
+
+				} else {
+					throw new RuntimeException(
+							"failed to add arret : " + responseCreationTrain1.getStatusInfo().toString());
+				}
+			} else {
+				throw new RuntimeException(
+						"failed to create train : " + responseCreationTrain1.getStatusInfo().toString());
+			}
+
 		} else {
 			throw new RuntimeException(
 					"failed to create Arret : " + responseCreationArret1Paris.getStatusInfo().toString());
 		}
 
-		// Creation infoGare associé
-		System.out.println("#\t#Creation InfoGare#\t#");
-		InfoGare infoGare1Paris = factory.createInfoGare();
-		infoGare1Paris.setLocalisationArretId(arret1Paris.getId());
-
-		Response responseCreationInfoGare1Paris = target.path("infoGare").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(infoGare1Paris));
-
-		URI infoGare1ParisLocation = null;
-		if (responseCreationInfoGare1Paris.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("InfoGare Created Successfully");
-			infoGare1ParisLocation = responseCreationInfoGare1Paris.getLocation();
-		} else {
-			throw new RuntimeException(
-					"failed to create infoGare : " + responseCreationInfoGare1Paris.getStatusInfo().toString());
-		}
-
-		// Creation train
-		System.out.println("#\t#Creation Train#\t#");
-		Train train1 = factory.createTrainAvecResa();
-		train1.setId(1);
-		train1.setNom("Bordeaux - Paris");
-		train1.setDirection(arret1Paris);
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
-		train1.setNumeroTrain(8541);
-		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
-		train1.setBaseDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setBaseArriveeTemps(LocalDateTime.now().plusMinutes(30));
-		train1.setReelDepartTemps(LocalDateTime.now().plusMinutes(10));
-		train1.setReelArriveeTemps(LocalDateTime.now().plusMinutes(30));
-
-		Response responseCreationTrain1 = target.path("train").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(train1));
-
-		URI train1Location = null;
-		if (responseCreationTrain1.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("\nTrain Created Successfully");
-			train1Location = responseCreationTrain1.getLocation();
-		} else {
-			throw new RuntimeException("failed to create train : " + responseCreationTrain1.getStatusInfo().toString());
-		}
-
-		Train train = client.target(train1Location).request().get(Response.class).readEntity(Train.class);
-		DateTimeFormatter formatTransfer = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss");
-		Arret arretLille = getArret("Lille", target);
-		Response responseAddArret = target.path("train/" + train.getId() + "/addarret/" + arretLille.getId()).request()
-				.accept(MediaType.APPLICATION_JSON).put(Entity.json(LocalDateTime.now().plusMinutes(20).toString()));
-
-		if (responseAddArret.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("Arret added successfully");
-		} else {
-			throw new RuntimeException("failed to add arret : " + responseCreationTrain1.getStatusInfo().toString()
-					+ "\n" + "train/" + train.getId() + "/addarret/" + arretLille.getId());
-		}
-
 	}
+
 	/*
-	 * private static FreeTrialPlan getPlan() { ObjectFactory factory = new
-	 * ObjectFactory(); FreeTrialPlan trial = factory.createFreeTrialPlan(); User
-	 * user = factory.createUser(); user.setFname("Nicolas");
-	 * user.setLname("Herbaut"); user.setMembershipId(1234);
-	 * 
-	 * Address addresse = factory.createAddress(); addresse.setCountry("France");
-	 * addresse.setStreetName("rue de Tolbiac"); addresse.setStreetNumber(90);
-	 * addresse.setZipCode("75014");
-	 * 
-	 * trial.setUser(user); trial.setAddress(addresse); return trial; }
-	 * 
 	 * public static void main(String[] args) throws InterruptedException { Client
 	 * client = ClientBuilder.newClient(); WebTarget target =
 	 * client.target("http://localhost:8080");

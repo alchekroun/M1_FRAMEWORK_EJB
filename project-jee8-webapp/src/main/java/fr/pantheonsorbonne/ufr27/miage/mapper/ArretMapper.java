@@ -9,22 +9,19 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 
 public class ArretMapper {
 	public static Arret arretDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret) {
-
-		/**
 		Arret arretDTO = new ObjectFactory().createArret();
 
-		arretDTO.setIdArret(arret.getId());
-		arretDTO.setNomArret(arret.getNom());
+		arretDTO.setId(arret.getId());
+		arretDTO.setNom(arret.getNom());
 
-		return arretDTO;**/
-		return new ObjectFactory().createArret();
+		return arretDTO;
 	}
 
 	public static List<Arret> arretAllDTOMapper(List<fr.pantheonsorbonne.ufr27.miage.jpa.Arret> listeArrets) {
-		List<Arret> ListeArrets = new ArrayList<Arret>();
+		List<Arret> ListeArretsDTO = new ArrayList<Arret>();
 		for (fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret : listeArrets) {
-			ListeArrets.add(arretDTOMapper(arret));
+			ListeArretsDTO.add(arretDTOMapper(arret));
 		}
-		return ListeArrets;
+		return ListeArretsDTO;
 	}
 }

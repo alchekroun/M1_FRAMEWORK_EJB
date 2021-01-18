@@ -12,11 +12,14 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({ @NamedQuery(name = "getAllPassager", query = "SELECT p FROM Passager p"),
-		@NamedQuery(name = "deletePassager", query = "DELETE FROM Passager p WHERE p.id = :id") })
+		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :trainId"),
+		@NamedQuery(name = "findPassagerByDepart", query = "SELECT p FROM Passager p WHERE p.depart.id= :idArretDepart"),
+		@NamedQuery(name = "findPassagerByArrivee", query = "SELECT p FROM Passager p WHERE p.arrive.id= :idArretArrivee"),
+		@NamedQuery(name = "findPassagerByCorrespondance", query = "SELECT p FROM Passager p WHERE p.correspondance.id= :arretId")})
 public class Passager {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	int id;
 
 	protected String nom;
@@ -24,10 +27,14 @@ public class Passager {
 	protected Arret depart;
 	@ManyToOne
 	protected Arret arrive;
+	@ManyToOne
+	protected Arret correspondance;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinColumn(name = "train_id")
 	private Train train;
+
+	boolean isCreated;
 
 	public int getId() {
 		return id;
@@ -56,8 +63,33 @@ public class Passager {
 	public Arret getArrive() {
 		return arrive;
 	}
+	
+	public Arret getCorrespondance() {
+		return correspondance;
+	}
+	
+	public void setCorrespondance(Arret correspondance) {
+		this.correspondance=correspondance;
+	}
 
 	public void setArrive(Arret arrive) {
 		this.arrive = arrive;
 	}
+
+	public boolean isCreated() {
+		return isCreated;
+	}
+
+	public void setCreated(boolean isCreated) {
+		this.isCreated = isCreated;
+	}
+
+	public Train getTrain() {
+		return train;
+	}
+
+	public void setTrain(Train train) {
+		this.train = train;
+	}
+
 }

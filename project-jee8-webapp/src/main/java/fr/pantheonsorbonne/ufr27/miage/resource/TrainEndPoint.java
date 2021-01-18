@@ -2,8 +2,6 @@ package fr.pantheonsorbonne.ufr27.miage.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
-
 import javax.inject.Inject;
 
 import javax.ws.rs.Consumes;
@@ -19,9 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
+import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.EmptyListException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchArretException;
+import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchHdpException;
 import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
@@ -38,7 +39,7 @@ public class TrainEndPoint {
 			int trainId = service.createTrain(train);
 			return Response.created(new URI("/train/" + trainId)).build();
 		} catch (CantCreateException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("Can\'t create train", 400);
 		}
 
 	}
@@ -51,20 +52,26 @@ public class TrainEndPoint {
 			Train train = service.getTrainFromId(trainId);
 			return Response.ok(train).build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 
 	}
 
+	/*
+	 * TODO Revoir la suppresion : Pour supprimer un train il faut vérifier qu'il ne
+	 * soit pas inclu dans les listes suivantes Arret.trainsArrivants et
+	 * Arret.listeHeureDePassage
+	 * 
+	 * De plus s'il possède des passagers il faut les supprimer avec.
+	 */
 	@DELETE
 	@Path("delete/{trainId}")
-	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
 		try {
 			service.deleteTrain(trainId);
-			return Response.noContent().build();
+			return Response.status(200, "train deleted").build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
 		}
 	}
 
@@ -74,25 +81,43 @@ public class TrainEndPoint {
 	public Response update(Train train) throws URISyntaxException {
 		try {
 			service.updateTrain(train);
-			return Response.noContent().build();
+			return Response.status(200, "train updated").build();
 		} catch (NoSuchTrainException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No such train", 404);
+		} catch (CantUpdateException e) {
+			throw new WebApplicationException("Can\'t update train", 400);
 		}
 	}
 
 	@PUT
-	@Path("{trainId}/addarret/{arretId}")
+	@Path("{trainId}/addarret/{arretId}/{desservi}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId, String passage)
+	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
+			@PathParam("terminus") String desservi, @PathParam("terminus") String terminus, String passage)
 			throws URISyntaxException {
 		try {
-			service.addArret(trainId, arretId, LocalDateTime.parse(passage));
-			return Response.noContent().build();
-		} catch (NoSuchTrainException | NoSuchArretException e) {
-			e.printStackTrace();
-			throw new WebApplicationException(404);
+			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(desservi), Boolean.parseBoolean(terminus));
+			return Response.status(200, "arret added to train").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
 		}
 
+	}
+
+	@DELETE
+	@Path("{trainId}/removearret/{arretId}")
+	public Response removeArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
+			throws URISyntaxException {
+		try {
+			service.removeArret(trainId, arretId);
+			return Response.status(200, "arret removed from train").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
+		}
 	}
 
 	@GET
@@ -102,9 +127,69 @@ public class TrainEndPoint {
 		try {
 			return Response.ok(service.getAllTrain()).build();
 		} catch (EmptyListException e) {
-			throw new WebApplicationException(404);
+			throw new WebApplicationException("No train yet", 404);
 		}
 
+	}
+
+	@PUT
+	@Path("/changeParameterDesservi/{traindId}/{arretId}/{newDesservi}")
+	public Response changeParamaterDesservi(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
+			@PathParam("newDesservi") String newDesservi) {
+		try {
+			service.changeParameterDesservi(trainId, arretId, Boolean.parseBoolean(newDesservi));
+			return Response.status(200, "desservi parameter changed").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		} catch (NoSuchArretException e) {
+			throw new WebApplicationException("No such arret", 404);
+		} catch (NoSuchHdpException e) {
+			throw new WebApplicationException("There is no link between train & arret", 404);
+		}
+	}
+
+	@POST
+	@Path("/createPerturbation")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response createPerturbation(Perturbation perturbation) {
+		try {
+			service.createPerturbation(perturbation);
+			return Response.status(200, "arret removed from train").build();
+		} catch (NoSuchTrainException e) {
+			throw new WebApplicationException("No such train", 404);
+		}
+	}
+
+	@POST
+	@Path("/enmarche")
+	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response enMarche(Train train) {
+		
+		// TODO Voir comment on peut exploiter les erreurs qui remontent d'un thread
+		
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						service.enMarche(train);
+						Thread.sleep(60000); // 1mn
+					} catch (NoSuchTrainException e) {
+						break;
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchArretException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						break;
+					}
+				}
+			}
+		}).start();
+
+		return Response.accepted().build();
 	}
 
 }
