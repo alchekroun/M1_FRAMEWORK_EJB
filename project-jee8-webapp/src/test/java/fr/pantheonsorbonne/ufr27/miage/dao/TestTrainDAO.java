@@ -130,7 +130,7 @@ public class TestTrainDAO {
 	public void testAddArret() {
 		em.getTransaction().begin();
 		dao.addArret(train1, arretDirection, LocalDateTime.now().plusMinutes(10), LocalDateTime.now(), true, true);
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(10), LocalDateTime.now().plusMinutes(20), true,
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true,
 				false);
 		em.getTransaction().commit();
 		List<HeureDePassage> listHdp = train1.getListeHeureDePassage();
@@ -192,6 +192,45 @@ public class TestTrainDAO {
 		em.getTransaction().commit();
 
 	}
+	
+	@Test
+	public void testFindTrainByArretAndDepartAfterDate() {
+		
+		em.getTransaction().begin();
+		Arret arret2 = new Arret();
+		arret2.setNom("Lyon");
+		em.persist(arret2);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		List<Train> list1 = dao.findTrainByArretAndDepartAfterDate(arret2.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list2 = dao.findTrainByArretAndDepartAfterDate(arret1.getId(), LocalDateTime.now().plusMinutes(30));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list3 = dao.findTrainByArretAndDepartAfterDate(arret1.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertTrue(list1.isEmpty());
+		assertTrue(list2.isEmpty());
+		assertEquals(train1.getId(),list3.get(0).getId());
+		em.getTransaction().commit();
+		
+		
+		em.getTransaction().begin();
+		dao.removeArret(train1, arret1);
+		em.remove(arret2);
+		arret2 = null;
+		em.getTransaction().commit();
+	}
 
 	@Test
 	public void testRemoveArret() {
@@ -230,7 +269,7 @@ public class TestTrainDAO {
 		assertNull(passager1.getTrain());
 	}
 
-	// Vérifier bcp plus de chsoe sur la méthode :
+	// Vérifier bcp plus de chose sur la méthode :
 	// Si le train a été bien enlevé des listes contenu dans l'Arret
 	@Test
 	public void testDeleteTrain() {

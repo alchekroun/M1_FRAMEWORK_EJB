@@ -4,9 +4,12 @@ package fr.pantheonsorbonne.ufr27.miage.dao;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -179,6 +182,90 @@ class TestHeureDePassageDAO {
 		em.remove(heureDePassage2);
 		heureDePassage2 = null;
 		em.getTransaction().commit();
+	}
+	
+	@Test
+	public void testGetHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2() {
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list1 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(), arretArrivee.getId(), LocalDateTime.now().plusMinutes(5), LocalDateTime.now().plusMinutes(8));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list2 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(), arretArrivee.getId(), LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(40));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list3 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(), arretArrivee.getId(), LocalDateTime.now().plusMinutes(5), LocalDateTime.now().plusMinutes(30));	
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertTrue(list1.isEmpty());
+		assertTrue(list2.isEmpty());
+		assertEquals(heureDePassage1.getId(),list3.get(0).getId());
+		
+		em.getTransaction().commit();
+		
+	}
+	
+	@Test
+	public void testFindHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(){
+		
+		em.getTransaction().begin();
+		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
+				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list1 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(10));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list2 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(50));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertEquals(heureDePassage2.getId(),list1.get(0).getId());
+		assertEquals(1,list1.size());
+		assertTrue(list2.isEmpty());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2 = null;
+		em.getTransaction().commit();
+		
+	}
+	
+	@Test
+	public void testFindHdpByTrainAfterDateAndSorted(){
+		
+		em.getTransaction().begin();
+		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
+				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list1 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(10));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<HeureDePassage> list2 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(50));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertEquals(heureDePassage2.getId(),list1.get(0).getId());
+		assertEquals(1,list1.size());
+		assertTrue(list2.isEmpty());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2 = null;
+		em.getTransaction().commit();
+		
 	}
 
 }

@@ -140,7 +140,6 @@ public class HeureDePassageDAO {
 				.setParameter("temps", LocalDateTime.now()).setParameter("trainId", trainId).getSingleResult();
 	}
 	
-	//voir si liste ou non selon si on détruit les hdp déjà parcouru
 	public List<HeureDePassage> getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(int trainId, int arretId, LocalDateTime date1, LocalDateTime date2) {
 		return em.createNamedQuery("findHeureTrainIdAndArretIdAndBetweenDate1AndDate2")
 				.setParameter("trainId", trainId).setParameter("arretId", arretId).setParameter("date1", date1).setParameter("date2", date2).getResultList();
@@ -157,15 +156,15 @@ public class HeureDePassageDAO {
 	}
 	
 	//retourne une liste des hdp des trains partant de arretId au plus tôt juste après une date
-	public List<HeureDePassage> findHeureMoreRecentByArretIdAfterDate(int arretId, LocalDateTime date){
-		List<Object[]> list = em.createNamedQuery("findHeureMoreRecentByArretIdAfterDate")
-				.setParameter("arretId", arretId).setParameter("temps",date).getResultList();
-		List<HeureDePassage> listHdp = new ArrayList<>();
-		for (Object[] obj : list) {
-			listHdp.add((HeureDePassage) em.createNamedQuery("findHeureById").setParameter("idHdp", (HeureDePassageKey) obj[0]).getSingleResult());
-		}
-		
-		return listHdp;
-	}
+//	public List<HeureDePassage> findHeureMoreRecentByArretIdAfterDate(int arretId, LocalDateTime date){
+//		List<Object[]> list = em.createNamedQuery("findHeureMoreRecentByArretIdAfterDate")
+//				.setParameter("arretId", arretId).setParameter("temps",date).getResultList();
+//		List<HeureDePassage> listHdp = new ArrayList<>();
+//		for (Object[] obj : list) {
+//			listHdp.add((HeureDePassage) em.createNamedQuery("findHeureById").setParameter("idHdp", (HeureDePassageKey) obj[0]).getSingleResult());
+//		}
+//		
+//		return listHdp;
+//	}
 	
 }

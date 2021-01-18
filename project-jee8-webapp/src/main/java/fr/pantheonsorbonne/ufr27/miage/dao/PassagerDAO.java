@@ -85,12 +85,14 @@ public class PassagerDAO {
 		class Etat{
 			private HeureDePassage actuel;
 			private HeureDePassage precedent=null;
+			private int nombresChangements=0;
 			private Etat etatPrecedent = null;
 			
-			public Etat(HeureDePassage actuel, HeureDePassage precedent, Etat etat) {
+			public Etat(HeureDePassage actuel, HeureDePassage precedent, Etat etat, int nombreChangements) {
 				this.actuel=actuel;
 				this.precedent=precedent;
 				this.etatPrecedent=etat;
+				this.nombresChangements=nombreChangements;
 			}
 			
 			public Etat(HeureDePassage actuel) {
@@ -101,33 +103,25 @@ public class PassagerDAO {
 				return this.actuel;
 			}
 
-			public void setActuel(HeureDePassage actuel) {
-				this.actuel = actuel;
-			}
-
 			public HeureDePassage getPrecedent() {
 				return this.precedent;
 			}
 
-			public void setPrecedent(HeureDePassage precedent) {
-				this.precedent = precedent;
-			}
-			
 			public Etat getEtatPrecedent() {
 				return this.etatPrecedent;
+			}
+			
+			public int getNombreChangements() {
+				return this.nombresChangements;
 			}
 		}
 		
 		
 		
 		Passager p = em.find(Passager.class, passagerId);
-		//List<Arret> trajetPlusRapide;
-		//List<Train> listeTrainEtatChemin;
 		List<Train> listeTrainByArretDepartPassager;
 		List<HeureDePassage> listeHdpAfterDepartByTrain = null;
 		List<HeureDePassage> listeHdpAfterDepartArretEnCoursByTrain;
-		//List<Train> listeTrainDirectPossible;
-		//List<Train> listeTrainPossible;
 		
 		TreeSet<Etat> listeEtatPossible = new TreeSet<>(new Comparator<Etat>() {
 			@Override
@@ -185,82 +179,51 @@ public class PassagerDAO {
 		Arret arretDepart = p.getDepart();
 		LocalDateTime dateNow = LocalDateTime.now();
 		listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDate(arretDepart.getId(),dateNow);
-		System.out.println( "Train depart: "+listeTrainByArretDepartPassager.get(0).getId() );
-		System.out.println( "Train nom depart: "+listeTrainByArretDepartPassager.get(0).getNom() );
-		System.out.println( "Train depart size: "+listeTrainByArretDepartPassager.size() );
 		for(fr.pantheonsorbonne.ufr27.miage.jpa.Train train:listeTrainByArretDepartPassager) {
-			// on ajoute hdp de arret de depart
-			//HeureDePassage hdpDepart = hdpDAO.getHdpFromTrainIdAndArretId(train.getId(),arretDepart.getId());
 			List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train.getId(),arretDepart.getId(),dateNow);
 			HeureDePassage hdpDepart = null;
 			if(!listHdpDepart.isEmpty()) {
 				hdpDepart = listHdpDepart.get(0);
 				listeHdpAfterDepartByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),hdpDepart.getReelDepartTemps());
-				System.out.println("****::::SIZE"+listeHdpAfterDepartByTrain.size());
 			}
 			Etat depart = new Etat(hdpDepart);
-			//listeEtatPossible.add(depart);
-			System.out.println("****::::SIZE"+train.getListeHeureDePassage().size());
-			//utiliser DAO findHdpByTrainid
-			//récup les hdp des arrets parcouru par les trains juste après le départ de l'arrêt de départ du passager
-			//je recup la premiere heure d'arrivee à l'arret suivant qui soit la plus tôt possible juste après mon départ soit après now
-			///////////
-			//listeHdpAfterDepartByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),dateNow);
-			//////////
-			
-			
-			//for(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp:train.getListeHeureDePassage()) {
-			
-			/*for(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp:listeHdpAfterDepartByTrain) {
-				System.out.println("Heure passage: TrainID: "+hdp.getTrain().getId() +" ArretID: "+hdp.getArret().getId());
-				System.out.println(hdp.getArret() +" "+ p.getDepart() + " ID VERSIONS "+hdp.getArret() +" "+ p.getDepart());
-				//cas possible quand depart 
-				// voir aussi si hdp est apres depart
-				if(hdp.getArret() != p.getDepart()) {
-					listeEtatPossible.add(new Etat(hdp,hdpDepart, depart));
-					if(hdp.getArret().getId() == p.getArrive().getId()) {
-						//LocalDateTime hdpTmp = hdp.getReelArriveeTemps();
-						listeEtatDirectPossible.add(new Etat(hdp,hdpDepart, depart));
-					}
-				}
-			}*/
 			HeureDePassage hdpSuivante=null;
 			boolean dernierArret = false;
 			if(!listeHdpAfterDepartByTrain.isEmpty()) {
 				hdpSuivante = listeHdpAfterDepartByTrain.get(0);
-				//if(hdpSuivante.getArret() != p.getDepart()) {
-						listeEtatPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
 						//on ajoute à la liste des calculs pour les correspondances pour la suite de l'algo si pas de chemin direct trouve
-						listeEtatCalculCorrespondance.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
-						if(hdpSuivante.getArret().getId() == p.getArrive().getId()) {
-							listeEtatDirectPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart));
-							dernierArret=true;
+						if(hdpSuivante.getTrain().getId()==depart.getActuel().getTrain().getId()) {
+							listeEtatPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()));
+							listeEtatCalculCorrespondance.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()));
+							if(hdpSuivante.getArret().getId() == p.getArrive().getId()) {
+								listeEtatDirectPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()));
+								dernierArret=true;
+							}
 						}
-				//}
+						else {
+							listeEtatPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()+1));
+							listeEtatCalculCorrespondance.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()+1));
+							if(hdpSuivante.getArret().getId() == p.getArrive().getId()) {
+								listeEtatDirectPossible.add(new Etat(hdpSuivante, depart.getActuel() ,depart, depart.getNombreChangements()+1));
+								dernierArret=true;
+							}
+							
+						}
 			}
 			
 			boolean tousLesCheminsParcourus=false;
-			//int tailleListePrecedente=listeEtatPossible.size();
 			while(((!listeEtatPossible.isEmpty()) && (!tousLesCheminsParcourus)) && (!dernierArret)) {
-				//tailleListePrecedente=listeEtatPossible.size();
 				Etat etatEnCours = listeEtatPossible.pollFirst();
-				//on veut recup la liste des hdp du train partant de l'arret et on garde la plus recente par rapport à l'heure d'arrivee
-				/*List<HeureDePassage> listHdpDepartArretEnCours = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
-				HeureDePassage hdpDepartArretEnCours = null;
-				if(!listHdpDepartArretEnCours.isEmpty()) {
-					hdpDepartArretEnCours = listHdpDepartArretEnCours.get(0);
-				}
-				*/
 				//récup les hdp des arrets parcouru par le train juste après le départ de l'arrêt en cours
-				//peut etre remplace getReelDepartTemps par getReelArriveeTemps
+				//getReelArriveeTemps to getReelDepartTemps??
 				listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelDepartTemps());
 				HeureDePassage hdpSuivanteFromArretEnCours=null;
 				if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
 					hdpSuivanteFromArretEnCours = listeHdpAfterDepartArretEnCoursByTrain.get(0);
 					if(hdpSuivanteFromArretEnCours.getArret() != p.getDepart()) {
-						listeEtatPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours));
+						listeEtatPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours, etatEnCours.getNombreChangements()));
 						if(hdpSuivanteFromArretEnCours.getArret().getId() == p.getArrive().getId()) {
-							listeEtatDirectPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours));
+							listeEtatDirectPossible.add(new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours, etatEnCours.getNombreChangements()));
 							dernierArret=true;
 						}
 					}
@@ -272,87 +235,88 @@ public class PassagerDAO {
 					tousLesCheminsParcourus=true;
 				}
 			}
-			// faire la boucle for ici pour developper le train en cours et tout son chemin et ne pas mélanger ses etats avec ceux des autres train qui partent du départ aussi
-			//et conserver dans la liste final letat final si on arrive au bout
 			
 			
 			listeHdpAfterDepartByTrain.clear();
 		}
 		//cas ou il existe un train qui emmene directement a destination sans correspondance
 		if(!listeEtatDirectPossible.isEmpty()) {
-			//on peut lui faire un setTrain() ?
 			return listeEtatDirectPossible.pollFirst().getActuel().getTrain();
 		}
 		
-		//
-		boolean tousLesCheminsParcourus=false;
-		while((!listeEtatCalculCorrespondance.isEmpty())) { //&& (!tousLesCheminsParcourus)) {
-			tousLesCheminsParcourus=false;
+		while((!listeEtatCalculCorrespondance.isEmpty())) {
 			TreeSet<Etat> listeEtatDejaVisitePrecedente = new TreeSet<>(listeEtatDejaVisite);
 			int size = listeEtatCalculCorrespondance.size();
 			Etat etatEnCours = listeEtatCalculCorrespondance.pollFirst();
-			//listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelDepartTemps());
-			//if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
-				
-			//}
-			//je recup liste des trains de l'arret en cpurs qui partent après larrivee du train provenant de larret precedent
+			//je recup liste des trains de l'arret en cours qui partent après larrivee du train provenant de larret precedent
 			listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDate(etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
 			for(fr.pantheonsorbonne.ufr27.miage.jpa.Train train:listeTrainByArretDepartPassager) {
 				//liste des hdp des(du) train(s) qui minteresse pour larret en cours cad que le train en question doit partir de larret apres que le train qui vient de larret precdent soit arrive
-				//bug car j'ai set une heure de depart alors quon est au terminus
 				List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train.getId(),etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
 				HeureDePassage hdpDepart = null;
 				if(!listHdpDepart.isEmpty()) {
 					hdpDepart = listHdpDepart.get(0);
-					// JE NE CREEPAS DETAT AVEC CA MMAIS JE FAIS CREER UN ETAT EN CHERCHANT LE PROCHAIN ARRET A PARTIR DE HEURE DEPART DE CTTE HDP Etat depart = new Etat(hdpDepart,);
 					//je veux recup hdp heure darrivee la plus tot du prochain arret et qui soit le plus tot par rapport à mon heure de depart 
 					listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),hdpDepart.getReelDepartTemps());
-					// BIEN VERIF DANS LE CAS OU CE NEST PAS UN TRAIN DIFFERENT QUI PREND LE RELAID A LA CORRESPONDANCE. IL Y A PEUT ETRE DES ERREURS SUR LES COMPARAISONS AVEC SYMBOLES > OU < QUI SONT EXCLUSIFS
 					HeureDePassage hdpSuivanteFromArretEnCours=null;
-					//boolean dernierArret = false;
 					if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
 						hdpSuivanteFromArretEnCours = listeHdpAfterDepartArretEnCoursByTrain.get(0);
-						//cas ou je suis parti du depart puis je reviens avec une correpondance pour aller au final, il faut que ça puisse passer
-						//if(hdpSuivanteFromArretEnCours.getArret() != p.getDepart()) {
-							Etat newEtat = new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours);
-							boolean contientEtat=false;
-							if(!listeEtatDejaVisite.isEmpty()) {
-								for(Etat e : listeEtatDejaVisite) { //listeEtatPossible
-									if(e.getActuel().getId() == newEtat.getActuel().getId() && e.getPrecedent().getId() == newEtat.getPrecedent().getId()) {
-										contientEtat=true;
-									}
-								}
-							}
+						Etat newEtat = null;
+						if(hdpSuivanteFromArretEnCours.getTrain().getId()==etatEnCours.getActuel().getTrain().getId()) {
+							newEtat = new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours, etatEnCours.getNombreChangements());
+						}
+						else {
+							newEtat = new Etat(hdpSuivanteFromArretEnCours, etatEnCours.getActuel() ,etatEnCours, etatEnCours.getNombreChangements()+1);
+						}
 							
-							if(!contientEtat) {
-								listeEtatCalculCorrespondance.add(newEtat);
-								listeEtatDejaVisite.add(newEtat);
-								if(hdpSuivanteFromArretEnCours.getArret().getId() == p.getArrive().getId()) {
-									listeEtatsFinaux.add(newEtat);
-									//dernierArret=true;
+						boolean contientEtat=false;
+							
+						if(!listeEtatDejaVisite.isEmpty()) {
+							for(Etat e : listeEtatDejaVisite) {
+								if(e.getActuel().getId() == newEtat.getActuel().getId() && e.getPrecedent().getId() == newEtat.getPrecedent().getId()) {
+										contientEtat=true;
 								}
 							}
-						//}
-					
+						}
+							
+						if(!contientEtat) {
+							listeEtatCalculCorrespondance.add(newEtat);
+							listeEtatDejaVisite.add(newEtat);
+							if(hdpSuivanteFromArretEnCours.getArret().getId() == p.getArrive().getId()) {
+									listeEtatsFinaux.add(newEtat);
+							}
+						}		
 					}
 				}
-					//listeHdpAfterDepartByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),hdpDepart.getReelArriveeTemps());
 			}
-//			if(listeEtatCalculCorrespondance.size() == size && listeEtatDejaVisite.containsAll(listeEtatDejaVisitePrecedente)) {
-//				tousLesCheminsParcourus=true;
-//			}
 		}
 		
 
 		if(!listeEtatsFinaux.isEmpty()) {
 			Etat meilleurEtatFinalCorrespondance = listeEtatsFinaux.pollFirst();
-			while(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=null ){//compareTo(dateArriveeArretActuelForTrainPrecedent)}//(dateDepartArretPrecedent+(dateArriveeArretActuel-dateDepartArretPrecedent)<)) {
+			while(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=null ){
+				if(meilleurEtatFinalCorrespondance.getEtatPrecedent().getNombreChangements()==0 && meilleurEtatFinalCorrespondance.getNombreChangements()==1) {
+					break;
+				}	
 				meilleurEtatFinalCorrespondance = meilleurEtatFinalCorrespondance.getEtatPrecedent();
+				
 			}
-			p.setCorrespondance(meilleurEtatFinalCorrespondance.getActuel().getArret());
-			return meilleurEtatFinalCorrespondance.getActuel().getTrain();
+			
+			p.setCorrespondance(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getArret());
+			return meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain();
+			//p.setCorrespondance(meilleurEtatFinalCorrespondance.getActuel().getArret());
+			//return meilleurEtatFinalCorrespondance.getActuel().getTrain();
 		}
+		return null;
+		
+		
+		
+	}
+}
+	
+////////////////////////////	
 		/*	boolean cheminFinalTrouve=false;
+		  if(!listeEtatsFinaux.isEmpty()) {
 			int taille=listeEtatsFinaux.size();
 			Etat meilleurEtatFinalCorrespondance = listeEtatsFinaux.pollFirst();
 			taille--;
@@ -389,11 +353,11 @@ public class PassagerDAO {
 			return meilleurEtatFinalCorrespondance.getActuel().getTrain();
 		}*/
 		
-		return null;
-		
-		
-		
-	}
+//		return null;
+//		
+//		
+//		
+//	}
 
 
 	
@@ -464,4 +428,4 @@ public class PassagerDAO {
 	
 	
 	
-}
+
