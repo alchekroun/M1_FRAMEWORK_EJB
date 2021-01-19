@@ -20,7 +20,9 @@ import javax.persistence.OneToMany;
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
 		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId"),
 		@NamedQuery(name = "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp"),
-		@NamedQuery(name = "findTrainByArretAndDepartAfterDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps")})
+		@NamedQuery(name = "findTrainByArretAndDepartAfterDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps"),
+		@NamedQuery(name = "findTrainByArretAndArriveeBeforeDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelArriveeTemps < :temps ORDER BY h.reelArriveeTemps ASC"),
+		@NamedQuery(name="findNombrePassagerByTrain", query= "SELECT SIZE(t.listePassagers) FROM Train t WHERE t.id= :trainId")})
 
 public abstract class Train {
 
