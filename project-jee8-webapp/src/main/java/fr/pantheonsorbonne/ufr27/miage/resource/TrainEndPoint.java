@@ -93,7 +93,7 @@ public class TrainEndPoint {
 	@Path("{trainId}/addarret/{arretId}/{desservi}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
-			@PathParam("terminus") String desservi, @PathParam("terminus") String terminus, String passage)
+			@PathParam("desservi") String desservi, @PathParam("terminus") String terminus, String passage)
 			throws URISyntaxException {
 		try {
 			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(desservi), Boolean.parseBoolean(terminus));
@@ -164,9 +164,9 @@ public class TrainEndPoint {
 	@Path("/enmarche")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response enMarche(Train train) {
-		
+
 		// TODO Voir comment on peut exploiter les erreurs qui remontent d'un thread
-		
+
 		new Thread(new Runnable() {
 
 			@Override
