@@ -79,4 +79,16 @@ public class Arret {
 		this.isCreated = isCreated;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Arret) {
+			Arret a = (Arret) obj;
+			if (this.id == a.getId() && this.nom.equals(a.getNom())) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
 }

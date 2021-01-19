@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -224,7 +225,7 @@ public class TrainServiceImpl implements TrainService {
 		}
 		if (hdpDAO.findHdpByTrain(trainJPA.getId()) != null) {
 			HeureDePassage hdpActuel = verifIfExistArretNow(trainJPA.getId());
-			if (hdpActuel != null) {
+			if (hdpActuel != null && hdpActuel.isDesservi()) {
 				// Fait descendre les gens qui doivent descendre
 				// Arrivee
 				descendreListPassager(
@@ -240,17 +241,26 @@ public class TrainServiceImpl implements TrainService {
 				if (!hdpActuel.isTerminus()) {
 					// Fait monter les gens qui attendent sur le quai
 
-					// TODO Rajouter une fonction qui vérifie que les gens qui montent dans le train
-					// ont bien leur arret qui soit desservi par ce même train
+					List<Passager> listPassagerDescendre = new ArrayList<Passager>();
 
-					monterListPassager(PassagerMapper.passagerAllDTOMapper(
-							passagerDAO.getAllPassagerByDepart(hdpActuel.getArret().getId())), trainJPA);
+					for (Passager p : PassagerMapper
+							.passagerAllDTOMapper(passagerDAO.getAllPassagerByDepart(hdpActuel.getArret().getId()))) {
+						if (trainGetMeWhereIWant(train, p)) {
+							listPassagerDescendre.add(p);
+						}
+					}
+
+					monterListPassager(listPassagerDescendre, trainJPA);
 
 				} else {
 					// interupt le thread car nous sommes arriver au terminus
 				}
+
 			} else {
-				// Le train n'a plus d'arrêt à desservir. Il faut interupt le thread.
+				// Le train n'a pas d'arrêt à desservir pour le moment.
+				HeureDePassage nextHdp = HeureDePassageMapper
+						.heureDePassageDTOMapper(hdpDAO.findNextHdp(train.getId()));
+				arretExceptionnel(nextHdp);
 			}
 		} else {
 			// Le train n'a aucun arrêt à desservir
@@ -288,6 +298,63 @@ public class TrainServiceImpl implements TrainService {
 
 	protected HeureDePassage verifIfExistArretNow(int trainId) {
 		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
+	}
+
+	// Fonction qui modifie le desservi de False a True si toutes les conditions
+	// sont vérifiées
+	protected void arretExceptionnel(HeureDePassage hdp) {
+		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard(hdp.getArret().getId());
+		if (hdpAvecTrainEnRetard != null && isRetardMoreThan2hours(hdp)) {
+			List<Passager> listPassagerTrainEnRetard = hdpAvecTrainEnRetard.getTrain().getListePassagers();
+			if (listPassagerTrainEnRetard.size() >= 50) {
+				int count = 0;
+				for (Passager p : listPassagerTrainEnRetard) {
+					if (p.getCorrespondance() != null) {
+						if (p.getCorrespondance().equals(hdp.getArret())
+								&& trainGetMeWhereIWant(hdpAvecTrainEnRetard.getTrain(), p)) {
+							count++;
+						}
+					}
+				}
+				if (count >= 50) {
+					hdpDAO.changeParameterDesservi(
+							hdpDAO.getHdpFromTrainIdAndArretId(hdp.getTrain().getId(), hdp.getArret().getId()), true);
+				}
+			}
+		}
+	}
+
+	protected boolean trainGetMeWhereIWant(Train train, Passager passager) {
+		List<HeureDePassage> listHdp = HeureDePassageMapper
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByTrain(train.getId()));
+		for (HeureDePassage hdp : listHdp) {
+			// Faire gaffe aux corress
+			if (hdp.getArret().equals(passager.getArrive())) {
+				return true;
+			}
+			if (passager.getCorrespondance() != null) {
+				if (hdp.getArret().equals(passager.getCorrespondance())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	protected HeureDePassage verifIfNextArretHasTrainEnRetard(int arretId) {
+		List<HeureDePassage> listHdpAtArretId = HeureDePassageMapper
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByArret(arretId));
+
+		for (HeureDePassage hdp : listHdpAtArretId) {
+			if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) == 0) {
+				return hdp;
+			}
+		}
+		return null;
+	}
+
+	protected boolean isRetardMoreThan2hours(HeureDePassage hdp) {
+		return hdp.getReelDepartTemps().isAfter(hdp.getBaseArriveeTemps().plusHours(2));
 	}
 
 }

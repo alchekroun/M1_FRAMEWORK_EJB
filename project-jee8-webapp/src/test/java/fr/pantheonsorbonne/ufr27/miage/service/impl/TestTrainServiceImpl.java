@@ -242,4 +242,28 @@ class TestTrainServiceImpl {
 
 	}
 
+	@Test
+	public void testIsRetardMoreThan2hours() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	public void testVerifIfNextArretHasTrainEnRetard() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	public void testTrainGetMeWhereIWant() {
+		// TODO
+		fail("todo");
+	}
+
+	@Test
+	public void testArretExceptionnel() {
+		// TODO
+		fail("todo");
+	}
+
 }
