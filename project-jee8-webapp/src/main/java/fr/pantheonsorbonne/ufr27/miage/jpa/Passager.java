@@ -15,7 +15,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :trainId"),
 		@NamedQuery(name = "findPassagerByDepart", query = "SELECT p FROM Passager p WHERE p.depart.id= :idArretDepart"),
 		@NamedQuery(name = "findPassagerByArrivee", query = "SELECT p FROM Passager p WHERE p.arrive.id= :idArretArrivee"),
-		@NamedQuery(name = "findPassagerByCorrespondance", query = "SELECT p FROM Passager p WHERE p.correspondance.id= :arretId")})
+		@NamedQuery(name = "findPassagerByCorrespondance", query = "SELECT p FROM Passager p WHERE p.correspondance.id= :arretId") })
 public class Passager {
 
 	@Id
@@ -35,6 +35,8 @@ public class Passager {
 	private Train train;
 
 	boolean isCreated;
+
+	boolean arrived;
 
 	public int getId() {
 		return id;
@@ -63,13 +65,13 @@ public class Passager {
 	public Arret getArrive() {
 		return arrive;
 	}
-	
+
 	public Arret getCorrespondance() {
 		return correspondance;
 	}
-	
+
 	public void setCorrespondance(Arret correspondance) {
-		this.correspondance=correspondance;
+		this.correspondance = correspondance;
 	}
 
 	public void setArrive(Arret arrive) {
@@ -90,6 +92,14 @@ public class Passager {
 
 	public void setTrain(Train train) {
 		this.train = train;
+	}
+
+	public boolean isArrived() {
+		return arrived;
+	}
+
+	public void setArrived(boolean arrived) {
+		this.arrived = arrived;
 	}
 
 }

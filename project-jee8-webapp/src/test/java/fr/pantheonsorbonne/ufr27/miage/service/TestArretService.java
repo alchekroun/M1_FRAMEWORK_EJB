@@ -41,7 +41,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.TrainServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
-class TestArrretService {
+class TestArretService {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator
 			.from(TrainService.class, TrainServiceImpl.class, TrainEndPoint.class, ArretService.class,

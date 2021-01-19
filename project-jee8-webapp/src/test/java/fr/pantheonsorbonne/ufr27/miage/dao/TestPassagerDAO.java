@@ -1,7 +1,6 @@
 
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -41,10 +40,10 @@ class TestPassagerDAO {
 
 	@Inject
 	PassagerDAO dao;
-	
+
 	@Inject
 	ArretDAO arretDao;
-	
+
 	@Inject
 	TrainDAO trainDao;
 
@@ -62,7 +61,7 @@ class TestPassagerDAO {
 	Passager passager4;
 	// Arret Bordeaux
 	Arret arretDepart;
-	//Arret Paris
+	// Arret Paris
 	Arret arretArrivee;
 	Arret arretTours;
 	Arret arretLyon;
@@ -70,7 +69,6 @@ class TestPassagerDAO {
 	Arret arretLille;
 	Arret arretBretagne;
 	Arret arretNice;
-
 
 	@BeforeEach
 	public void setup() {
@@ -106,11 +104,11 @@ class TestPassagerDAO {
 
 		arretBretagne = new Arret();
 		arretBretagne.setNom("Bretagne");
-		em.persist(arretBretagne);		
+		em.persist(arretBretagne);
 
 		arretNice = new Arret();
 		arretNice.setNom("Nice");
-		em.persist(arretNice);	
+		em.persist(arretNice);
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris - Bretagne");
@@ -177,86 +175,85 @@ class TestPassagerDAO {
 		passager3.setDepart(arretDepart);
 		passager3.setTrain(train2);
 		em.persist(passager3);
-		
+
 		passager4 = new Passager();
 		passager4.setNom("Alexandre");
 		passager4.setArrive(arretNice);
 		passager4.setDepart(arretDepart);
 		passager4.setTrain(train2);
 		em.persist(passager4);
-				
+
 		em.getTransaction().commit();
-		
+
 		LocalDateTime date = LocalDateTime.now();
-		
-		//Bordeaux ( hdp dans le passé) - Paris (hdp dans le passé) - Bordeaux - Paris - Bretagne
-		
+
+		// Bordeaux ( hdp dans le passé) - Paris (hdp dans le passé) - Bordeaux - Paris
+		// - Bretagne
+
 		em.getTransaction().begin();
 		trainDao.addArret(train1, arretDepart, date.plusMinutes(30), date.plusMinutes(10), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train1, arretArrivee, date.plusMinutes(60), date.plusMinutes(40), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train1, arretBretagne, date.plusMinutes(80), date.plusMinutes(70), true, false);
 		em.getTransaction().commit();
-		
-		//Nice - Paris - Tours - Lille
-		
+
+		// Nice - Paris - Tours - Lille
+
 		em.getTransaction().begin();
 		trainDao.addArret(train2, arretNice, date.minusMinutes(200), date.minusMinutes(230), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train2, arretArrivee, date.plusMinutes(130), date.plusMinutes(120), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train2, arretTours, date.plusMinutes(150), date.plusMinutes(140), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train2, arretLille, date.plusMinutes(180), date.plusMinutes(170), true, false);
 		em.getTransaction().commit();
-		
-		//Paris (hdp dans le passé) - Bordeaux - Marseille
-		
+
+		// Paris (hdp dans le passé) - Bordeaux - Marseille
+
 		em.getTransaction().begin();
 		trainDao.addArret(train3, arretDepart, date.plusMinutes(30), date.plusMinutes(10), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train3, arretMarseille, date.plusMinutes(80), date.plusMinutes(60), true, false);
 		em.getTransaction().commit();
-		
-		
-		
-		//Bretagne - Lille
-		
+
+		// Bretagne - Lille
+
 		em.getTransaction().begin();
 		trainDao.addArret(train4, arretBretagne, date.plusMinutes(100), null, true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train4, arretLille, null, date.plusMinutes(150), true, false);
 		em.getTransaction().commit();
-		
-		//Bordeaux - Lyon - Paris
-		
+
+		// Bordeaux - Lyon - Paris
+
 		em.getTransaction().begin();
 		trainDao.addArret(train5, arretDepart, date.plusMinutes(20), null, true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train5, arretLyon, date.plusMinutes(180), date.plusMinutes(150), true, false);
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		trainDao.addArret(train5, arretArrivee, date.plusMinutes(280), date.plusMinutes(200), true, false);
 		em.getTransaction().commit();
-		
+
 	}
 
 	@AfterEach
@@ -266,31 +263,31 @@ class TestPassagerDAO {
 		em.remove(passager1);
 		passager1 = null;
 		em.remove(passager2);
-		passager2=null;
+		passager2 = null;
 		em.remove(passager3);
-		passager3=null;
+		passager3 = null;
 		em.remove(passager4);
-		passager4=null;
+		passager4 = null;
 
 		trainDao.removeArret(train1, arretDepart);
 		trainDao.removeArret(train1, arretArrivee);
 		trainDao.removeArret(train1, arretBretagne);
-		
+
 		trainDao.removeArret(train2, arretNice);
 		trainDao.removeArret(train2, arretArrivee);
 		trainDao.removeArret(train2, arretTours);
 		trainDao.removeArret(train2, arretLille);
-		
+
 		trainDao.removeArret(train3, arretDepart);
 		trainDao.removeArret(train3, arretMarseille);
-		
+
 		trainDao.removeArret(train4, arretBretagne);
 		trainDao.removeArret(train4, arretLille);
-		
+
 		trainDao.removeArret(train5, arretDepart);
 		trainDao.removeArret(train5, arretLyon);
 		trainDao.removeArret(train5, arretArrivee);
-		
+
 		em.remove(train1);
 		train1 = null;
 		em.remove(train2);
@@ -378,7 +375,7 @@ class TestPassagerDAO {
 		List<Passager> passagers = dao.getAllPassager();
 
 		assertEquals(4, passagers.size());
-		//assertEquals(passager4, passagers.get(0));
+		// assertEquals(passager4, passagers.get(0));
 		assertTrue(passagers.contains(passager1));
 		assertTrue(passagers.contains(passager2));
 		assertTrue(passagers.contains(passager3));
@@ -396,7 +393,7 @@ class TestPassagerDAO {
 	void testgetAllPassagerByDepart() {
 		List<Passager> passagers = dao.getAllPassagerByDepart(arretDepart.getId());
 		assertEquals(4, passagers.size());
-		//assertEquals(passager4, passagers.get(0));
+		// assertEquals(passager4, passagers.get(0));
 		assertTrue(passagers.contains(passager1));
 		assertTrue(passagers.contains(passager2));
 		assertTrue(passagers.contains(passager3));
@@ -410,53 +407,52 @@ class TestPassagerDAO {
 		assertEquals(passager1, passagers.get(0));
 
 	}
-	
-	@Test 
-	void testFindTrajet(){
 
-		
-		//prend le train1 Bordeaux - Paris plutôt que Bordeaux - Lyon - Paris qui est plus long
-		//ne prend pas le train3 non plus car hdp de Paris dans le passé
-		Train trainAttribue =  dao.findTrajet(passager1.getId());
-		assertEquals(train1.getId(),trainAttribue.getId());
-		
-		// prend le train1 Bordeaux - Paris - Bretagne pour ensuite prendre train4 Bretagne - Lille plutôt que Paris-Tours-Lille qui est plus long
-		Train trainCorrespondance =  dao.findTrajet(passager2.getId());
-		assertEquals(train1.getId(),trainCorrespondance.getId());
-		assertEquals(arretBretagne.getId(),passager2.getCorrespondance().getId());
-		
-		assertEquals(train1.getId(),dao.findTrajet(passager3.getId()).getId());
-		//Correspondance a Paris pour aller a Tours
-		assertEquals(arretArrivee.getId(),passager3.getCorrespondance().getId());
-		
-		//renvoie null car pas de train pour Nice car l'hdp est déjà passée et plus hdp existante dans le futur pour Nice
+	@Test
+	void testFindTrajet() {
+
+		// prend le train1 Bordeaux - Paris plutôt que Bordeaux - Lyon - Paris qui est
+		// plus long
+		// ne prend pas le train3 non plus car hdp de Paris dans le passé
+		Train trainAttribue = dao.findTrajet(passager1.getId());
+		assertEquals(train1.getId(), trainAttribue.getId());
+
+		// prend le train1 Bordeaux - Paris - Bretagne pour ensuite prendre train4
+		// Bretagne - Lille plutôt que Paris-Tours-Lille qui est plus long
+		Train trainCorrespondance = dao.findTrajet(passager2.getId());
+		assertEquals(train1.getId(), trainCorrespondance.getId());
+		assertEquals(arretBretagne.getId(), passager2.getCorrespondance().getId());
+
+		assertEquals(train1.getId(), dao.findTrajet(passager3.getId()).getId());
+		// Correspondance a Paris pour aller a Tours
+		assertEquals(arretArrivee.getId(), passager3.getCorrespondance().getId());
+
+		// renvoie null car pas de train pour Nice car l'hdp est déjà passée et plus hdp
+		// existante dans le futur pour Nice
 		assertNull(dao.findTrajet(passager4.getId()));
-		
-		
-		
+
 	}
-	
-	@Test 
+
+	@Test
 	void testFindPassagerByCorrespondance() {
-		assertTrue(dao.findPassagerByCorrespondance(arretBretagne.getId()).isEmpty());
-		assertTrue( dao.findPassagerByCorrespondance(arretArrivee.getId()).isEmpty());
-		
+		assertTrue(dao.getAllPassagerByCorrespondance(arretBretagne.getId()).isEmpty());
+		assertTrue(dao.getAllPassagerByCorrespondance(arretArrivee.getId()).isEmpty());
+
 		em.getTransaction().begin();
 		em.merge(dao.findTrajet(passager2.getId()));
 		em.getTransaction().commit();
 		em.getTransaction().begin();
 		dao.findTrajet(passager3.getId());
 		em.getTransaction().commit();
-		 
-		List<Passager> list1 = dao.findPassagerByCorrespondance(arretBretagne.getId());
-		List<Passager> list2 = dao.findPassagerByCorrespondance(arretArrivee.getId());
-		 
-		assertEquals(1,list1.size());
-		assertEquals(passager2.getId(),list1.get(0).getId());
-		 
-		assertEquals(1,list2.size());
-		assertEquals(passager3.getId(),list2.get(0).getId());
+
+		List<Passager> list1 = dao.getAllPassagerByCorrespondance(arretBretagne.getId());
+		List<Passager> list2 = dao.getAllPassagerByCorrespondance(arretArrivee.getId());
+
+		assertEquals(1, list1.size());
+		assertEquals(passager2.getId(), list1.get(0).getId());
+
+		assertEquals(1, list2.size());
+		assertEquals(passager3.getId(), list2.get(0).getId());
 	}
 
-	
 }

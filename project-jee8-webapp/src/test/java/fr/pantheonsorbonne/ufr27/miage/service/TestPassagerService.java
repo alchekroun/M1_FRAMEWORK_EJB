@@ -137,7 +137,11 @@ class TestPassagerService {
 	void testCreatePassager() {
 		try {
 			int idPassager = passagerService.createPassager(passager1);
-			assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = dao.getPassagerFromId(idPassager);
+			assertEquals(pJPA.getNom(), passager1.getNom());
+			assertEquals(pJPA.getArrive().getNom(), passager1.getArrive().getNom());
+			assertEquals(pJPA.getDepart().getNom(), passager1.getDepart().getNom());
+			assertEquals(pJPA.getCorrespondance(), passager1.getCorrespondance()); // Null
 			passagerService.deletePassager(idPassager);
 		} catch (CantCreateException e) {
 			// TODO Auto-generated catch block

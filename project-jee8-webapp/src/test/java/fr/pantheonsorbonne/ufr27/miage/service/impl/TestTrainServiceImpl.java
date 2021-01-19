@@ -45,7 +45,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
-class TestTrainServiceImpl  {
+class TestTrainServiceImpl {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator
 			.from(ArretMapper.class, PassagerMapper.class, PassagerService.class, PassagerServiceImpl.class,
@@ -88,8 +88,11 @@ class TestTrainServiceImpl  {
 	Passager passager1;
 	Passager passager2;
 	int idArretDirection;
+	int idArret1;
+	int idArret2;
 	int idPassager1;
 	int idPassager2;
+	int idTrain;
 
 	List<Passager> listePassagers;
 
@@ -115,9 +118,13 @@ class TestTrainServiceImpl  {
 
 		arret1 = factory.createArret();
 		arret1.setNom("Bordeaux");
+		idArret1 = arretService.createArret(arret1);
+		arret1.setId(idArret1);
 
 		arret2 = factory.createArret();
 		arret2.setNom("Paris");
+		idArret2 = arretService.createArret(arret2);
+		arret2.setId(idArret2);
 
 		arretDirection = factory.createArret();
 		arretDirection.setNom("Paris");
@@ -130,43 +137,48 @@ class TestTrainServiceImpl  {
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
 		train1.setStatut("en marche");
+		idTrain = trainService.createTrain(train1);
+		train1.setId(idTrain);
 
 		passager1 = factory.createPassager();
 		passager1.setNom("Hanna");
-		passager1.setArrive(arret1);
-		passager1.setDepart(arretDirection);
+		passager1.setArrive(arretDirection);
+		passager1.setDepart(arret1);
+		idPassager1 = passagerService.createPassager(passager1);
+		passager1.setId(idPassager1);
 
 		passager2 = factory.createPassager();
 		passager2.setNom("David");
-		passager2.setArrive(arret1);
-		passager2.setDepart(arretDirection);
+		passager2.setArrive(arretDirection);
+		passager2.setDepart(arret1);
+		idPassager2 = passagerService.createPassager(passager2);
+		passager2.setId(idPassager2);
 
 	}
 
 	@AfterEach
 	void tearDown() throws NoSuchPassagerException {
 		try {
+			passagerService.deletePassager(idPassager1);
+			passagerService.deletePassager(idPassager2);
+			trainService.deleteTrain(idTrain);
 			arretService.deleteArret(idArretDirection);
+			arretService.deleteArret(idArret1);
+			arretService.deleteArret(idArret2);
 		} catch (NoSuchArretException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CantDeleteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NoSuchTrainException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-
 	@Test
 	public void testDescendreListPassager() throws CantCreateException, NoSuchPassagerException, NoSuchTrainException {
-
-		idPassager1 = passagerService.createPassager(passager1);
-		idPassager2 = passagerService.createPassager(passager2);
-		int idTrain = trainService.createTrain(train1);
-
-		train1.setId(idTrain);
-		passager1.setId(idPassager1);
-		passager2.setId(idPassager2);
 
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(), 0);
 
@@ -182,30 +194,23 @@ class TestTrainServiceImpl  {
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(), 2);
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(), 2);
 
-		em.getTransaction().begin();
-		trainService.descendreListPassager(passagers, dao.getTrainFromId(idTrain));
-		em.getTransaction().commit();
+		trainService.descendreListPassager(passagers, dao.getTrainFromId(idTrain), idArretDirection);
 
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(), 0);
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(), 0);
 
-		passagerService.deletePassager(idPassager1);
-		passagerService.deletePassager(idPassager2);
-		trainService.deleteTrain(idTrain);
+		passager1 = PassagerMapper.passagerDTOMapper(passagerDao.getPassagerFromId(idPassager1));
+		passager2 = PassagerMapper.passagerDTOMapper(passagerDao.getPassagerFromId(idPassager2));
+		assertTrue(passager1.isArrived());
+		assertTrue(passager2.isArrived());
+		assertEquals(passager1.getArrive().getId(), passager1.getDepart().getId());
+		assertEquals(passager2.getArrive().getId(), passager2.getDepart().getId());
 
 	}
 
 	@Test
 	public void testMonterListPassager() throws CantCreateException, NoSuchTrainException, NoSuchArretException,
 			CantDeleteException, NoSuchPassagerException {
-
-		idPassager1 = passagerService.createPassager(passager1);
-		idPassager2 = passagerService.createPassager(passager2);
-		int idTrain = trainService.createTrain(train1);
-
-		train1.setId(idTrain);
-		passager1.setId(idPassager1);
-		passager2.setId(idPassager2);
 
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(), 0);
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(), 0);
@@ -214,16 +219,10 @@ class TestTrainServiceImpl  {
 		passagers.add(passager1);
 		passagers.add(passager2);
 
-		em.getTransaction().begin();
 		trainService.monterListPassager(passagers, dao.getTrainFromId(idTrain));
-		em.getTransaction().commit();
 
 		assertEquals(passagerDao.getAllPassagerByTrain(idTrain).size(), 2);
 		assertEquals(dao.getTrainFromId(idTrain).getListePassagers().size(), 2);
-
-		passagerService.deletePassager(idPassager1);
-		passagerService.deletePassager(idPassager2);
-		trainService.deleteTrain(idTrain);
 
 	}
 
@@ -231,10 +230,6 @@ class TestTrainServiceImpl  {
 	public void testVerifIfExistArretNow()
 			throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
 
-		int idTrain = trainService.createTrain(train1);
-		int idArret = arretService.createArret(arret1);
-		arret1.setId(idArret);
-		train1.setId(idTrain);
 		LocalDateTime dt1 = LocalDateTime.now();
 		LocalDateTime dt2 = LocalDateTime.now().plusMinutes(10);
 		String passage = dt1.toString() + " " + dt2.toString();
@@ -244,9 +239,6 @@ class TestTrainServiceImpl  {
 		HeureDePassage hdp = trainService.verifIfExistArretNow(idTrain);
 		assertEquals(dt1, hdp.getReelDepartTemps());
 		assertEquals(dt2, hdp.getReelArriveeTemps());
-
-		arretService.deleteArret(idArret);
-		trainService.deleteTrain(idTrain);
 
 	}
 

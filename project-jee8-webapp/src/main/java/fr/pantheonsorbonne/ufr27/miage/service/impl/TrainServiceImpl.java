@@ -222,13 +222,20 @@ public class TrainServiceImpl implements TrainService {
 		if (trainJPA == null) {
 			throw new NoSuchTrainException();
 		}
-		// TODO vérifier qu'il reste des arrêts
 		if (hdpDAO.findHdpByTrain(trainJPA.getId()) != null) {
 			HeureDePassage hdpActuel = verifIfExistArretNow(trainJPA.getId());
 			if (hdpActuel != null) {
 				// Fait descendre les gens qui doivent descendre
-				descendreListPassager(PassagerMapper.passagerAllDTOMapper(
-						passagerDAO.getAllPassagerByArrivee(hdpActuel.getArret().getId())), trainJPA);
+				// Arrivee
+				descendreListPassager(
+						PassagerMapper.passagerAllDTOMapper(
+								passagerDAO.getAllPassagerByArrivee(hdpActuel.getArret().getId())),
+						trainJPA, hdpActuel.getArret().getId());
+				// Correspondance
+				descendreListPassager(
+						PassagerMapper.passagerAllDTOMapper(
+								passagerDAO.getAllPassagerByCorrespondance(hdpActuel.getArret().getId())),
+						trainJPA, hdpActuel.getArret().getId());
 
 				if (!hdpActuel.isTerminus()) {
 					// Fait monter les gens qui attendent sur le quai
@@ -251,29 +258,34 @@ public class TrainServiceImpl implements TrainService {
 		}
 	}
 
-	
-	protected void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
+	protected void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train,
+			int arretId) {
+		em.getTransaction().begin();
+		fr.pantheonsorbonne.ufr27.miage.jpa.Arret aJPA = em.find(fr.pantheonsorbonne.ufr27.miage.jpa.Arret.class,
+				arretId);
 		for (Passager p : listPassager) {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
 					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
 			if (train.getListePassagers().contains(pJPA)) {
+				pJPA.setDepart(aJPA);
 				dao.removePassager(train, pJPA);
 			}
 		}
+		em.getTransaction().commit();
 	}
 
-	
 	protected void monterListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train) {
 		for (Passager p : listPassager) {
+			em.getTransaction().begin();
 			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = em
 					.find(fr.pantheonsorbonne.ufr27.miage.jpa.Passager.class, p.getId());
 			if (!train.getListePassagers().contains(pJPA)) {
 				dao.addPassager(train, pJPA);
 			}
+			em.getTransaction().commit();
 		}
 	}
 
-	
 	protected HeureDePassage verifIfExistArretNow(int trainId) {
 		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
 	}
