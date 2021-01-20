@@ -341,6 +341,7 @@ public class TrainServiceImpl implements TrainService {
 
 				// On recherche les hdp en retard
 				if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) != 0) {
+				
 
 					if (isRetardMoreThan2hours(hdp)) {
 						return hdp;
@@ -352,7 +353,7 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	protected boolean isRetardMoreThan2hours(HeureDePassage hdp) {
-		return hdp.getReelDepartTemps().isAfter(hdp.getBaseArriveeTemps().plusHours(2));
+		return hdp.getReelArriveeTemps().isAfter(hdp.getBaseArriveeTemps().plusHours(2));
 	}
 
 }
