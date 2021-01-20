@@ -186,13 +186,13 @@ public class PassagerDAO {
 		if(p.getDepart().getId()!=p.getArrive().getId()) {
 			Arret arretDepart = p.getDepart();
 			LocalDateTime dateNow = LocalDateTime.now();
-			listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDate(arretDepart.getId(),dateNow);
+			listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDateAndDesservi(arretDepart.getId(),dateNow);
 			for(fr.pantheonsorbonne.ufr27.miage.jpa.Train train:listeTrainByArretDepartPassager) {
-				List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train.getId(),arretDepart.getId(),dateNow);
+				List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi(train.getId(),arretDepart.getId(),dateNow);
 				HeureDePassage hdpDepart = null;
 				if(!listHdpDepart.isEmpty()) {
 					hdpDepart = listHdpDepart.get(0);
-					listeHdpAfterDepartByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),hdpDepart.getReelDepartTemps());
+					listeHdpAfterDepartByTrain = hdpDAO.findHdpByTrainAfterDateAndSortedAndDesservi(train.getId(),hdpDepart.getReelDepartTemps());
 				}
 				Etat depart = new Etat(hdpDepart);
 				HeureDePassage hdpSuivante=null;
@@ -224,7 +224,7 @@ public class PassagerDAO {
 					Etat etatEnCours = listeEtatPossible.pollFirst();
 					//récup les hdp des arrets parcouru par le train juste après le départ de l'arrêt en cours
 					//getReelArriveeTemps to getReelDepartTemps??
-					listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelDepartTemps());
+					listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSortedAndDesservi(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelDepartTemps());
 					HeureDePassage hdpSuivanteFromArretEnCours=null;
 					if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
 						hdpSuivanteFromArretEnCours = listeHdpAfterDepartArretEnCoursByTrain.get(0);
@@ -257,15 +257,15 @@ public class PassagerDAO {
 				int size = listeEtatCalculCorrespondance.size();
 				Etat etatEnCours = listeEtatCalculCorrespondance.pollFirst();
 				//je recup liste des trains de l'arret en cours qui partent après larrivee du train provenant de larret precedent
-				listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDate(etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
+				listeTrainByArretDepartPassager = trainDAO.findTrainByArretAndDepartAfterDateAndDesservi(etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
 				for(fr.pantheonsorbonne.ufr27.miage.jpa.Train train:listeTrainByArretDepartPassager) {
 					//liste des hdp des(du) train(s) qui minteresse pour larret en cours cad que le train en question doit partir de larret apres que le train qui vient de larret precdent soit arrive
-					List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train.getId(),etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
+					List<HeureDePassage> listHdpDepart = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi(train.getId(),etatEnCours.getActuel().getArret().getId(),etatEnCours.getActuel().getReelArriveeTemps());
 					HeureDePassage hdpDepart = null;
 					if(!listHdpDepart.isEmpty()) {
 						hdpDepart = listHdpDepart.get(0);
 						//je veux recup hdp heure darrivee la plus tot du prochain arret et qui soit le plus tot par rapport à mon heure de depart 
-						listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(),hdpDepart.getReelDepartTemps());
+						listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSortedAndDesservi(train.getId(),hdpDepart.getReelDepartTemps());
 						HeureDePassage hdpSuivanteFromArretEnCours=null;
 						if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
 							hdpSuivanteFromArretEnCours = listeHdpAfterDepartArretEnCoursByTrain.get(0);

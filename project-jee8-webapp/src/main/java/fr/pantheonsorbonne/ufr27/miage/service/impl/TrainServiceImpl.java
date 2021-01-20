@@ -294,7 +294,7 @@ public class TrainServiceImpl implements TrainService {
 			if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.isEmpty()) {
 				for(fr.pantheonsorbonne.ufr27.miage.jpa.Train t : listTrainCheckIfHaveToDelay) {
 					if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.contains(t)) {
-						if(passagerDAO.getNombrePassagerByTrainIdAndNotArrivalAtArretId(perturbation.getTrain().getId(),hdp.getArret().getId()).size()>50 && t.getClass().getName().equals("TrainAvecResa")) {
+						if(passagerDAO.getNombrePassagerByTrainIdAndNotArrivalAtArretId(perturbation.getTrain().getId(),hdp.getArret().getId()).size()>50 && t instanceof fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa) {
 							listTrainARetarder.add(t);
 						}
 							
