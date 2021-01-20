@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.List;
+
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.persistence.EntityManager;
@@ -14,6 +16,7 @@ import fr.pantheonsorbonne.ufr27.miage.jms.InfoCentrePublisher;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.InfoCentreService;
 
+@ManagedBean
 public class InfoCentreServiceImpl implements InfoCentreService {
 
 	@Inject
