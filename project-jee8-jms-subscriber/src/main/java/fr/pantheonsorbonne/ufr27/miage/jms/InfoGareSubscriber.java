@@ -64,7 +64,8 @@ public class InfoGareSubscriber implements Closeable {
 	// Cette fonction ne devrait pas être là
 	public HeureDePassage getTerminus(List<HeureDePassage> listHdp, Train t) {
 		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getTrain().equals(t) && hdp.isTerminus()) {
+			// TODO Revoir la fonction .equals de tous les objets JPA
+			if (hdp.getTrain().getId() == t.getId() && hdp.isTerminus()) {
 				return hdp;
 			}
 		}
@@ -89,12 +90,12 @@ public class InfoGareSubscriber implements Closeable {
 				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
-					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
+					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
 					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
-					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
+					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
+						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
@@ -104,12 +105,12 @@ public class InfoGareSubscriber implements Closeable {
 				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
-					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
+					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
 					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
-					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
+					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
+						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
 					}
 					toShow.append("\n##\n");
 				}
