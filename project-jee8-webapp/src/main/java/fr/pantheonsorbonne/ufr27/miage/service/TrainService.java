@@ -47,6 +47,6 @@ public interface TrainService {
 
 	public void descendreListPassager(List<Passager> listPassager, fr.pantheonsorbonne.ufr27.miage.jpa.Train train);
 
-	void retarderRuptureCorrespondance(Perturbation perturbation);
+	public void retarderCorrespondance(Perturbation perturbation);
 	
 }
