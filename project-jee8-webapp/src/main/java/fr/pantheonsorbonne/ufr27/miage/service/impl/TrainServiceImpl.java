@@ -260,7 +260,11 @@ public class TrainServiceImpl implements TrainService {
 				// Le train n'a pas d'arrêt à desservir pour le moment.
 				HeureDePassage nextHdp = HeureDePassageMapper
 						.heureDePassageDTOMapper(hdpDAO.findNextHdp(train.getId()));
-				arretExceptionnel(nextHdp);
+				if (nextHdp != null) {
+					arretExceptionnel(nextHdp);
+				} else {
+					// Le train n'a plus d'arrêt à desservir
+				}
 			}
 		} else {
 			// Le train n'a aucun arrêt à desservir
@@ -300,27 +304,12 @@ public class TrainServiceImpl implements TrainService {
 		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
 	}
 
-	// Fonction qui modifie le desservi de False a True si toutes les conditions
-	// sont vérifiées
-	protected void arretExceptionnel(HeureDePassage hdp) {
-		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard(hdp.getArret().getId());
-		if (hdpAvecTrainEnRetard != null && isRetardMoreThan2hours(hdp)) {
-			List<Passager> listPassagerTrainEnRetard = hdpAvecTrainEnRetard.getTrain().getListePassagers();
-			if (listPassagerTrainEnRetard.size() >= 50) {
-				int count = 0;
-				for (Passager p : listPassagerTrainEnRetard) {
-					if (p.getCorrespondance() != null) {
-						if (p.getCorrespondance().equals(hdp.getArret())
-								&& trainGetMeWhereIWant(hdpAvecTrainEnRetard.getTrain(), p)) {
-							count++;
-						}
-					}
-				}
-				if (count >= 50) {
-					hdpDAO.changeParameterDesservi(
-							hdpDAO.getHdpFromTrainIdAndArretId(hdp.getTrain().getId(), hdp.getArret().getId()), true);
-				}
-			}
+	protected void arretExceptionnel(HeureDePassage nextHdp) {
+		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard2h(nextHdp);
+		if (hdpAvecTrainEnRetard != null) {
+			hdpDAO.changeParameterDesservi(
+					hdpDAO.getHdpFromTrainIdAndArretId(nextHdp.getTrain().getId(), nextHdp.getArret().getId()), true);
+
 		}
 	}
 
@@ -341,13 +330,22 @@ public class TrainServiceImpl implements TrainService {
 		return false;
 	}
 
-	protected HeureDePassage verifIfNextArretHasTrainEnRetard(int arretId) {
+	protected HeureDePassage verifIfNextArretHasTrainEnRetard2h(HeureDePassage hdpBase) {
 		List<HeureDePassage> listHdpAtArretId = HeureDePassageMapper
-				.heureDePassageAllDTOMapper(hdpDAO.findHdpByArret(arretId));
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByArret(hdpBase.getArret().getId()));
 
 		for (HeureDePassage hdp : listHdpAtArretId) {
-			if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) == 0) {
-				return hdp;
+
+			// Seuls les trains qui arrivent après ce train sont prit en compte
+			if (hdp.getReelArriveeTemps().isAfter(hdpBase.getReelArriveeTemps())) {
+
+				// On recherche les hdp en retard
+				if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) != 0) {
+
+					if (isRetardMoreThan2hours(hdp)) {
+						return hdp;
+					}
+				}
 			}
 		}
 		return null;

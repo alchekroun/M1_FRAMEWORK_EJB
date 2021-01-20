@@ -160,31 +160,7 @@ public class HeureDePassageDAO {
 	}
 
 	public HeureDePassage findNextHdp(int trainId) {
-		List<HeureDePassage> listHdp = findHdpByTrain(trainId);
-		List<HeureDePassage> listHdpTMP = new ArrayList<HeureDePassage>();
-
-		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getReelArriveeTemps().isAfter(LocalDateTime.now())) {
-				listHdpTMP.add(hdp);
-			}
-		}
-		if (listHdpTMP.size() == 1) {
-			return listHdpTMP.get(0);
-		} else if (listHdpTMP.size() == 0) {
-			return null;
-		} else {
-			int k;
-			int min = 9999999;
-			int nextOne = 0;
-			for (int i = 0; i < listHdpTMP.size() - 1; i++) {
-				k = LocalDateTime.now().compareTo(listHdpTMP.get(i).getReelArriveeTemps());
-				if (k < min) {
-					min = k;
-					nextOne = i;
-				}
-			}
-			return listHdpTMP.get(nextOne);
-		}
+		return findHdpByTrainAfterDateAndSorted(trainId, LocalDateTime.now()).get(0);
 	}
 
 	// retourne une liste des hdp des trains partant de arretId au plus tôt juste
