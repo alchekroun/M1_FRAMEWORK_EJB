@@ -284,13 +284,13 @@ public class TrainServiceImpl implements TrainService {
 		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdp = hdpDAO.findHdpByTrainAfterDateAndSorted(perturbation.getTrain().getId(), LocalDateTime.now());
 		if(!listHdp.isEmpty()) {
 			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp = listHdp.get(0);
-			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainArretSuivant = dao.findTrainByArretAndArriveeBeforeDate(hdp.getArret().getId(),hdp.getReelArriveeTemps().minusMinutes(perturbation.getDureeEnPlus()));
-			//check que train arrivee avant ou apres nimporte mais surtout part apres l'arrivee qui de base nest pas perturbee
-			//verif quavec la perturbation les gens ratent ce train à cause du getDureeEnPlus() et dans ce cas faire attendre avec temps pertur enplus + 5 min pour laisser le temps
-			//verif que le train a retarde est reserve  de base
+			//liste qui recup les trains qui ont un depart après l'arrivee du train qui est perturbe (calcul en retirant le temps de perturbation pour avoir le cas original sans perturbation)
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainCheckIfHaveToDelay= dao.findTrainByArretAndDepartAfterDate(hdp.getArret().getId(),hdp.getReelArriveeTemps().minusMinutes(perturbation.getDureeEnPlus()));
+			//liste qui recup les trains qui ont un depart après l'arrivee du train qui est perturbe (cette fois on compte le temps de perturbation)
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainCheckIfHaveToDelayAfterAddingPerturbation= dao.findTrainByArretAndDepartAfterDate(hdp.getArret().getId(),hdp.getReelArriveeTemps());
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainARetarder = null;
+			//les trains de la premiere liste et qui ne sont pas dans la seconde liste sont donc ceux qu'ils faut retarder
+			//on check qu'il y a plus de 50 passagers à recup + que le train qu'on va retarder est un train avec reservation
 			if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.isEmpty()) {
 				for(fr.pantheonsorbonne.ufr27.miage.jpa.Train t : listTrainCheckIfHaveToDelay) {
 					if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.contains(t)) {
