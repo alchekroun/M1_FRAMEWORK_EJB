@@ -632,7 +632,7 @@ class TestTrainService {
 		
 		passagerDao.findTrajet(p.getId());
 		
-		trainService.retarderCorrespondance(perturbation1);
+		trainService.retarderCorrespondance(train1);
 		assertEquals(hdpTrain1.getReelArriveeTemps().plusMinutes(10),hdpTrain1.getReelArriveeTemps());
 		assertEquals(hdpTrain1.getReelDepartTemps().plusMinutes(10),hdpTrain1.getReelDepartTemps());
 		
