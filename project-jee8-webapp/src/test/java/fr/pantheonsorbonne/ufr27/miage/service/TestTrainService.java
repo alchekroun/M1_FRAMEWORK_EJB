@@ -524,7 +524,7 @@ class TestTrainService {
 	}
 	
 	
-	@Test
+/*	@Test
 	public void testRetarderCorrespondance() throws NoSuchTrainException, CantCreateException, NoSuchArretException, CantDeleteException, NoSuchPassagerException {
 		
 		Train train2 = factory.createTrainAvecResa();
@@ -646,4 +646,5 @@ class TestTrainService {
 		trainService.deleteTrain(idTrain1);
 		trainService.deleteTrain(idTrain2);
 	}
+*/
 }
