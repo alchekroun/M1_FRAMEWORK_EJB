@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -16,6 +17,7 @@ import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
 
+@ManagedBean
 public class PassagerServiceImpl implements PassagerService {
 
 	@Inject
