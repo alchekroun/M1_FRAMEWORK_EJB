@@ -21,6 +21,7 @@ import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.TrainMapper;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
@@ -57,7 +58,6 @@ public class TrainServiceImpl implements TrainService {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa();
 
 			train.setNom(trainDTO.getNom());
-			train.setDirectionType(trainDTO.getDirectionType());
 			train.setNumero(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
@@ -218,33 +218,42 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	@Override
-	public void enMarche(Train train) throws NoSuchTrainException, NoSuchArretException {
+	public int enMarche(Train train) throws NoSuchTrainException {
 		fr.pantheonsorbonne.ufr27.miage.jpa.Train trainJPA = dao.getTrainFromId(train.getId());
 		if (trainJPA == null) {
-			throw new NoSuchTrainException();
+			// throw new NoSuchTrainException();
+			return -1;
+		}
+		if (train.getStatut().equals("off")) {
+			changeStatut(train, "on");
 		}
 		if (hdpDAO.findHdpByTrain(trainJPA.getId()) != null) {
 			HeureDePassage hdpActuel = verifIfExistArretNow(trainJPA.getId());
 			if (hdpActuel != null && hdpActuel.isDesservi()) {
+
+				Arret arretActuel = hdpActuel.getArret();
+
 				// Fait descendre les gens qui doivent descendre
+
 				// Arrivee
 				descendreListPassager(
-						PassagerMapper.passagerAllDTOMapper(
-								passagerDAO.getAllPassagerByArrivee(hdpActuel.getArret().getId())),
-						trainJPA, hdpActuel.getArret().getId());
+						PassagerMapper.passagerAllDTOMapper(passagerDAO.getAllPassagerByArrivee(arretActuel.getId())),
+						trainJPA, arretActuel.getId());
+
 				// Correspondance
 				descendreListPassager(
-						PassagerMapper.passagerAllDTOMapper(
-								passagerDAO.getAllPassagerByCorrespondance(hdpActuel.getArret().getId())),
-						trainJPA, hdpActuel.getArret().getId());
+						PassagerMapper
+								.passagerAllDTOMapper(passagerDAO.getAllPassagerByCorrespondance(arretActuel.getId())),
+						trainJPA, arretActuel.getId());
 
 				if (!hdpActuel.isTerminus()) {
+
 					// Fait monter les gens qui attendent sur le quai
 
 					List<Passager> listPassagerDescendre = new ArrayList<Passager>();
 
 					for (Passager p : PassagerMapper
-							.passagerAllDTOMapper(passagerDAO.getAllPassagerByDepart(hdpActuel.getArret().getId()))) {
+							.passagerAllDTOMapper(passagerDAO.getAllPassagerByDepart(arretActuel.getId()))) {
 						if (trainGetMeWhereIWant(train, p)) {
 							listPassagerDescendre.add(p);
 						}
@@ -252,23 +261,42 @@ public class TrainServiceImpl implements TrainService {
 
 					monterListPassager(listPassagerDescendre, trainJPA);
 
-				} else {
-					// interupt le thread car nous sommes arriver au terminus
-				}
+					return 1;
 
-			} else {
-				// Le train n'a pas d'arrêt à desservir pour le moment.
-				HeureDePassage nextHdp = HeureDePassageMapper
-						.heureDePassageDTOMapper(hdpDAO.findNextHdp(train.getId()));
-				if (nextHdp != null) {
-					arretExceptionnel(nextHdp);
-				} else {
-					// Le train n'a plus d'arrêt à desservir
 				}
+				// interupt le thread car nous sommes arriver au terminus
+				changeStatut(train, "off");
+				return -1;
+
 			}
-		} else {
-			// Le train n'a aucun arrêt à desservir
-			throw new NoSuchArretException();
+			// Le train n'a pas d'arrêt à desservir pour le moment.
+			HeureDePassage nextHdp = HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.findNextHdp(train.getId()));
+			if (nextHdp != null) {
+				arretExceptionnel(nextHdp);
+			} else {
+				// Le train n'a plus d'arrêt à desservir
+				changeStatut(train, "off");
+				return -1;
+			}
+
+			return 1;
+
+		}
+		// Le train n'a aucun arrêt à desservir
+		changeStatut(train, "off");
+		return -1;
+
+	}
+
+	protected void changeStatut(Train t, String s) {
+		if (s.equals("on") || s.equals("off")) {
+			t.setStatut(s);
+			try {
+				updateTrain(t);
+			} catch (NoSuchTrainException | CantUpdateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -352,7 +380,7 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 	protected boolean isRetardMoreThan2hours(HeureDePassage hdp) {
-		return hdp.getReelDepartTemps().isAfter(hdp.getBaseArriveeTemps().plusHours(2));
+		return hdp.getReelArriveeTemps().isAfter(hdp.getBaseArriveeTemps().plusHours(2));
 	}
 
 }

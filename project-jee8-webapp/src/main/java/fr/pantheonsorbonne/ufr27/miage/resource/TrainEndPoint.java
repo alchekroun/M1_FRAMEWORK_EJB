@@ -164,26 +164,24 @@ public class TrainEndPoint {
 	@Path("/enmarche")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response enMarche(Train train) {
-		
+
 		// TODO Voir comment on peut exploiter les erreurs qui remontent d'un thread
-		
+
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				while (true) {
+				int statut = 0;
+
+				while (statut != -1) {
 					try {
-						service.enMarche(train);
+						statut = service.enMarche(train);
 						Thread.sleep(60000); // 1mn
 					} catch (NoSuchTrainException e) {
 						break;
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (NoSuchArretException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						break;
 					}
 				}
 			}
