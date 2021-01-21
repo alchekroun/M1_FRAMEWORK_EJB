@@ -67,7 +67,7 @@ class TestTrainServiceImpl {
 
 	@Inject
 	TrainServiceImpl trainService;
-	
+
 	@Inject
 	TrainService trainService2;
 
@@ -247,31 +247,31 @@ class TestTrainServiceImpl {
 
 	}
 
-   @Test
+	@Test
 	public void testIsRetardMoreThan2hours() throws NoSuchTrainException, NoSuchArretException {
-		
+
 		LocalDateTime dt1 = LocalDateTime.now().plusMinutes(10);
 		LocalDateTime dt2 = LocalDateTime.now();
 		String passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train1.getId(), arret1.getId(), passage, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
 				arret1.getId());
-	    boolean enRetard = trainService.isRetardMoreThan2hours(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-	    assertEquals(enRetard,false);
-		
-	    em.getTransaction().begin();
-	    hdp1.setReelArriveeTemps(hdp1.getBaseArriveeTemps().plusMinutes(140));
-	    em.getTransaction().commit();
-	    hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
-				arret1.getId());
-	    enRetard = trainService.isRetardMoreThan2hours(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-	    assertEquals(enRetard,true);
-		
+		boolean enRetard = trainService.isRetardMoreThan2hours(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
+		assertEquals(enRetard, false);
+
+		em.getTransaction().begin();
+		hdp1.setReelArriveeTemps(hdp1.getBaseArriveeTemps().plusMinutes(140));
+		em.getTransaction().commit();
+		hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(), arret1.getId());
+		enRetard = trainService.isRetardMoreThan2hours(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
+		assertEquals(enRetard, true);
+
 	}
 
 	@Test
-	public void testVerifIfNextArretHasTrainEnRetard() throws CantCreateException, NoSuchTrainException, NoSuchArretException {
-		
+	public void testVerifIfNextArretHasTrainEnRetard()
+			throws CantCreateException, NoSuchTrainException, NoSuchArretException {
+
 		Train train2 = factory.createTrainAvecResa();
 		train2.setNom("Lens- Paris");
 		train2.setDirectionType("forward");
@@ -281,7 +281,7 @@ class TestTrainServiceImpl {
 		train2.setStatut("en marche");
 		int idTrain2 = trainService2.createTrain(train2);
 		train2.setId(idTrain2);
-		
+
 		Train train3 = factory.createTrainAvecResa();
 		train3.setNom("Montpellier - Paris");
 		train3.setDirectionType("forward");
@@ -291,55 +291,50 @@ class TestTrainServiceImpl {
 		train3.setStatut("en marche");
 		int idTrain3 = trainService2.createTrain(train3);
 		train3.setId(idTrain3);
-		
+
 		LocalDateTime dt1 = LocalDateTime.now().plusMinutes(10);
 		LocalDateTime dt2 = LocalDateTime.now();
 		String passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train1.getId(), arret1.getId(), passage, true, false);
-		
+
 		dt1 = LocalDateTime.now().plusMinutes(22);
 		dt2 = LocalDateTime.now().plusMinutes(20);
-	    passage = dt1.toString() + " " + dt2.toString();
+		passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train2.getId(), arret1.getId(), passage, true, false);
-		
+
 		dt1 = LocalDateTime.now().plusMinutes(42);
 		dt2 = LocalDateTime.now().plusMinutes(40);
-	    passage = dt1.toString() + " " + dt2.toString();
+		passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train3.getId(), arret1.getId(), passage, true, false);
-		
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
 				arret1.getId());
-		
-		HeureDePassage hdp=trainService.verifIfNextArretHasTrainEnRetard2h(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-		
-		assertEquals(hdp,null);
-		
+
+		HeureDePassage hdp = trainService
+				.verifIfNextArretHasTrainEnRetard2h(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
+
+		assertEquals(hdp, null);
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(),
 				arret1.getId());
-		
+
 		em.getTransaction().begin();
 		hdp2.setReelArriveeTemps(hdp2.getBaseArriveeTemps().plusHours(3));
 		em.merge(hdp2);
 		em.getTransaction().commit();
-		
-		hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(),
-				arret1.getId());
-		
-		
-		 hdp=trainService.verifIfNextArretHasTrainEnRetard2h(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-		 HeureDePassage hdpResultat= HeureDePassageMapper.heureDePassageDTOMapper(hdp2);
-		 
-		 assertEquals(hdp.getArret().getId(),hdpResultat.getArret().getId());
-		 assertEquals(hdp.getReelArriveeTemps(),hdpResultat.getReelArriveeTemps());
-		 assertEquals(hdp.getBaseArriveeTemps(),hdpResultat.getBaseArriveeTemps());
-		 
-		 
+
+		hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(), arret1.getId());
+
+		hdp = trainService.verifIfNextArretHasTrainEnRetard2h(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
+		HeureDePassage hdpResultat = HeureDePassageMapper.heureDePassageDTOMapper(hdp2);
+
+		assertEquals(hdp.getArret().getId(), hdpResultat.getArret().getId());
+		assertEquals(hdp.getReelArriveeTemps(), hdpResultat.getReelArriveeTemps());
+		assertEquals(hdp.getBaseArriveeTemps(), hdpResultat.getBaseArriveeTemps());
+
 		trainService2.deleteTrain(idTrain2);
 		trainService2.deleteTrain(idTrain3);
-		
-		
-		
-		
+
 	}
 
 	@Test
@@ -350,7 +345,7 @@ class TestTrainServiceImpl {
 
 	@Test
 	public void testArretExceptionnel() throws CantCreateException, NoSuchTrainException, NoSuchArretException {
-		
+
 		Train train2 = factory.createTrainAvecResa();
 		train2.setNom("Lens- Paris");
 		train2.setDirectionType("forward");
@@ -360,7 +355,7 @@ class TestTrainServiceImpl {
 		train2.setStatut("en marche");
 		int idTrain2 = trainService2.createTrain(train2);
 		train2.setId(idTrain2);
-		
+
 		Train train3 = factory.createTrainAvecResa();
 		train3.setNom("Montpellier - Paris");
 		train3.setDirectionType("forward");
@@ -370,65 +365,58 @@ class TestTrainServiceImpl {
 		train3.setStatut("en marche");
 		int idTrain3 = trainService2.createTrain(train3);
 		train3.setId(idTrain3);
-		
+
 		LocalDateTime dt1 = LocalDateTime.now().plusMinutes(10);
 		LocalDateTime dt2 = LocalDateTime.now();
 		String passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train1.getId(), arret1.getId(), passage, false, false);
-		
+
 		dt1 = LocalDateTime.now().plusMinutes(22);
 		dt2 = LocalDateTime.now().plusMinutes(20);
-	    passage = dt1.toString() + " " + dt2.toString();
+		passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train2.getId(), arret1.getId(), passage, true, false);
-		
+
 		dt1 = LocalDateTime.now().plusMinutes(42);
 		dt2 = LocalDateTime.now().plusMinutes(40);
-	    passage = dt1.toString() + " " + dt2.toString();
+		passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train3.getId(), arret1.getId(), passage, false, false);
-		
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
 				arret1.getId());
-		
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(),
 				arret1.getId());
-		
+
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp3 = hdpDao.getHdpFromTrainIdAndArretId(train3.getId(),
 				arret1.getId());
-		
-		assertEquals(hdp1.isDesservi(),false);
-		assertEquals(hdp2.isDesservi(),true);
-		assertEquals(hdp3.isDesservi(),false);
-		
+
+		assertEquals(hdp1.isDesservi(), false);
+		assertEquals(hdp2.isDesservi(), true);
+		assertEquals(hdp3.isDesservi(), false);
+
 		trainService.arretExceptionnel(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-		
-		assertEquals(hdp1.isDesservi(),false);
-		assertEquals(hdp2.isDesservi(),true);
-		assertEquals(hdp3.isDesservi(),false);
-		
-		
+
+		assertEquals(hdp1.isDesservi(), false);
+		assertEquals(hdp2.isDesservi(), true);
+		assertEquals(hdp3.isDesservi(), false);
+
 		em.getTransaction().begin();
 		hdp2.setReelArriveeTemps(hdp2.getBaseArriveeTemps().plusHours(3));
 		em.merge(hdp2);
 		em.getTransaction().commit();
-		
-		
+
 		trainService.arretExceptionnel(HeureDePassageMapper.heureDePassageDTOMapper(hdp1));
-		
-		hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
-				arret1.getId());
-		
-		hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(),
-				arret1.getId());
-		
-		hdp3 = hdpDao.getHdpFromTrainIdAndArretId(train3.getId(),
-				arret1.getId());
-		
-		 
-		 assertEquals(hdp1.isDesservi(),true);
-		 assertEquals(hdp2.isDesservi(),true);
-		 assertEquals(hdp3.isDesservi(),false);
-		 
-		 
+
+		hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(), arret1.getId());
+
+		hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(), arret1.getId());
+
+		hdp3 = hdpDao.getHdpFromTrainIdAndArretId(train3.getId(), arret1.getId());
+
+		assertEquals(hdp1.isDesservi(), true);
+		assertEquals(hdp2.isDesservi(), true);
+		assertEquals(hdp3.isDesservi(), false);
+
 		trainService2.deleteTrain(idTrain2);
 		trainService2.deleteTrain(idTrain3);
 	}

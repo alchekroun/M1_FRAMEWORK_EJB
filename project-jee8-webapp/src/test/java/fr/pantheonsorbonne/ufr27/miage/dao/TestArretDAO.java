@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
@@ -43,7 +42,6 @@ public class TestArretDAO {
 	TrainDAO daoTrain;
 
 	Arret arret1;
-	InfoGare infoGare1;
 	Train train1;
 	Arret arretDirection;
 
@@ -59,9 +57,6 @@ public class TestArretDAO {
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
-		infoGare1 = new InfoGare();
-		infoGare1.setLocalisation(arret1);
-		em.persist(infoGare1);
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
 		train1.setStatut("on");
@@ -76,8 +71,6 @@ public class TestArretDAO {
 	public void tearDown() {
 		System.out.println("\n== TearDown");
 		em.getTransaction().begin();
-		em.remove(infoGare1);
-		infoGare1 = null;
 		em.remove(arret1);
 		arret1 = null;
 		em.remove(arretDirection);

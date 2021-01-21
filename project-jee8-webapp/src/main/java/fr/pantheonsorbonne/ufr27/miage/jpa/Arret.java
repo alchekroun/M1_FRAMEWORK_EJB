@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 
@@ -30,10 +28,6 @@ public class Arret {
 	// ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
 	protected List<HeureDePassage> listeHeureDePassage;
-
-	@OneToOne(mappedBy = "localisation", cascade = CascadeType.ALL)
-	@PrimaryKeyJoinColumn
-	protected InfoGare infoGare;
 
 	boolean isCreated;
 

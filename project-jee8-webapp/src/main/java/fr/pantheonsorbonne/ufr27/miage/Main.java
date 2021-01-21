@@ -2,10 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Locale;
-import javax.enterprise.inject.se.SeContainer;
-import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.inject.Singleton;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -26,7 +23,6 @@ import fr.pantheonsorbonne.ufr27.miage.conf.EMFactory;
 import fr.pantheonsorbonne.ufr27.miage.conf.PersistenceConf;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
-import fr.pantheonsorbonne.ufr27.miage.dao.InfoGareDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.InvoiceDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PaymentDAO;
@@ -41,12 +37,9 @@ import fr.pantheonsorbonne.ufr27.miage.jms.conf.JMSProducer;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation;
-import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
 import fr.pantheonsorbonne.ufr27.miage.service.InfoCentreService;
-import fr.pantheonsorbonne.ufr27.miage.service.InfoGareService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
 import fr.pantheonsorbonne.ufr27.miage.service.MailingService;
 import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
@@ -56,7 +49,6 @@ import fr.pantheonsorbonne.ufr27.miage.service.UserService;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoCentreServiceImpl;
-import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoGareServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.MailingServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.PassagerServiceImpl;
@@ -90,7 +82,6 @@ public class Main {
 						bind(PassagerDAO.class).to(PassagerDAO.class);
 						bind(ArretDAO.class).to(ArretDAO.class);
 						bind(HeureDePassageDAO.class).to(HeureDePassageDAO.class);
-						bind(InfoGareDAO.class).to(InfoGareDAO.class);
 						bind(PerturbationDAO.class).to(PerturbationDAO.class);
 						bind(PaymentDAO.class).to(PaymentDAO.class);
 						bind(InvoiceDAO.class).to(InvoiceDAO.class);
@@ -100,7 +91,6 @@ public class Main {
 						bind(ArretServiceImpl.class).to(ArretService.class);
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(PassagerServiceImpl.class).to(PassagerService.class);
-						bind(InfoGareServiceImpl.class).to(InfoGareService.class);
 						bind(InfoCentreServiceImpl.class).to(InfoCentreService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
 						bind(PaymentServiceImpl.class).to(PaymentService.class);
@@ -156,18 +146,6 @@ public class Main {
 		System.in.read();
 		server.stop();
 
-	}
-
-	public static void testExemple() {
-		SeContainerInitializer initializer = SeContainerInitializer.newInstance();
-
-		try (SeContainer container = initializer.disableDiscovery().addPackages(Main.class).initialize()) {
-
-			final InfoCentrePublisher infoCentrePublisher = container.select(InfoCentrePublisher.class).get();
-
-			// code
-
-		}
 	}
 
 }
