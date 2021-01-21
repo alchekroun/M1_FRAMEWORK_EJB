@@ -248,14 +248,13 @@ class TestHeureDePassageDAO {
 				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
 		em.getTransaction().commit();
 
-		List<HeureDePassage> list1 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(),
-				arretDepart.getId(), LocalDateTime.now().plusMinutes(5));
+		List<HeureDePassage> list1 = dao.findHdpByTrainAfterDateAndSorted(train1.getId(), LocalDateTime.now());
 
-		List<HeureDePassage> list2 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(),
-				arretDepart.getId(), LocalDateTime.now().plusMinutes(50));
+		List<HeureDePassage> list2 = dao.findHdpByTrainAfterDateAndSorted(train1.getId(), LocalDateTime.now().plusMinutes(110));
 
 		assertEquals(heureDePassage2.getId(), list1.get(0).getId());
-		assertEquals(1, list1.size());
+		assertEquals(2, list1.size());
+		assertEquals(list1.get(0),heureDePassage2);
 		assertTrue(list2.isEmpty());
 
 		em.getTransaction().begin();

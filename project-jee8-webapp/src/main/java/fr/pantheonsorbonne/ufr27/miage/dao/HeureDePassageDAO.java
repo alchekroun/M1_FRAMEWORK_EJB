@@ -138,7 +138,7 @@ public class HeureDePassageDAO {
 
 	public HeureDePassage getHdpByTrainAndDateNow(int trainId) {
 		return (HeureDePassage) em.createNamedQuery("findHeureByDateNowAndTrain")
-				.setParameter("temps", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)).setParameter("trainId", trainId).getSingleResult();
+				.setParameter("temps", LocalDateTime.now()).setParameter("trainId", trainId).getSingleResult();
 	}
 
 	public List<HeureDePassage> getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(int trainId, int arretId,
