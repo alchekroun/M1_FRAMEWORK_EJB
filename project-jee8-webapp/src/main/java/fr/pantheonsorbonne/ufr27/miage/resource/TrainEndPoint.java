@@ -93,7 +93,7 @@ public class TrainEndPoint {
 	@Path("{trainId}/addarret/{arretId}/{desservi}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response addArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
-			@PathParam("terminus") String desservi, @PathParam("terminus") String terminus, String passage)
+			@PathParam("desservi") String desservi, @PathParam("terminus") String terminus, String passage)
 			throws URISyntaxException {
 		try {
 			service.addArret(trainId, arretId, passage, Boolean.parseBoolean(desservi), Boolean.parseBoolean(terminus));

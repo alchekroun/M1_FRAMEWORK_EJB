@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -17,6 +18,7 @@ import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 
+@ManagedBean
 public class ArretServiceImpl implements ArretService {
 
 	@Inject

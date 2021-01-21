@@ -160,10 +160,10 @@ public class HeureDePassageDAO {
 				.setParameter("temps", date).getResultList();
 	}
 
+
 	public HeureDePassage findNextHdp(int trainId) {
 		return findHdpByTrainAfterDateAndSorted(trainId, LocalDateTime.now()).get(0);
 	}
-
 	// retourne une liste des hdp des trains partant de arretId au plus tôt juste
 	// après une date
 //	public List<HeureDePassage> findHeureMoreRecentByArretIdAfterDate(int arretId, LocalDateTime date){

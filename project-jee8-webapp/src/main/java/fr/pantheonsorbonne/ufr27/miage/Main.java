@@ -38,6 +38,7 @@ import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentAckQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.conf.PaymentQueueSupplier;
 import fr.pantheonsorbonne.ufr27.miage.jms.utils.BrokerUtils;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
+import fr.pantheonsorbonne.ufr27.miage.service.DataInitializerService;
 import fr.pantheonsorbonne.ufr27.miage.service.GymService;
 import fr.pantheonsorbonne.ufr27.miage.service.InfoCentreService;
 import fr.pantheonsorbonne.ufr27.miage.service.InvoicingService;
@@ -47,6 +48,7 @@ import fr.pantheonsorbonne.ufr27.miage.service.PaymentService;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 import fr.pantheonsorbonne.ufr27.miage.service.UserService;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.ArretServiceImpl;
+import fr.pantheonsorbonne.ufr27.miage.service.impl.DataInitializerServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.GymServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InfoCentreServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.service.impl.InvoicingServiceImpl;
@@ -92,6 +94,7 @@ public class Main {
 						bind(TrainServiceImpl.class).to(TrainService.class);
 						bind(PassagerServiceImpl.class).to(PassagerService.class);
 						bind(InfoCentreServiceImpl.class).to(InfoCentreService.class);
+						bind(DataInitializerServiceImpl.class).to(DataInitializerService.class);
 						bind(GymServiceImpl.class).to(GymService.class);
 						bind(PaymentServiceImpl.class).to(PaymentService.class);
 						bind(InvoicingServiceImpl.class).to(InvoicingService.class);
@@ -137,8 +140,10 @@ public class Main {
 		BrokerUtils.startBroker();
 
 		PersistenceConf pc = new PersistenceConf();
-		pc.getEM();
+		EntityManager em = pc.getEM();
 		pc.launchH2WS();
+
+		initBdd(em);
 
 		System.out.println(String.format(
 				"Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...",
@@ -148,4 +153,9 @@ public class Main {
 
 	}
 
+	public static void initBdd(EntityManager em) {
+		DataInitializerService di = new DataInitializerServiceImpl(em);
+		di.fulfilBdd();
+	}
+  
 }

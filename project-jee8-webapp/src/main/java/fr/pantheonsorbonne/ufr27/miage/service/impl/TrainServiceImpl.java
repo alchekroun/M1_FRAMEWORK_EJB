@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -29,6 +30,7 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
+@ManagedBean
 public class TrainServiceImpl implements TrainService {
 
 	@Inject
