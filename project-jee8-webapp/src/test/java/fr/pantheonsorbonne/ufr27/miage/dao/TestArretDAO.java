@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
@@ -31,7 +30,8 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 public class TestArretDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
-			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class,PerturbationDAO.class).activate(RequestScoped.class).build();
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class, PerturbationDAO.class)
+			.activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
@@ -42,7 +42,6 @@ public class TestArretDAO {
 	TrainDAO daoTrain;
 
 	Arret arret1;
-	InfoGare infoGare1;
 	Train train1;
 	Arret arretDirection;
 
@@ -58,16 +57,11 @@ public class TestArretDAO {
 		arretDirection = new Arret();
 		arretDirection.setNom("Paris");
 		em.persist(arretDirection);
-		infoGare1 = new InfoGare();
-		infoGare1.setLocalisation(arret1);
-		em.persist(infoGare1);
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		em.persist(train1);
 		em.getTransaction().commit();
 
@@ -77,8 +71,6 @@ public class TestArretDAO {
 	public void tearDown() {
 		System.out.println("\n== TearDown");
 		em.getTransaction().begin();
-		em.remove(infoGare1);
-		infoGare1 = null;
 		em.remove(arret1);
 		arret1 = null;
 		em.remove(arretDirection);

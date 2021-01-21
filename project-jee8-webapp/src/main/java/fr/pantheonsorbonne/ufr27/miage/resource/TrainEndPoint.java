@@ -171,19 +171,17 @@ public class TrainEndPoint {
 
 			@Override
 			public void run() {
-				while (true) {
+				int statut = 0;
+
+				while (statut != -1) {
 					try {
-						service.enMarche(train);
+						statut = service.enMarche(train);
 						Thread.sleep(60000); // 1mn
 					} catch (NoSuchTrainException e) {
 						break;
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (NoSuchArretException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						break;
 					}
 				}
 			}

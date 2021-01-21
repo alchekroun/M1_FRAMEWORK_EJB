@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.inject.Inject;
@@ -136,7 +138,7 @@ public class HeureDePassageDAO {
 
 	public HeureDePassage getHdpByTrainAndDateNow(int trainId) {
 		return (HeureDePassage) em.createNamedQuery("findHeureByDateNowAndTrain")
-				.setParameter("temps", LocalDateTime.now()).setParameter("trainId", trainId).getSingleResult();
+				.setParameter("temps", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)).setParameter("trainId", trainId).getSingleResult();
 	}
 
 	public List<HeureDePassage> getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(int trainId, int arretId,
@@ -158,6 +160,10 @@ public class HeureDePassageDAO {
 				.setParameter("temps", date).getResultList();
 	}
 
+
+	public HeureDePassage findNextHdp(int trainId) {
+		return findHdpByTrainAfterDateAndSorted(trainId, LocalDateTime.now()).get(0);
+	}
 	// retourne une liste des hdp des trains partant de arretId au plus tôt juste
 	// après une date
 //	public List<HeureDePassage> findHeureMoreRecentByArretIdAfterDate(int arretId, LocalDateTime date){

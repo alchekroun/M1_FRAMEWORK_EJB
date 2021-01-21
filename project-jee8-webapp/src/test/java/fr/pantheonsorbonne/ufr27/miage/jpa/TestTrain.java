@@ -50,11 +50,9 @@ class TestTrain extends Train {
 		train1 = new TrainAvecResa();
 		train1.setId(indexTrain++);
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		train1.setListeHeureDePassage(listeHeureDePassage2);
 		train1.setListePassagers(listePassagers2);
 

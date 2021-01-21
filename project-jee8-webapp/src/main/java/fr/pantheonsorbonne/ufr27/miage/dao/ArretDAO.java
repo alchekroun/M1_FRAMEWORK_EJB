@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 
 public class ArretDAO {
 	@Inject
@@ -29,9 +28,6 @@ public class ArretDAO {
 		if (!arret.getListeHeureDePassage().isEmpty()) {
 			hdpDAO.deleteHeureDePassageByArret(arret);
 		}
-		// On supprime l'infoGare associé car un infoGare n'existe qu'au travers de
-		// l'arret
-		em.remove(em.find(InfoGare.class, arret.getId()));
 		em.remove(arret);
 	}
 

@@ -67,12 +67,10 @@ class TestPerturbationDAO {
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
-		
+
 		em.persist(train1);
 
 		arret1 = new Arret();
@@ -83,9 +81,6 @@ class TestPerturbationDAO {
 		arret2.setNom("Bordeaux");
 		em.persist(arret2);
 		em.getTransaction().commit();
-
-		
-		
 
 	}
 
@@ -116,7 +111,7 @@ class TestPerturbationDAO {
 		assertEquals(p.getMotif(), perturbationTmp.getMotif());
 		assertEquals(p.getTrain().getId(), perturbationTmp.getTrain().getId());
 		assertEquals(p.getDureeEnPlus(), perturbationTmp.getDureeEnPlus());
-		
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
@@ -124,7 +119,7 @@ class TestPerturbationDAO {
 
 	@Test
 	void testGetPerturbationFromId() {
-		
+
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
 		perturbationTmp.setMotif("chevreuil");
@@ -133,10 +128,10 @@ class TestPerturbationDAO {
 
 		Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
 		em.getTransaction().commit();
-		
+
 		assertEquals(perturbation1, dao.getPerturbationFromId(perturbation1.getId()));
 		assertEquals(perturbation1.getMotif(), dao.getPerturbationFromId(perturbation1.getId()).getMotif());
-		
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
@@ -152,18 +147,17 @@ class TestPerturbationDAO {
 
 		Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
 		em.getTransaction().commit();
-		
+
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp2 = factory.createPerturbation();
 		perturbationTmp2.setMotif("covid");
 		perturbationTmp2.setTrain(TrainMapper.trainDTOMapper(train1));
 		perturbationTmp2.setDureeEnPlus(20);
-		
-		
+
 		dao.updatePerturbation(perturbation1, perturbationTmp2);
 
-		assertEquals(perturbation1.getDureeEnPlus(),perturbationTmp2.getDureeEnPlus());
-		assertEquals(perturbation1.getMotif(),perturbationTmp2.getMotif());
-		
+		assertEquals(perturbation1.getDureeEnPlus(), perturbationTmp2.getDureeEnPlus());
+		assertEquals(perturbation1.getMotif(), perturbationTmp2.getMotif());
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
@@ -171,87 +165,85 @@ class TestPerturbationDAO {
 
 	@Test
 	void testGetAllPerturbation() {
-		
+
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
 		perturbationTmp.setMotif("chevreuil");
 		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
 		perturbationTmp.setDureeEnPlus(10);
-        Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
+		Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
 		em.getTransaction().commit();
-		
+
 		List<Perturbation> listPerturbations = dao.getAllPerturbation();
 		assertEquals(1, listPerturbations.size());
 		assertTrue(listPerturbations.contains(perturbation1));
-		assertEquals(perturbation1,listPerturbations.get(0));
-		
+		assertEquals(perturbation1, listPerturbations.get(0));
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
-		
-		
+
 	}
 
 	@Test
 	void testDeletePerturbation() {
-		
+
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
 		perturbationTmp.setMotif("chevreuil");
 		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
 		perturbationTmp.setDureeEnPlus(10);
-        Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
-        int id = perturbation1.getId();
+		Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
+		int id = perturbation1.getId();
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
 		Perturbation perturbation3 = dao.getPerturbationFromId(id);
 		assertNull(perturbation3);
-		
+
 	}
 
 	@Test
 	void testImpacterTrafic() {
-		
+
 		em.getTransaction().begin();
-		trainDAO.addArret(train1, arret1, LocalDateTime.now().minusMinutes(30), LocalDateTime.now().minusMinutes(30), true,
-				false);
-		trainDAO.addArret(train1, arret2, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(30), true,
-				true);
+		trainDAO.addArret(train1, arret1, LocalDateTime.now().minusMinutes(30), LocalDateTime.now().minusMinutes(30),
+				true, false);
+		trainDAO.addArret(train1, arret2, LocalDateTime.now().plusMinutes(30), LocalDateTime.now().plusMinutes(30),
+				true, true);
 		em.getTransaction().commit();
-		
+
 		HeureDePassage hdp1 = hdpDAO.getHdpFromTrainIdAndArretId(train1.getId(), arret1.getId());
 		HeureDePassage hdp2 = hdpDAO.getHdpFromTrainIdAndArretId(train1.getId(), arret2.getId());
-		
+
 		assertEquals(hdp2.getBaseArriveeTemps(), hdp2.getReelArriveeTemps());
 		assertEquals(hdp1.getBaseArriveeTemps(), hdp1.getReelArriveeTemps());
-		
+
 		em.getTransaction().begin();
 		fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationTmp = factory.createPerturbation();
 		perturbationTmp.setMotif("chevreuil");
 		perturbationTmp.setTrain(TrainMapper.trainDTOMapper(train1));
 		perturbationTmp.setDureeEnPlus(10);
-        Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
-        int id = perturbation1.getId();
+		Perturbation perturbation1 = dao.createPerturbation(perturbationTmp);
+		int id = perturbation1.getId();
 		em.getTransaction().commit();
-		
 
 		dao.impacterTrafic(perturbation1);
-
 
 		// On vérifie que le premier arret n'est pas impacté CAR dans le passé
 		assertTrue(hdp1.getBaseArriveeTemps().equals(hdp1.getReelArriveeTemps()));
 
 		// On vérifie que le dernier arret est impacté CAR dans le futur
 		assertFalse(hdp2.getBaseArriveeTemps().equals(hdp2.getReelArriveeTemps()));
-		assertTrue(hdp2.getBaseArriveeTemps().equals(hdp2.getReelArriveeTemps().minusMinutes(perturbationTmp.getDureeEnPlus())));
-		
+		assertTrue(hdp2.getBaseArriveeTemps()
+				.equals(hdp2.getReelArriveeTemps().minusMinutes(perturbationTmp.getDureeEnPlus())));
+
 		em.getTransaction().begin();
 		dao.deletePerturbation(perturbation1);
 		em.getTransaction().commit();
-		
+
 	}
 
 }

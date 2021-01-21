@@ -15,6 +15,10 @@ public class PassagerMapper {
 		passagerDTO.setNom(passager.getNom());
 		passagerDTO.setDepart(ArretMapper.arretDTOMapper(passager.getDepart()));
 		passagerDTO.setArrive(ArretMapper.arretDTOMapper(passager.getArrive()));
+		if (passager.getCorrespondance() != null) {
+			passagerDTO.setCorrespondance(ArretMapper.arretDTOMapper(passager.getCorrespondance()));
+		}
+		passagerDTO.setArrived(passager.isArrived());
 
 		return passagerDTO;
 	}
