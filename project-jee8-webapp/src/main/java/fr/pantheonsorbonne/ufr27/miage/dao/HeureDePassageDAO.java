@@ -124,6 +124,12 @@ public class HeureDePassageDAO {
 				hdp.getReelDepartTemps().plusMinutes(dureeEnPlus), hdp.getReelArriveeTemps(),
 				hdp.isDesservi(), hdp.isTerminus());
 	}
+	
+	public void retarderHdpArriveeAndDepart(HeureDePassage hdp, int dureeEnPlus) {
+		updateHeureDePassage(hdp.getTrain(), hdp.getArret(), hdp.getBaseDepartTemps(), hdp.getBaseArriveeTemps(),
+				hdp.getReelDepartTemps().plusMinutes(dureeEnPlus), hdp.getReelArriveeTemps().plusMinutes(dureeEnPlus),
+				hdp.isDesservi(), hdp.isTerminus());
+	}
 
 	public boolean isHeureDePassageCreated(HeureDePassageKey key) {
 
@@ -174,6 +180,11 @@ public class HeureDePassageDAO {
 	public List<HeureDePassage> findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi(int trainId, int arretId, LocalDateTime date){
 		return em.createNamedQuery("findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi")
 				.setParameter("trainId", trainId).setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+	}
+	
+	public List<HeureDePassage> findHdpByArretAndNotTrainIdAndSorted(int arretId, int trainId ,LocalDateTime date){
+		return em.createNamedQuery("findHdpByArretAndNotTrainIdAndSorted")
+				.setParameter("arretId", trainId).setParameter("trainId", trainId).setParameter("temps", date).getResultList();
 	}
 	
 	//retourne une liste des hdp des trains partant de arretId au plus tôt juste après une date

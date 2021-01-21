@@ -83,8 +83,8 @@ public class PassagerDAO {
 		return em.createNamedQuery("findPassagerByCorrespondance").setParameter("arretId", arretId).getResultList();
 	}
 	
-	public List<Passager> getNombrePassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
-		return em.createNamedQuery("getNombrePassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("arretId", arretId).getResultList();
+	public List<Passager> getPassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
+		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("arretId", arretId).getResultList();
 	}
 	
 	
