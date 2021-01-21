@@ -14,7 +14,7 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 public interface TrainService {
 
 	/**
-	 * Méthode permettant de créer un train dans la base donnée.
+	 * Méthode permettant de créer un train dans la base de données.
 	 * 
 	 * @param trainDTO
 	 * @return id du train
@@ -30,21 +30,21 @@ public interface TrainService {
 	public Train getTrainFromId(int trainId) throws NoSuchTrainException;
 
 	/**
-	 * Méthode permettant de supprimer un train de la base de donnée.
+	 * Méthode permettant de supprimer un train de la base de données.
 	 * 
 	 * @param trainId
 	 */
 	public void deleteTrain(int trainId) throws NoSuchTrainException;
 
 	/**
-	 * Méthode permettant de mettre à jour un train dans la base de donnée.
+	 * Méthode permettant de mettre à jour un train dans la base de données.
 	 * 
 	 * @param train
 	 */
 	public void updateTrain(Train train) throws NoSuchTrainException, CantUpdateException;
 
 	/**
-	 * Méthode permettant de récupérer tous les trains de la base de donnée.
+	 * Méthode permettant de récupérer tous les trains de la base de données.
 	 * 
 	 * @return
 	 */
@@ -81,7 +81,7 @@ public interface TrainService {
 			throws NoSuchTrainException, NoSuchArretException, NoSuchHdpException;
 
 	/**
-	 * Méthode permettant de créer une pertubation dans la base de donnée.
+	 * Méthode permettant de créer une pertubation dans la base de données.
 	 * 
 	 * @param perturbation
 	 */

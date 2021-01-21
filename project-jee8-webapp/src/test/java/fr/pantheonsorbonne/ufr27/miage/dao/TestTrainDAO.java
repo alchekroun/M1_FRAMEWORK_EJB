@@ -65,8 +65,7 @@ public class TestTrainDAO {
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		em.persist(train1);

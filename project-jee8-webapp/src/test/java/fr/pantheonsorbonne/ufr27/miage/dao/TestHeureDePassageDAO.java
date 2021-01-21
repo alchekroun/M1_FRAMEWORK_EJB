@@ -1,11 +1,9 @@
 
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
@@ -64,11 +62,9 @@ class TestHeureDePassageDAO {
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		em.persist(train1);
 
 		key = new HeureDePassageKey();
@@ -147,14 +143,13 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testChangeParameterDesservi() {
-		
+
 		Boolean desserviTest = false;
 		em.getTransaction().begin();
 		HeureDePassage hdp = dao.createHeureDePassage(train1, arretDepart, LocalDateTime.now().plusMinutes(30),
 				LocalDateTime.now().plusMinutes(10), desserviTest, false);
 		em.getTransaction().commit();
-		
-		
+
 		assertEquals(desserviTest, hdp.isDesservi());
 		em.getTransaction().begin();
 		dao.changeParameterDesservi(hdp, !desserviTest);
@@ -163,7 +158,7 @@ class TestHeureDePassageDAO {
 		em.merge(arretDepart);
 		em.getTransaction().commit();
 		assertEquals(!desserviTest, hdp.isDesservi());
-		
+
 		em.getTransaction().begin();
 		em.remove(hdp);
 		hdp = null;
@@ -197,29 +192,20 @@ class TestHeureDePassageDAO {
 
 	@Test
 	public void testGetHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2() {
-		
-
 
 		List<HeureDePassage> list1 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(),
 				arretArrivee.getId(), LocalDateTime.now().plusMinutes(5), LocalDateTime.now().plusMinutes(8));
 
-
-
 		List<HeureDePassage> list2 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(),
 				arretArrivee.getId(), LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(40));
-
-
 
 		List<HeureDePassage> list3 = dao.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(train1.getId(),
 				arretArrivee.getId(), LocalDateTime.now().plusMinutes(80), LocalDateTime.now().plusMinutes(120));
 
-
-
 		assertTrue(list1.isEmpty());
 		assertTrue(list2.isEmpty());
-		assertEquals(list3.size(),1);
+		assertEquals(list3.size(), 1);
 		assertEquals(heureDePassage1.getId(), list3.get(0).getId());
-
 
 	}
 
@@ -262,20 +248,15 @@ class TestHeureDePassageDAO {
 				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
 		em.getTransaction().commit();
 
-
 		List<HeureDePassage> list1 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(),
 				arretDepart.getId(), LocalDateTime.now().plusMinutes(5));
-
-
 
 		List<HeureDePassage> list2 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(train1.getId(),
 				arretDepart.getId(), LocalDateTime.now().plusMinutes(50));
 
-
 		assertEquals(heureDePassage2.getId(), list1.get(0).getId());
 		assertEquals(1, list1.size());
 		assertTrue(list2.isEmpty());
-
 
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
@@ -290,12 +271,11 @@ class TestHeureDePassageDAO {
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
 				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
 		em.getTransaction().commit();
-		
-		HeureDePassage hdp1=dao.findNextHdp(train1.getId());
-		
-		assertEquals(hdp1.getId(),heureDePassage2.getId());
-		
-		
+
+		HeureDePassage hdp1 = dao.findNextHdp(train1.getId());
+
+		assertEquals(hdp1.getId(), heureDePassage2.getId());
+
 		em.getTransaction().begin();
 		heureDePassage2.setBaseDepartTemps(LocalDateTime.now().minusMinutes(10));
 		heureDePassage2.setReelDepartTemps(LocalDateTime.now().minusMinutes(10));
@@ -303,17 +283,15 @@ class TestHeureDePassageDAO {
 		heureDePassage2.setReelArriveeTemps(LocalDateTime.now().minusMinutes(40));
 		em.merge(heureDePassage2);
 		em.getTransaction().commit();
-		
-		hdp1 =dao.findNextHdp(train1.getId());
-		assertEquals(hdp1.getId(),heureDePassage1.getId());
-		
+
+		hdp1 = dao.findNextHdp(train1.getId());
+		assertEquals(hdp1.getId(), heureDePassage1.getId());
+
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
 		heureDePassage2 = null;
 		em.getTransaction().commit();
-		
-		
-		
+
 	}
 
 }

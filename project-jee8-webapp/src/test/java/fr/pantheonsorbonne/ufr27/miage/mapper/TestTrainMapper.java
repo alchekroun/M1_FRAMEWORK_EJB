@@ -29,8 +29,9 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 class TestTrainMapper {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(Passager.class,Train.class,TrainDAO.class,PerturbationDAO.class,HeureDePassageDAO.class, TrainMapper.class, TestPersistenceProducer.class)
-			.activate(RequestScoped.class).build();
+	private WeldInitiator weld = WeldInitiator.from(Passager.class, Train.class, TrainDAO.class, PerturbationDAO.class,
+			HeureDePassageDAO.class, TrainMapper.class, TestPersistenceProducer.class).activate(RequestScoped.class)
+			.build();
 
 	@Inject
 	EntityManager em;
@@ -62,9 +63,8 @@ class TestTrainMapper {
 
 		trainJPA1 = new TrainAvecResa();
 		trainJPA1.setNom("Nom");
-		trainJPA1.setDirectionType("forward");
 		trainJPA1.setReseau("SNCF");
-		trainJPA1.setStatut("En marche");
+		trainJPA1.setStatut("on");
 		trainJPA1.addPassager(passagerJPA1);
 		em.persist(trainJPA1);
 		listTrain.add(trainJPA1);
@@ -89,7 +89,6 @@ class TestTrainMapper {
 
 		assertEquals(trainJAXBtest.getId(), trainJPA1.getId());
 		assertEquals(trainJAXBtest.getNom(), trainJPA1.getNom());
-		assertEquals(trainJAXBtest.getDirectionType(), trainJPA1.getDirectionType());
 		assertEquals(trainJAXBtest.getReseau(), trainJPA1.getReseau());
 		assertEquals(trainJAXBtest.getListePassagers().get(0).getNom(), trainJPA1.getListePassagers().get(0).getNom());
 
@@ -103,7 +102,6 @@ class TestTrainMapper {
 		for (int i = 0; i < listTrain.size(); i++) {
 			assertEquals(listTrainJAXBtest.get(i).getId(), listTrain.get(i).getId());
 			assertEquals(listTrainJAXBtest.get(i).getNom(), listTrain.get(i).getNom());
-			assertEquals(listTrainJAXBtest.get(i).getDirectionType(), listTrain.get(i).getDirectionType());
 			assertEquals(listTrainJAXBtest.get(i).getReseau(), listTrain.get(i).getReseau());
 			assertEquals(listTrainJAXBtest.get(i).getListePassagers().get(0).getNom(),
 					listTrain.get(i).getListePassagers().get(0).getNom());

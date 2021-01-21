@@ -28,7 +28,6 @@ public class TrainDAO {
 
 	public Train updateTrain(Train trainOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train trainUpdate) {
 		trainOriginal.setNom(trainUpdate.getNom());
-		trainOriginal.setDirectionType(trainUpdate.getDirectionType());
 		trainOriginal.setNumero(trainUpdate.getNumeroTrain());
 		trainOriginal.setReseau(trainUpdate.getReseau());
 

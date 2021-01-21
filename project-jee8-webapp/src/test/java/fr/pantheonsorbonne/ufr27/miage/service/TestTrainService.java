@@ -35,7 +35,6 @@ import fr.pantheonsorbonne.ufr27.miage.exception.NoSuchTrainException;
 import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
@@ -269,7 +268,6 @@ class TestTrainService {
 			assertEquals(arret1.getId(), arret2.getId());
 			assertEquals(train1.getId(), train2.getId());
 			assertEquals(arret1.getNom(), arret2.getNom());
-			assertEquals(train1.getDirectionType(), train2.getDirectionType());
 			assertEquals(train1.getNumeroTrain(), train2.getNumero());
 			assertEquals(passages[0], hdp1.getBaseDepartTemps().toString());
 			assertEquals(passages[1], hdp1.getBaseArriveeTemps().toString());
@@ -428,7 +426,5 @@ class TestTrainService {
 		// TODO
 		fail("todo");
 	}
-
-	
 
 }

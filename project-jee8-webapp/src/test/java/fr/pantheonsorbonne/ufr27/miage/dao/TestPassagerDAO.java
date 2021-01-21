@@ -21,8 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
@@ -112,47 +110,37 @@ class TestPassagerDAO {
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris - Bretagne");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		em.persist(train1);
 
 		train2 = new TrainAvecResa();
 		train2.setNom("Paris - Tours - Lille");
-		train2.setDirectionType("forward");
-		train2.setStatut("enmarche");
+		train2.setStatut("on");
 		train2.setNumero(7400);
 		train2.setReseau("SNCF");
-		train2.setStatut("en marche");
 		em.persist(train2);
 
 		train3 = new TrainAvecResa();
 		train3.setNom("Bordeaux - Marseille");
-		train3.setDirectionType("forward");
-		train3.setStatut("enmarche");
+		train3.setStatut("on");
 		train3.setNumero(6020);
 		train3.setReseau("SNCF");
-		train3.setStatut("en marche");
 		em.persist(train3);
 
 		train4 = new TrainAvecResa();
 		train4.setNom("Bretagne - Lille");
-		train4.setDirectionType("forward");
-		train4.setStatut("enmarche");
+		train4.setStatut("on");
 		train4.setNumero(5350);
 		train4.setReseau("SNCF");
-		train4.setStatut("en marche");
 		em.persist(train4);
 
 		train5 = new TrainAvecResa();
 		train5.setNom("Bordeaux - Lyon - Paris");
-		train5.setDirectionType("forward");
-		train5.setStatut("enmarche");
+		train5.setStatut("on");
 		train5.setNumero(3410);
 		train5.setReseau("SNCF");
-		train5.setStatut("en marche");
 		em.persist(train5);
 
 		passager1 = new Passager();

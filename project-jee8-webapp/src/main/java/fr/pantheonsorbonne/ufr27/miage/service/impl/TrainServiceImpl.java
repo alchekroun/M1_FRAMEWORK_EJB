@@ -58,7 +58,6 @@ public class TrainServiceImpl implements TrainService {
 			fr.pantheonsorbonne.ufr27.miage.jpa.Train train = new fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa();
 
 			train.setNom(trainDTO.getNom());
-			train.setDirectionType(trainDTO.getDirectionType());
 			train.setNumero(trainDTO.getNumeroTrain());
 			train.setReseau(trainDTO.getReseau());
 			train.setStatut(trainDTO.getStatut());
