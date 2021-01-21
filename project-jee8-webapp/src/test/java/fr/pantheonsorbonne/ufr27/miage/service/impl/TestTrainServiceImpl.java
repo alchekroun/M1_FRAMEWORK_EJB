@@ -95,7 +95,7 @@ class TestTrainServiceImpl {
 	Passager passager1;
 	Passager passager2;
 	Passager passager3;
-	
+
 	int idArretDirection;
 	int idArret1;
 	int idArret2;
@@ -271,8 +271,8 @@ class TestTrainServiceImpl {
 	public void testVerifIfExistArretNow()
 			throws CantCreateException, NoSuchTrainException, NoSuchArretException, CantDeleteException {
 
-		LocalDateTime dt1 = LocalDateTime.now().plusMinutes(10).truncatedTo(ChronoUnit.SECONDS);
-		LocalDateTime dt2 = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+		LocalDateTime dt1 = LocalDateTime.now().plusMinutes(10);
+		LocalDateTime dt2 = LocalDateTime.now();
 		String passage = dt1.toString() + " " + dt2.toString();
 		trainService2.addArret(train1.getId(), arret1.getId(), passage, true, false);
 		HeureDePassage hdp = trainService.verifIfExistArretNow(train1.getId());

@@ -50,7 +50,6 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 
 		Train train1 = new TrainAvecResa();
 		train1.setNom("Lyon Part Dieu - Nice-Ville");
-		train1.setDirectionType("forward");
 		train1.setNumero(6801);
 		train1.setReseau("SNCF");
 		train1.setStatut("off");
@@ -58,7 +57,6 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 
 		Train train2 = new TrainAvecResa();
 		train2.setNom("Paris Gare de Lyon - Marseille");
-		train2.setDirectionType("forward");
 		train2.setNumero(8541);
 		train2.setReseau("SNCF");
 		train2.setStatut("off");

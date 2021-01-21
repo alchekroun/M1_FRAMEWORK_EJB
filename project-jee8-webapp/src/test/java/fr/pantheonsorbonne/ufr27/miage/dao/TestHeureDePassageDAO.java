@@ -180,7 +180,7 @@ class TestHeureDePassageDAO {
 	public void testGetHdpByTrainAndDateNow() {
 		em.getTransaction().begin();
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
-				LocalDateTime.now().minusMinutes(30), LocalDateTime.now().plusMinutes(10), true, false);
+				LocalDateTime.now().plusMinutes(10), LocalDateTime.now().minusMinutes(1), true, false);
 		em.getTransaction().commit();
 		HeureDePassage heureDePassage3 = dao.getHdpByTrainAndDateNow(train1.getId());
 		assertEquals(heureDePassage2, heureDePassage3);
