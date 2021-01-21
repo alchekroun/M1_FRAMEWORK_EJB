@@ -297,10 +297,10 @@ public class TrainServiceImpl implements TrainService {
 		return false;
 	}
 	
-	protected boolean isWorthRetardTrain(List<Passager> listPassager, List<HeureDePassage> listTrain) {
+	protected boolean isWorthRetardTrain(List<Passager> listPassager, HeureDePassage hdpTrain) {
 		int cpt=0;
 		for(Passager p : listPassager) {
-			if(trainGetMeWhereIWant(listTrain.get(0).getTrain(),p)) {
+			if(trainGetMeWhereIWant(hdpTrain.getTrain(),p)) {
 				cpt++;
 			}
 		}
@@ -327,10 +327,13 @@ public class TrainServiceImpl implements TrainService {
 				
 				List<HeureDePassage> listHdpTrainCheckARetarder = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrainArrivingBeforeTrainPerturbe);
 				
-				if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, listHdpTrainCheckARetarder)) {
+				if(listHdpTrainCheckARetarder.get(0).getTrain() instanceof TrainAvecResa) {
 					
-					fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpARetarder = listHdpTrainArrivingBeforeTrainPerturbe.get(0);
-					hdpDAO.updateHeureDePassage(hdpARetarder.getTrain(),hdpARetarder.getArret(),hdpARetarder.getBaseDepartTemps(), hdpARetarder.getBaseArriveeTemps(), hdp.getReelDepartTemps().plusMinutes(10), hdp.getReelArriveeTemps().plusMinutes(10), hdpARetarder.isDesservi(), hdpARetarder.isTerminus());
+					if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, listHdpTrainCheckARetarder.get(0))) {
+						
+						fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpARetarder = listHdpTrainArrivingBeforeTrainPerturbe.get(0);
+						hdpDAO.updateHeureDePassage(hdpARetarder.getTrain(),hdpARetarder.getArret(),hdpARetarder.getBaseDepartTemps(), hdpARetarder.getBaseArriveeTemps(), hdp.getReelDepartTemps().plusMinutes(10), hdp.getReelArriveeTemps().plusMinutes(10), hdpARetarder.isDesservi(), hdpARetarder.isTerminus());
+					}
 				}
 			}
 		}
