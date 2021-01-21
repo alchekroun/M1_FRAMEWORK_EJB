@@ -346,12 +346,14 @@ public class TrainServiceImpl implements TrainService {
 				.heureDePassageAllDTOMapper(hdpDAO.findHdpByTrain(train.getId()));
 		for (HeureDePassage hdp : listHdp) {
 			// Faire gaffe aux corress
-			if (hdp.getArret().equals(passager.getArrive())) {
-				return true;
-			}
-			if (passager.getCorrespondance() != null) {
-				if (hdp.getArret().equals(passager.getCorrespondance())) {
+			if (hdp.getReelDepartTemps().isAfter(LocalDateTime.now())) {
+				if (hdp.getArret().getId() == passager.getArrive().getId()) {
 					return true;
+				}
+				if (passager.getCorrespondance() != null) {
+					if (hdp.getArret().getId() == passager.getCorrespondance().getId()) {
+						return true;
+					}
 				}
 			}
 		}

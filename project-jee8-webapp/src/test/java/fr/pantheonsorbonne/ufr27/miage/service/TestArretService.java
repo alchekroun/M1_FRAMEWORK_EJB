@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,13 +74,7 @@ class TestArretService {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-
 		factory = new ObjectFactory();
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-
 	}
 
 	@BeforeEach
