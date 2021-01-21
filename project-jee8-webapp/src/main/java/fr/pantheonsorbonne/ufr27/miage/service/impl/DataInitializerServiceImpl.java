@@ -1,17 +1,13 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.ManagedBean;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
@@ -57,7 +53,7 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 		train1.setDirectionType("forward");
 		train1.setNumero(6801);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
+		train1.setStatut("off");
 		em.persist(train1);
 
 		Train train2 = new TrainAvecResa();
@@ -65,7 +61,7 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 		train2.setDirectionType("forward");
 		train2.setNumero(8541);
 		train2.setReseau("SNCF");
-		train2.setStatut("en marche");
+		train2.setStatut("off");
 		em.persist(train2);
 
 		em.getTransaction().commit();
@@ -86,13 +82,13 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 		addArret(train1, mapArrets.get("Saint-Raphael"), base.plusMinutes(150), base.plusMinutes(140), true, false);
 		addArret(train1, mapArrets.get("Cannes"), base.plusMinutes(170), base.plusMinutes(160), true, false);
 		addArret(train1, mapArrets.get("Antibes"), base.plusMinutes(190), base.plusMinutes(180), true, false);
-		addArret(train1, mapArrets.get("Nice-Ville"), base.plusMinutes(210), base.plusMinutes(200), true, true);
+		addArret(train1, mapArrets.get("Nice-Ville"), base.plusMinutes(205), base.plusMinutes(200), true, true);
 
 		// - Paris Marseille
 		addArret(train2, mapArrets.get("Paris Gare de Lyon"), base.plusMinutes(10), base, true, false);
 		addArret(train2, mapArrets.get("Avignon"), base.plusMinutes(50), base.plusMinutes(40), true, false);
 		addArret(train2, mapArrets.get("Aix-en-Provence"), base.plusMinutes(70), base.plusMinutes(60), true, false);
-		addArret(train2, mapArrets.get("Marseille"), base.plusMinutes(70), base.plusMinutes(60), true, false);
+		addArret(train2, mapArrets.get("Marseille"), base.plusMinutes(205), base.plusMinutes(60), true, true);
 
 		em.getTransaction().commit();
 

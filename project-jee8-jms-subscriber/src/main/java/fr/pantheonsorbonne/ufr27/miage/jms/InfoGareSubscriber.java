@@ -87,7 +87,8 @@ public class InfoGareSubscriber implements Closeable {
 			toShow.append("------------------------INFO TRAINS---------------------\n");
 			toShow.append("DEPARTS\n");
 			for (HeureDePassage hdp : listHdp) {
-				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()) {
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()
+						&& hdp.getTrain().getStatut().equals("on")) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
 					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
@@ -95,6 +96,8 @@ public class InfoGareSubscriber implements Closeable {
 					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
 						toShow.append("A l'heure");
 					} else {
+						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
+						// deux
 						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
 					}
 					toShow.append("\n##\n");
@@ -102,7 +105,9 @@ public class InfoGareSubscriber implements Closeable {
 			}
 			toShow.append("ARRIVEES\n");
 			for (HeureDePassage hdp : listHdp) {
-				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
+
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()
+						&& hdp.getTrain().getStatut().equals("on")) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
 					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
@@ -110,10 +115,13 @@ public class InfoGareSubscriber implements Closeable {
 					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
 						toShow.append("A l'heure");
 					} else {
+						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
+						// deux
 						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
 					}
 					toShow.append("\n##\n");
 				}
+
 			}
 			toShow.append("------------------------FIN INFO TRAINS---------------------");
 			System.out.println(toShow);
