@@ -284,7 +284,6 @@ public class TrainServiceImpl implements TrainService {
 		List<HeureDePassage> listHdp = HeureDePassageMapper
 				.heureDePassageAllDTOMapper(hdpDAO.findHdpByTrain(train.getId()));
 		for (HeureDePassage hdp : listHdp) {
-			// Faire gaffe aux corress
 			if (hdp.getArret().equals(passager.getArrive())) {
 				return true;
 			}
@@ -295,6 +294,31 @@ public class TrainServiceImpl implements TrainService {
 			}
 		}
 		return false;
+	}
+	
+	protected HeureDePassage verifIfNextArretHasTrainEnRetard(HeureDePassage hdpBase) {
+		List<HeureDePassage> listHdpAtArretId = HeureDePassageMapper
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByArret(hdpBase.getArret().getId()));
+
+		for (HeureDePassage hdp : listHdpAtArretId) {
+
+			// Seuls les trains qui arrivent après ce train sont prit en compte
+			if (hdp.getReelArriveeTemps().isAfter(hdpBase.getReelArriveeTemps())) {
+
+				// On recherche les hdp en retard
+				if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) != 0) {
+
+					if (isRetard(hdp)) {
+						return hdp;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	protected boolean isRetard(HeureDePassage hdp) {
+		return hdp.getReelArriveeTemps().isAfter(hdp.getBaseArriveeTemps());
 	}
 	
 	protected boolean isWorthRetardTrain(List<Passager> listPassager, HeureDePassage hdpTrain) {
@@ -312,33 +336,51 @@ public class TrainServiceImpl implements TrainService {
 	
 	
 	@Override
-	public void retarderCorrespondance (Perturbation perturbation) {
+	public void retarderCorrespondance (Train train){
 		
-		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdp = hdpDAO.findHdpByTrainAfterDateAndSorted(perturbation.getTrain().getId(), LocalDateTime.now());
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(), LocalDateTime.now());
+		List<HeureDePassage> listHdp = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrain);
 		
 		if(!listHdp.isEmpty()) {			
 			
-			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp = listHdp.get(0);
-			//liste des trains arrivant avant le train perturbe à l'arret
-			List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrainArrivingBeforeTrainPerturbe = hdpDAO.findHdpByArretAndNotTrainIdAndSorted(hdp.getArret().getId(),hdp.getTrain().getId(),hdp.getReelArriveeTemps());
-			List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(hdp.getTrain().getId(), hdp.getArret().getId()));
+			HeureDePassage hdp = listHdp.get(0);
 			
-			if(!listHdpTrainArrivingBeforeTrainPerturbe.isEmpty()) {
+			HeureDePassage hdpTrainEnRetard = verifIfNextArretHasTrainEnRetard(hdp);
+			if(train instanceof TrainAvecResa && hdpTrainEnRetard!=null) {
 				
-				List<HeureDePassage> listHdpTrainCheckARetarder = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrainArrivingBeforeTrainPerturbe);
+				List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(hdpTrainEnRetard.getTrain().getId(), hdp.getArret().getId()));
 				
-				if(listHdpTrainCheckARetarder.get(0).getTrain() instanceof TrainAvecResa) {
+				if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, hdp)) {
 					
-					if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, listHdpTrainCheckARetarder.get(0))) {
-						
-						fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpARetarder = listHdpTrainArrivingBeforeTrainPerturbe.get(0);
-						hdpDAO.updateHeureDePassage(hdpARetarder.getTrain(),hdpARetarder.getArret(),hdpARetarder.getBaseDepartTemps(), hdpARetarder.getBaseArriveeTemps(), hdp.getReelDepartTemps().plusMinutes(10), hdp.getReelArriveeTemps().plusMinutes(10), hdpARetarder.isDesservi(), hdpARetarder.isTerminus());
-					}
+					fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrainARetarder = listHdpTrain.get(0);
+					fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrainEnRetardJpa = hdpDAO.findHdpByTrainIdAndArretIdAndHeureReel(hdpTrainEnRetard.getTrain().getId(),hdpTrainEnRetard.getArret().getId(),hdpTrainEnRetard.getReelArriveeTemps(),hdpTrainEnRetard.getReelDepartTemps());
+					hdpDAO.updateHeureDePassage(hdpTrainARetarder.getTrain(),hdpTrainARetarder.getArret(),hdpTrainARetarder.getBaseDepartTemps(), hdpTrainARetarder.getBaseArriveeTemps(), hdpTrainEnRetardJpa.getReelDepartTemps().plusMinutes(10), hdpTrainEnRetardJpa.getReelArriveeTemps().plusMinutes(10), hdpTrainARetarder.isDesservi(), hdpTrainARetarder.isTerminus());
 				}
 			}
 		}
-	}	
-}
+	}
+}			
+//			
+//			//liste des trains arrivant avant le train perturbe à l'arret
+//			List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrainArrivingBeforeTrainPerturbe = hdpDAO.findHdpByArretAndNotTrainIdAndSorted(hdp.getArret().getId(),hdp.getTrain().getId(),hdp.getReelArriveeTemps());
+//			List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(hdp.getTrain().getId(), hdp.getArret().getId()));
+//			
+//			if(!listHdpTrainArrivingBeforeTrainPerturbe.isEmpty()) {
+//				
+//				List<HeureDePassage> listHdpTrainCheckARetarder = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrainArrivingBeforeTrainPerturbe);
+//				
+//				if(listHdpTrainCheckARetarder.get(0).getTrain() instanceof TrainAvecResa) {
+//					
+//					if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, listHdpTrainCheckARetarder.get(0))) {
+//						
+//						fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpARetarder = listHdpTrainArrivingBeforeTrainPerturbe.get(0);
+//						hdpDAO.updateHeureDePassage(hdpARetarder.getTrain(),hdpARetarder.getArret(),hdpARetarder.getBaseDepartTemps(), hdpARetarder.getBaseArriveeTemps(), hdp.getReelDepartTemps().plusMinutes(10), hdp.getReelArriveeTemps().plusMinutes(10), hdpARetarder.isDesservi(), hdpARetarder.isTerminus());
+//					}
+//				}
+//			}
+//		}
+//	}	
+//}
 	
 //	@Override
 //	public void retarderCorrespondance (Perturbation perturbation) {

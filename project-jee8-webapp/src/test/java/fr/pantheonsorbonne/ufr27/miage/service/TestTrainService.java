@@ -538,16 +538,16 @@ class TestTrainService {
 		Arret arret3 = factory.createArret();
 		arret3.setNom("Marseille");
 		
-		List<Passager> listPassager = new ArrayList<>();
+		List<Passager> listPassager = new ArrayList<Passager>();
 		for(int i=0; i<=49; i++) {
 			Passager p = factory.createPassager();
+			p.setArrive(arret3);
+			p.setDepart(arret1);
 			listPassager.add(p);
 		}
 		
-		List<Integer> listIdPassager = null;
+		List<Integer> listIdPassager = new ArrayList<Integer>();;
 		for(Passager p : listPassager) {
-			p.setArrive(arret3);
-			p.setDepart(arret1);
 			listIdPassager.add(passagerService.createPassager(p));
 		}
 
@@ -612,7 +612,7 @@ class TestTrainService {
 		perturbation1.setDureeEnPlus(100);
 		trainService.createPerturbation(perturbation1);
 		
-		trainService.retarderCorrespondance(perturbation1);
+		trainService.retarderCorrespondance(train1);
 		
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrain1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
 				arret2.getId());
