@@ -1,7 +1,10 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.annotation.ManagedBean;
@@ -27,7 +30,7 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
-
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainAvecResa;
 import fr.pantheonsorbonne.ufr27.miage.service.TrainService;
 
 @ManagedBean
@@ -333,6 +336,148 @@ public class TrainServiceImpl implements TrainService {
 	protected HeureDePassage verifIfExistArretNow(int trainId) {
 		return HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.getHdpByTrainAndDateNow(trainId));
 	}
+	
+	
+	protected boolean trainGetMeWhereIWant(Train train, Passager passager) {
+		List<HeureDePassage> listHdp = HeureDePassageMapper
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByTrain(train.getId()));
+		for (HeureDePassage hdp : listHdp) {
+			if (hdp.getArret().equals(passager.getArrive())) {
+				return true;
+			}
+			if (passager.getCorrespondance() != null) {
+				if (hdp.getArret().equals(passager.getCorrespondance())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	protected HeureDePassage verifIfNextArretHasTrainEnRetard(HeureDePassage hdpBase) {
+		List<HeureDePassage> listHdpAtArretId = HeureDePassageMapper
+				.heureDePassageAllDTOMapper(hdpDAO.findHdpByArret(hdpBase.getArret().getId()));
+
+		for (HeureDePassage hdp : listHdpAtArretId) {
+
+			// Seuls les trains qui arrivent après ce train sont prit en compte
+			if (hdp.getReelArriveeTemps().isAfter(hdpBase.getReelArriveeTemps())) {
+
+				// On recherche les hdp en retard
+				if (hdp.getBaseArriveeTemps().compareTo((hdp.getReelArriveeTemps())) != 0) {
+
+					if (isRetard(hdp)) {
+						return hdp;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	protected boolean isRetard(HeureDePassage hdp) {
+		return hdp.getReelArriveeTemps().isAfter(hdp.getBaseArriveeTemps());
+	}
+	
+	protected boolean isWorthRetardTrain(List<Passager> listPassager, HeureDePassage hdpTrain) {
+		int cpt=0;
+		for(Passager p : listPassager) {
+			if(trainGetMeWhereIWant(hdpTrain.getTrain(),p)) {
+				cpt++;
+			}
+		}
+		if(cpt>50) {
+			return true;
+		}
+		return false;
+	}
+	
+	
+	@Override
+	public void retarderCorrespondance (Train train){
+		
+		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrain = hdpDAO.findHdpByTrainAfterDateAndSorted(train.getId(), LocalDateTime.now());
+		List<HeureDePassage> listHdp = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrain);
+		
+		if(!listHdp.isEmpty()) {			
+			
+			HeureDePassage hdp = listHdp.get(0);
+			
+			HeureDePassage hdpTrainEnRetard = verifIfNextArretHasTrainEnRetard(hdp);
+			if(train instanceof TrainAvecResa && hdpTrainEnRetard!=null) {
+				
+				List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(hdpTrainEnRetard.getTrain().getId(), hdp.getArret().getId()));
+				
+				if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, hdp)) {
+					
+					fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrainARetarder = listHdpTrain.get(0);
+					fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrainEnRetardJpa = hdpDAO.findHdpByTrainIdAndArretIdAndHeureReel(hdpTrainEnRetard.getTrain().getId(),hdpTrainEnRetard.getArret().getId(),hdpTrainEnRetard.getReelArriveeTemps(),hdpTrainEnRetard.getReelDepartTemps());
+					hdpDAO.updateHeureDePassage(hdpTrainARetarder.getTrain(),hdpTrainARetarder.getArret(),hdpTrainARetarder.getBaseDepartTemps(), hdpTrainARetarder.getBaseArriveeTemps(), hdpTrainEnRetardJpa.getReelDepartTemps().plusMinutes(10), hdpTrainEnRetardJpa.getReelArriveeTemps().plusMinutes(10), hdpTrainARetarder.isDesservi(), hdpTrainARetarder.isTerminus());
+				}
+			}
+		}
+	}
+}			
+//			
+//			//liste des trains arrivant avant le train perturbe à l'arret
+//			List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrainArrivingBeforeTrainPerturbe = hdpDAO.findHdpByArretAndNotTrainIdAndSorted(hdp.getArret().getId(),hdp.getTrain().getId(),hdp.getReelArriveeTemps());
+//			List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(hdp.getTrain().getId(), hdp.getArret().getId()));
+//			
+//			if(!listHdpTrainArrivingBeforeTrainPerturbe.isEmpty()) {
+//				
+//				List<HeureDePassage> listHdpTrainCheckARetarder = HeureDePassageMapper.heureDePassageAllDTOMapper(listHdpTrainArrivingBeforeTrainPerturbe);
+//				
+//				if(listHdpTrainCheckARetarder.get(0).getTrain() instanceof TrainAvecResa) {
+//					
+//					if(isWorthRetardTrain(listPassagerTrainPerturbeTakingCorrespondanceAtArret, listHdpTrainCheckARetarder.get(0))) {
+//						
+//						fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpARetarder = listHdpTrainArrivingBeforeTrainPerturbe.get(0);
+//						hdpDAO.updateHeureDePassage(hdpARetarder.getTrain(),hdpARetarder.getArret(),hdpARetarder.getBaseDepartTemps(), hdpARetarder.getBaseArriveeTemps(), hdp.getReelDepartTemps().plusMinutes(10), hdp.getReelArriveeTemps().plusMinutes(10), hdpARetarder.isDesservi(), hdpARetarder.isTerminus());
+//					}
+//				}
+//			}
+//		}
+//	}	
+//}
+	
+//	@Override
+//	public void retarderCorrespondance (Perturbation perturbation) {
+//		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdp = hdpDAO.findHdpByTrainAfterDateAndSorted(perturbation.getTrain().getId(), LocalDateTime.now());
+//		if(!listHdp.isEmpty()) {
+//			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp = listHdp.get(0);
+//			//liste qui recup les trains qui ont un depart après l'arrivee du train qui est perturbe (calcul en retirant le temps de perturbation pour avoir le cas original sans perturbation)
+//			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainCheckIfHaveToDelay= dao.findTrainByArretAndDepartAfterDate(hdp.getArret().getId(),hdp.getReelArriveeTemps().minusMinutes(perturbation.getDureeEnPlus()));
+//			//liste qui recup les trains qui ont un depart après l'arrivee du train qui est perturbe (cette fois on compte le temps de perturbation)
+//			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainCheckIfHaveToDelayAfterAddingPerturbation= dao.findTrainByArretAndDepartAfterDate(hdp.getArret().getId(),hdp.getReelArriveeTemps());
+//			List<fr.pantheonsorbonne.ufr27.miage.jpa.Train> listTrainARetarder = null;
+//			//les trains de la premiere liste et qui ne sont pas dans la seconde liste sont donc ceux qu'ils faut retarder
+//			//on check qu'il y a plus de 50 passagers à recup + que le train qu'on va retarder est un train avec reservation
+//			if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.isEmpty()) {
+//				for(fr.pantheonsorbonne.ufr27.miage.jpa.Train t : listTrainCheckIfHaveToDelay) {
+//					if(!listTrainCheckIfHaveToDelayAfterAddingPerturbation.contains(t)) {
+//						if(passagerDAO.getNombrePassagerByTrainIdAndNotArrivalAtArretId(perturbation.getTrain().getId(),hdp.getArret().getId()).size()>50 && t instanceof fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa) {
+//							listTrainARetarder.add(t);
+//						}
+//							
+//					}
+//				}
+//				
+//			}else {
+//				for(fr.pantheonsorbonne.ufr27.miage.jpa.Train t : listTrainCheckIfHaveToDelay) {
+//					if(passagerDAO.getNombrePassagerByTrainIdAndNotArrivalAtArretId(perturbation.getTrain().getId(),hdp.getArret().getId()).size()>50 && t.getClass().getName().equals("TrainAvecResa")) {
+//						listTrainARetarder.add(t);
+//					}	
+//				}
+//			}
+//
+//			for(fr.pantheonsorbonne.ufr27.miage.jpa.Train t :listTrainARetarder) {
+//				fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrainARetarder = hdpDAO.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(t.getId(), hdp.getArret().getId(), hdp.getReelArriveeTemps().minusMinutes(perturbation.getDureeEnPlus())).get(0);
+//				hdpDAO.retarderHdpDepart(hdpTrainARetarder, perturbation.getDureeEnPlus());//(int) ChronoUnit.MINUTES.between(hdp.getReelArriveeTemps().plusMinutes(5), hdpTrainARetarder.getReelDepartTemps()));
+//			}
+//			
+//		}
+//	}
+
 
 	protected void arretExceptionnel(HeureDePassage nextHdp) {
 		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard2h(nextHdp);
@@ -388,3 +533,4 @@ public class TrainServiceImpl implements TrainService {
 	}
 
 }
+

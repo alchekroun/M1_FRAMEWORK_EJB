@@ -140,6 +140,13 @@ class TestHeureDePassageDAO {
 				dao.getHdpFromTrainIdAndArretId(heureDePassage1.getTrain().getId(), heureDePassage1.getArret().getId()),
 				heureDePassage1);
 	}
+	
+	public void testFindHdpByTrainIdAndArretIdAndHeureReel() {
+		assertEquals(
+				dao.findHdpByTrainIdAndArretIdAndHeureReel(heureDePassage1.getTrain().getId(), heureDePassage1.getArret().getId(), heureDePassage1.getReelArriveeTemps(), heureDePassage1.getReelDepartTemps()),
+				heureDePassage1);
+		assertNull(dao.findHdpByTrainIdAndArretIdAndHeureReel(heureDePassage1.getTrain().getId(), heureDePassage1.getArret().getId(), LocalDateTime.now().plusMinutes(100), LocalDateTime.now().plusMinutes(120)));
+	}
 
 	@Test
 	public void testChangeParameterDesservi() {
@@ -206,12 +213,11 @@ class TestHeureDePassageDAO {
 		assertTrue(list2.isEmpty());
 		assertEquals(list3.size(), 1);
 		assertEquals(heureDePassage1.getId(), list3.get(0).getId());
-
 	}
-
+	
 	@Test
-	public void testFindHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted() {
-
+	public void testFindHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted(){
+		
 		em.getTransaction().begin();
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
 				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
@@ -232,6 +238,65 @@ class TestHeureDePassageDAO {
 		assertEquals(1, list1.size());
 		assertTrue(list2.isEmpty());
 		em.getTransaction().commit();
+    
+    assertTrue(list2.isEmpty());
+		assertEquals(list3.size(), 1);
+		assertEquals(heureDePassage1.getId(), list3.get(0).getId());
+
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2 = null;
+		em.getTransaction().commit();
+		
+
+	}
+
+
+	public void testFindHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted() {
+
+		em.getTransaction().begin();
+		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
+				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+
+		List<HeureDePassage> list1 = dao.findHdpByTrainAfterDateAndSorted(train1.getId(), LocalDateTime.now().plusMinutes(5));
+
+		List<HeureDePassage> list2 = dao.findHdpByTrainAfterDateAndSorted(train1.getId(), LocalDateTime.now().plusMinutes(50));
+
+		assertEquals(heureDePassage2.getId(),list1.get(0).getId());
+		assertEquals(1,list1.size());
+		assertTrue(list2.isEmpty());
+		
+		em.getTransaction().begin();
+		em.remove(heureDePassage2);
+		heureDePassage2 = null;
+		em.getTransaction().commit();
+
+		
+	}
+	@Test
+	public void testFindHdpByTrainAfterDateAndSortedAndDesservi() {
+		em.getTransaction().begin();
+		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
+				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		List<HeureDePassage> list1 = dao.findHdpByTrainAfterDateAndSortedAndDesservi(train1.getId(), LocalDateTime.now().plusMinutes(5));
+
+		List<HeureDePassage> list2 = dao.findHdpByTrainAfterDateAndSortedAndDesservi(train1.getId(), LocalDateTime.now().plusMinutes(50));
+
+		assertEquals(heureDePassage2.getId(),list1.get(0).getId());
+		assertEquals(1,list1.size());
+		assertTrue(list2.isEmpty());
+		
+		dao.changeParameterDesservi(heureDePassage2,false);
+		
+		list1 = dao.findHdpByTrainAfterDateAndSortedAndDesservi(train1.getId(), LocalDateTime.now().plusMinutes(45));
+
+		
+		//null car non desservi
+		assertTrue(list1.isEmpty());
 
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
@@ -241,6 +306,7 @@ class TestHeureDePassageDAO {
 	}
 
 	@Test
+
 	public void testFindHdpByTrainAfterDateAndSorted() {
 
 		em.getTransaction().begin();
@@ -258,6 +324,7 @@ class TestHeureDePassageDAO {
 		assertTrue(list2.isEmpty());
 
 		em.getTransaction().begin();
+
 		em.remove(heureDePassage2);
 		heureDePassage2 = null;
 		em.getTransaction().commit();
@@ -267,8 +334,12 @@ class TestHeureDePassageDAO {
 	@Test
 	public void testFindNextHdp() {
 		em.getTransaction().begin();
+
+		List<HeureDePassage> list2 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(50));
+
 		HeureDePassage heureDePassage2 = dao.createHeureDePassage(train1, arretDepart,
 				LocalDateTime.now().plusMinutes(40), LocalDateTime.now().plusMinutes(10), true, false);
+
 		em.getTransaction().commit();
 
 		HeureDePassage hdp1 = dao.findNextHdp(train1.getId());
@@ -286,6 +357,20 @@ class TestHeureDePassageDAO {
 		hdp1 = dao.findNextHdp(train1.getId());
 		assertEquals(hdp1.getId(), heureDePassage1.getId());
 
+		em.getTransaction().begin();
+		dao.changeParameterDesservi(heureDePassage2,false);
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		list1 = dao.findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi(train1.getId(), arretDepart.getId(), LocalDateTime.now().plusMinutes(10));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		//null car non desservi
+		assertTrue(list1.isEmpty());
+		em.getTransaction().commit();
+		
+		
 		em.getTransaction().begin();
 		em.remove(heureDePassage2);
 		heureDePassage2 = null;

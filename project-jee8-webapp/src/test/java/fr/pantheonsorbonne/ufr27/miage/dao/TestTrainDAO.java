@@ -41,8 +41,8 @@ public class TestTrainDAO {
 	PassagerDAO passagerDao;
 
 	@Inject
-	HeureDePassageDAO hpdDao;
-
+	HeureDePassageDAO hdpDao;
+	
 	@Inject
 	PerturbationDAO perturbationDao;
 
@@ -225,6 +225,95 @@ public class TestTrainDAO {
 		assertEquals(train1.getId(), list3.get(0).getId());
 		em.getTransaction().commit();
 
+		em.getTransaction().begin();
+		dao.removeArret(train1, arret1);
+		em.remove(arret2);
+		arret2 = null;
+		em.getTransaction().commit();
+	}
+	
+	@Test
+	public void testFindTrainByArretAndDepartAfterDateAndDesservi() {
+		em.getTransaction().begin();
+		Arret arret2 = new Arret();
+		arret2.setNom("Lyon");
+		em.persist(arret2);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		List<Train> list1 = dao.findTrainByArretAndDepartAfterDateAndDesservi(arret2.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list2 = dao.findTrainByArretAndDepartAfterDateAndDesservi(arret1.getId(), LocalDateTime.now().plusMinutes(30));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list3 = dao.findTrainByArretAndDepartAfterDateAndDesservi(arret1.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertTrue(list1.isEmpty());
+		assertTrue(list2.isEmpty());
+		assertEquals(train1.getId(),list3.get(0).getId());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		HeureDePassage newHdp = null;
+		for(HeureDePassage hdp : train1.getListeHeureDePassage()) {
+			if(hdp.getArret().getId()==arret1.getId()) {
+				newHdp=hdp;
+			}
+		}
+		hdpDao.changeParameterDesservi(newHdp,false);
+		
+		list3 = dao.findTrainByArretAndDepartAfterDateAndDesservi(arret1.getId(), LocalDateTime.now());
+		//null car non desservi
+		assertTrue(list3.isEmpty());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		dao.removeArret(train1, arret1);
+		em.remove(arret2);
+		arret2 = null;
+		em.getTransaction().commit();
+	}
+	
+	@Test
+	public void testFindTrainByArretAndArriveeBeforeDate() {
+		
+		em.getTransaction().begin();
+		Arret arret2 = new Arret();
+		arret2.setNom("Lyon");
+		em.persist(arret2);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true, false);
+		em.getTransaction().commit();
+
+		em.getTransaction().begin();
+		List<Train> list1 = dao.findTrainByArretAndArriveeBeforeDate(arret2.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list2 = dao.findTrainByArretAndArriveeBeforeDate(arret1.getId(), LocalDateTime.now().plusMinutes(30));
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		List<Train> list3 = dao.findTrainByArretAndArriveeBeforeDate(arret1.getId(), LocalDateTime.now());
+		em.getTransaction().commit();
+		
+		em.getTransaction().begin();
+		assertTrue(list1.isEmpty());
+		assertEquals(train1.getId(),list2.get(0).getId());
+		assertTrue(list3.isEmpty());
+		em.getTransaction().commit();
+		
 		em.getTransaction().begin();
 		dao.removeArret(train1, arret1);
 		em.remove(arret2);

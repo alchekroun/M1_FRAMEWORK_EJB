@@ -67,6 +67,17 @@ public class TrainDAO {
 		return em.createNamedQuery("findTrainByArretAndDepartAfterDate").setParameter("arretId", arretId)
 				.setParameter("temps", date).getResultList();
 	}
+	
+	public List<Train> findTrainByArretAndDepartAfterDateAndDesservi(int arretId, LocalDateTime date) {
+		return em.createNamedQuery("findTrainByArretAndDepartAfterDateAndDesservi").setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+	}
+	
+	public List<Train> findTrainByArretAndArriveeBeforeDate(int arretId, LocalDateTime date) {
+		return em.createNamedQuery("findTrainByArretAndArriveeBeforeDate").setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+	}
+	
+
+	
 
 	public void addArret(Train train, Arret arret, LocalDateTime departTemps, LocalDateTime arriveeTemps,
 			boolean desservi, boolean terminus) {
@@ -101,5 +112,9 @@ public class TrainDAO {
 		return t.isCreated();
 
 	}
+	
+//	public int findNombrePassagerByTrain(int trainId) {
+//		return (int) em.createNamedQuery("findNombrePassagerByTrain").setParameter("trainId", trainId).getSingleResult();
+//	}
 
 }

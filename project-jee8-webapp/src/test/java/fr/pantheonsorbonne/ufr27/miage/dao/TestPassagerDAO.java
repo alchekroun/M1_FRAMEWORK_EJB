@@ -57,6 +57,8 @@ class TestPassagerDAO {
 	Passager passager2;
 	Passager passager3;
 	Passager passager4;
+	Passager passager5;
+	Passager passager6;
 	// Arret Bordeaux
 	Arret arretDepart;
 	// Arret Paris
@@ -171,6 +173,19 @@ class TestPassagerDAO {
 		passager4.setTrain(train2);
 		em.persist(passager4);
 
+		
+		passager5 = new Passager();
+		passager5.setNom("Frank");
+		passager5.setArrive(arretLyon);
+		passager5.setDepart(arretDepart);
+		em.persist(passager5);
+		
+		passager6 = new Passager();
+		passager6.setNom("Lucie");
+		passager6.setArrive(arretDepart);
+		passager6.setDepart(arretDepart);
+		em.persist(passager6);
+    
 		em.getTransaction().commit();
 
 		LocalDateTime date = LocalDateTime.now();
@@ -255,7 +270,12 @@ class TestPassagerDAO {
 		em.remove(passager3);
 		passager3 = null;
 		em.remove(passager4);
-		passager4 = null;
+		passager4=null;
+		em.remove(passager5);
+		passager5=null;
+		em.remove(passager6);
+		passager6=null;
+
 
 		trainDao.removeArret(train1, arretDepart);
 		trainDao.removeArret(train1, arretArrivee);
@@ -396,29 +416,43 @@ class TestPassagerDAO {
 
 	}
 
-	@Test
-	void testFindTrajet() {
+	
+	@Test 
+	void testFindTrajet(){
 
-		// prend le train1 Bordeaux - Paris plutôt que Bordeaux - Lyon - Paris qui est
-		// plus long
-		// ne prend pas le train3 non plus car hdp de Paris dans le passé
-		Train trainAttribue = dao.findTrajet(passager1.getId());
-		assertEquals(train1.getId(), trainAttribue.getId());
-
-		// prend le train1 Bordeaux - Paris - Bretagne pour ensuite prendre train4
-		// Bretagne - Lille plutôt que Paris-Tours-Lille qui est plus long
-		Train trainCorrespondance = dao.findTrajet(passager2.getId());
-		assertEquals(train1.getId(), trainCorrespondance.getId());
-		assertEquals(arretBretagne.getId(), passager2.getCorrespondance().getId());
-
-		assertEquals(train1.getId(), dao.findTrajet(passager3.getId()).getId());
-		// Correspondance a Paris pour aller a Tours
-		assertEquals(arretArrivee.getId(), passager3.getCorrespondance().getId());
-
-		// renvoie null car pas de train pour Nice car l'hdp est déjà passée et plus hdp
-		// existante dans le futur pour Nice
+		
+		
+		//prend le train1 Bordeaux - Paris plutôt que Bordeaux - Lyon - Paris qui est plus long
+		//ne prend pas le train3 non plus car hdp de Paris dans le passé
+		Train trainAttribue =  dao.findTrajet(passager1.getId());
+		assertEquals(train1.getId(),trainAttribue.getId());
+		
+		// prend le train1 Bordeaux - Paris - Bretagne pour ensuite prendre train4 Bretagne - Lille plutôt que Paris-Tours-Lille qui est plus long
+		Train trainCorrespondance =  dao.findTrajet(passager2.getId());
+		assertEquals(train1.getId(),trainCorrespondance.getId());
+		assertEquals(arretBretagne.getId(),passager2.getCorrespondance().getId());
+		
+		assertEquals(train1.getId(),dao.findTrajet(passager3.getId()).getId());
+		//correspondance a Paris pour aller a Tours
+		assertEquals(arretArrivee.getId(),passager3.getCorrespondance().getId());
+		
+		//renvoie null car pas de train pour Nice car l'hdp est déjà passée et plus hdp existante dans le futur pour Nice
 		assertNull(dao.findTrajet(passager4.getId()));
-
+		
+		//renvoie null car la personne est déjà à son arrêt d'arrivée
+		assertNull(dao.findTrajet(passager6.getId()));
+		
+		assertEquals(train4.getId(),dao.findTrajet(passager5.getId()).getId());
+		HeureDePassage newHdp = null;
+		for(HeureDePassage hdp : train5.getListeHeureDePassage()) {
+			if(hdp.getArret().getId()==arretLyon.getId()) {
+				newHdp=hdp;
+			}
+		}
+		hdpDao.changeParameterDesservi(newHdp,false);
+		//renvoie null car maintenant arret non desservi
+		assertNull(dao.findTrajet(passager5.getId()));
+  
 	}
 
 	@Test

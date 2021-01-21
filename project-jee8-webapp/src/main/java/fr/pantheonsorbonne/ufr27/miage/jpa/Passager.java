@@ -15,7 +15,9 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "findAllPassagerByTrain", query = "SELECT p FROM Passager p WHERE p.train.id= :trainId"),
 		@NamedQuery(name = "findPassagerByDepart", query = "SELECT p FROM Passager p WHERE p.depart.id= :idArretDepart"),
 		@NamedQuery(name = "findPassagerByArrivee", query = "SELECT p FROM Passager p WHERE p.arrive.id= :idArretArrivee"),
-		@NamedQuery(name = "findPassagerByCorrespondance", query = "SELECT p FROM Passager p WHERE p.correspondance.id= :arretId") })
+		@NamedQuery(name = "findPassagerByCorrespondance", query = "SELECT p FROM Passager p WHERE p.correspondance.id= :arretId"),
+		@NamedQuery(name = "getPassagerByTrainIdAndNotArrivalAtArretId", query = "SELECT p FROM Passager p WHERE p.train.id= :trainId AND p.arrive.id<> :idArret AND p.correspondance= :idArret ")})
+
 public class Passager {
 
 	@Id
