@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -17,6 +18,7 @@ import fr.pantheonsorbonne.ufr27.miage.mapper.ArretMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret;
 import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 
+@ManagedBean
 public class ArretServiceImpl implements ArretService {
 
 	@Inject
@@ -35,10 +37,7 @@ public class ArretServiceImpl implements ArretService {
 			em.getTransaction().begin();
 
 			fr.pantheonsorbonne.ufr27.miage.jpa.Arret arret = new fr.pantheonsorbonne.ufr27.miage.jpa.Arret();
-			fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare infoGare = new fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare();
 			arret.setNom(arretDTO.getNom());
-			infoGare.setLocalisation(arret);
-			em.persist(infoGare);
 			em.persist(arret);
 			em.getTransaction().commit();
 
@@ -114,5 +113,5 @@ public class ArretServiceImpl implements ArretService {
 		}
 		return ArretMapper.arretAllDTOMapper(dao.getAllArretByTrain(trainId));
 	}
-	
+
 }

@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 		@NamedQuery(name = "findTrainByArretAndArriveeBeforeDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelArriveeTemps < :temps ORDER BY h.reelArriveeTemps ASC")})
 		//@NamedQuery(name="findNombrePassagerByTrain", query= "SELECT SIZE(t.listePassagers) FROM Train t WHERE t.id= :trainId")
 
+
 public abstract class Train {
 
 	@Id
@@ -32,8 +33,6 @@ public abstract class Train {
 	int id;
 
 	protected String nom;
-
-	protected String directionType;
 
 	protected int numero;
 
@@ -48,14 +47,6 @@ public abstract class Train {
 	protected List<Passager> listePassagers;
 
 	boolean isCreated;
-
-	public String getDirectionType() {
-		return directionType;
-	}
-
-	public void setDirectionType(String directionType) {
-		this.directionType = directionType;
-	}
 
 	public String getReseau() {
 		return reseau;
@@ -122,8 +113,8 @@ public abstract class Train {
 	}
 
 	public void addPassager(Passager p) {
-		if (this.listePassagers==null) {
-			this.listePassagers= new ArrayList<Passager>();
+		if (this.listePassagers == null) {
+			this.listePassagers = new ArrayList<Passager>();
 		}
 		this.listePassagers.add(p);
 	}
@@ -138,6 +129,19 @@ public abstract class Train {
 
 	public void setCreated(boolean isCreated) {
 		this.isCreated = isCreated;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Train) {
+			Train t = (Train) obj;
+			if (this.id == t.getId() && this.nom.equals(t.getNom()) && this.numero == t.getNumero()
+					&& this.reseau.equals(t.getReseau()) && this.statut.equals(t.getStatut())) {
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 
 }

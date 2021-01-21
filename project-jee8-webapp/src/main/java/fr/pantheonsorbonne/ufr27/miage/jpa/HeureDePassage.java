@@ -17,7 +17,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name=  "findHdpByTrainIdAndArretIdAndHeureReel", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelArriveeTemps= :dateArrivee AND h.reelDepartTemps= :dateDepart"),
 		@NamedQuery(name = "findHeureByTrainId", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId"),
 		@NamedQuery(name = "findHeureByArretId", query = "SELECT h FROM HeureDePassage h WHERE h.arret.id = :arretId"),
-		@NamedQuery(name = "findHeureByDateNowAndTrain", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelDepartTemps < :temps AND h.reelArriveeTemps > :temps"),
+		@NamedQuery(name = "findHeureByDateNowAndTrain", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps < :temps AND h.reelDepartTemps >:temps"),
 		@NamedQuery(name = "findHdpByTrainAfterDateAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps > :temps ORDER BY h.reelArriveeTemps ASC"),
 		@NamedQuery(name = "findHdpByTrainAfterDateAndSortedAndDesservi", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps > :temps AND h.desservi = true ORDER BY h.reelArriveeTemps ASC"),
 		@NamedQuery(name = "findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelDepartTemps > :temps ORDER BY h.reelDepartTemps ASC"),
@@ -27,6 +27,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "findHdpByArretAndNotTrainIdAndSorted", query="SELECT h FROM HeureDePassage h WHERE h.train.id <> :trainId AND h.arret.id = :arretId AND h.reelArriveeTemps < :temps ORDER BY h.reelArriveeTemps ASC")})
 		//@NamedQuery(name = "findHeureMoreRecentByArretIdAfterDate", query = "SELECT t1.hdpPlusRecente FROM (SELECT h.train.id, MIN(h.reelDepartTemps) as hdpPlusRecente FROM HeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps GROUP BY h.train.id) t1")
 		//@NamedQuery(name= "findHeureMoreRecentByArretIdAfterDate", query= "SELECT h.id, h.train.id, MIN(h.reelDepartTemps) FROM HeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps GROUP BY h.train.id")})
+
 
 public class HeureDePassage {
 

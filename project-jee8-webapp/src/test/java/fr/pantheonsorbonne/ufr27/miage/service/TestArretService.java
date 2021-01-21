@@ -14,7 +14,6 @@ import javax.persistence.EntityManager;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantDeleteException;
@@ -40,12 +40,12 @@ import fr.pantheonsorbonne.ufr27.miage.service.impl.TrainServiceImpl;
 import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 
 @EnableWeld
-class TestArrretService {
+class TestArretService {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator
 			.from(TrainService.class, TrainServiceImpl.class, TrainEndPoint.class, ArretService.class,
 					ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,
-					HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
+					HeureDePassageDAO.class, PerturbationDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -74,13 +74,7 @@ class TestArrretService {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
-
 		factory = new ObjectFactory();
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-
 	}
 
 	@BeforeEach

@@ -24,7 +24,8 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 @EnableWeld
 class TestPerturbationMapper {
 	@WeldSetup
-	private WeldInitiator weld = WeldInitiator.from(TrainMapper.class, PerturbationMapper.class, TestPersistenceProducer.class)
+	private WeldInitiator weld = WeldInitiator
+			.from(TrainMapper.class, PerturbationMapper.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -42,11 +43,11 @@ class TestPerturbationMapper {
 
 		trainJPA = new TrainAvecResa();
 		trainJPA.setNom("Nom");
-		trainJPA.setDirectionType("forward");
 		trainJPA.setReseau("SNCF");
-		trainJPA.setStatut("En marche");
+		trainJPA.setStatut("on");
+		trainJPA.setNumero(1);
 		em.persist(trainJPA);
-		
+
 		perturbationJPA1 = new Perturbation();
 		perturbationJPA1.setMotif("covid");
 		perturbationJPA1.setDureeEnPlus(10);
@@ -62,8 +63,7 @@ class TestPerturbationMapper {
 		listPerturbation.add(perturbationJPA2);
 
 		em.getTransaction().commit();
-		
-		
+
 	}
 
 	@AfterEach
@@ -71,11 +71,11 @@ class TestPerturbationMapper {
 		listPerturbation.clear();
 		em.getTransaction().begin();
 		em.remove(perturbationJPA1);
-		perturbationJPA1=null;
+		perturbationJPA1 = null;
 		em.remove(perturbationJPA2);
-		perturbationJPA2=null;
+		perturbationJPA2 = null;
 		em.remove(trainJPA);
-		trainJPA=null;
+		trainJPA = null;
 		em.getTransaction().commit();
 	}
 

@@ -15,7 +15,7 @@ public class TrainDAO {
 
 	@Inject
 	EntityManager em;
-	
+
 	@Inject
 	PerturbationDAO perturbationDao;
 
@@ -28,7 +28,6 @@ public class TrainDAO {
 
 	public Train updateTrain(Train trainOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train trainUpdate) {
 		trainOriginal.setNom(trainUpdate.getNom());
-		trainOriginal.setDirectionType(trainUpdate.getDirectionType());
 		trainOriginal.setNumero(trainUpdate.getNumeroTrain());
 		trainOriginal.setReseau(trainUpdate.getReseau());
 
@@ -51,20 +50,22 @@ public class TrainDAO {
 			hdpDAO.deleteHeureDePassageByTrain(train);
 		}
 		if (!perturbationDao.getPerturbationByTrain(train).isEmpty()) {
-			List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDao.getPerturbationByTrain(train);
-			for ( fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation perturbation : listePerturbations) {
-		    perturbationDao.deletePerturbation(perturbation);
+			List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations = perturbationDao
+					.getPerturbationByTrain(train);
+			for (fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation perturbation : listePerturbations) {
+				perturbationDao.deletePerturbation(perturbation);
+			}
 		}
-	 }
 		em.remove(train);
 	}
 
 	public List<Train> findTrainByArret(int arretId) {
 		return em.createNamedQuery("findTrainByArret").setParameter("arretId", arretId).getResultList();
 	}
-	
+
 	public List<Train> findTrainByArretAndDepartAfterDate(int arretId, LocalDateTime date) {
-		return em.createNamedQuery("findTrainByArretAndDepartAfterDate").setParameter("arretId", arretId).setParameter("temps", date).getResultList();
+		return em.createNamedQuery("findTrainByArretAndDepartAfterDate").setParameter("arretId", arretId)
+				.setParameter("temps", date).getResultList();
 	}
 	
 	public List<Train> findTrainByArretAndDepartAfterDateAndDesservi(int arretId, LocalDateTime date) {
@@ -95,6 +96,9 @@ public class TrainDAO {
 
 	public void removePassager(Train train, Passager p) {
 		p.setTrain(null);
+		if (p.getArrive().equals(p.getDepart())) {
+			p.setArrived(true);
+		}
 		em.merge(p);
 		train.removePassager(p);
 	}

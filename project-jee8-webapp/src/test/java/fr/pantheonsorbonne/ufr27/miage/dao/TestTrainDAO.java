@@ -28,23 +28,24 @@ import fr.pantheonsorbonne.ufr27.miage.tests.utils.TestPersistenceProducer;
 public class TestTrainDAO {
 	@WeldSetup
 	private WeldInitiator weld = WeldInitiator.from(TrainDAO.class, TestPersistenceProducer.class,
-			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class, PerturbationDAO.class).activate(RequestScoped.class).build();
+			HeureDePassageDAO.class, ArretDAO.class, PassagerDAO.class, PerturbationDAO.class)
+			.activate(RequestScoped.class).build();
 
 	@Inject
 	EntityManager em;
 
 	@Inject
 	TrainDAO dao;
-	
+
 	@Inject
 	PassagerDAO passagerDao;
-	
+
 	@Inject
 	HeureDePassageDAO hdpDao;
 	
 	@Inject
 	PerturbationDAO perturbationDao;
-	
+
 	Train train1;
 	Arret arret1;
 	Arret arretDirection;
@@ -64,8 +65,7 @@ public class TestTrainDAO {
 
 		train1 = new TrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
 		em.persist(train1);
@@ -192,10 +192,10 @@ public class TestTrainDAO {
 		em.getTransaction().commit();
 
 	}
-	
+
 	@Test
 	public void testFindTrainByArretAndDepartAfterDate() {
-		
+
 		em.getTransaction().begin();
 		Arret arret2 = new Arret();
 		arret2.setNom("Lyon");
@@ -203,28 +203,28 @@ public class TestTrainDAO {
 		em.getTransaction().commit();
 
 		em.getTransaction().begin();
-		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true, false);
+		dao.addArret(train1, arret1, LocalDateTime.now().plusMinutes(20), LocalDateTime.now().plusMinutes(10), true,
+				false);
 		em.getTransaction().commit();
 
 		em.getTransaction().begin();
 		List<Train> list1 = dao.findTrainByArretAndDepartAfterDate(arret2.getId(), LocalDateTime.now());
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		List<Train> list2 = dao.findTrainByArretAndDepartAfterDate(arret1.getId(), LocalDateTime.now().plusMinutes(30));
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		List<Train> list3 = dao.findTrainByArretAndDepartAfterDate(arret1.getId(), LocalDateTime.now());
 		em.getTransaction().commit();
-		
+
 		em.getTransaction().begin();
 		assertTrue(list1.isEmpty());
 		assertTrue(list2.isEmpty());
-		assertEquals(train1.getId(),list3.get(0).getId());
+		assertEquals(train1.getId(), list3.get(0).getId());
 		em.getTransaction().commit();
-		
-		
+
 		em.getTransaction().begin();
 		dao.removeArret(train1, arret1);
 		em.remove(arret2);
@@ -356,7 +356,8 @@ public class TestTrainDAO {
 		dao.removePassager(train1, passager1);
 		assertTrue(train1.getListePassagers().isEmpty());
 		assertNull(passager1.getTrain());
-		
+		assertFalse(passager1.isArrived());
+
 	}
 
 	// Vérifier bcp plus de chose sur la méthode :
@@ -375,16 +376,16 @@ public class TestTrainDAO {
 			assertFalse(hdp.getTrain().equals(train1));
 		}
 		for (Passager passager : passagerDao.getAllPassager()) {
-			assertEquals(passager.getTrain(),train1);
+			assertEquals(passager.getTrain(), train1);
 		}
 		for (Passager passager : passagerDao.getAllPassager()) {
-			assertEquals(passager.getTrain(),train1);
+			assertEquals(passager.getTrain(), train1);
 		}
-		
+
 		for (Perturbation perturbation : perturbationDao.getAllPerturbation()) {
-			assertEquals(perturbation.getTrain(),train1);
+			assertEquals(perturbation.getTrain(), train1);
 		}
-		
+
 	}
 
 }

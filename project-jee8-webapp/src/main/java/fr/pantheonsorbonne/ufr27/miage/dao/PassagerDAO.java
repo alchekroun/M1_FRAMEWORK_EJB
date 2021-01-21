@@ -1,16 +1,9 @@
 package fr.pantheonsorbonne.ufr27.miage.dao;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -20,7 +13,6 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
-import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
 
 public class PassagerDAO {
 	@Inject
@@ -28,7 +20,7 @@ public class PassagerDAO {
 
 	@Inject
 	TrainDAO trainDAO;
-	
+
 	@Inject
 	HeureDePassageDAO hdpDAO;
 
@@ -69,6 +61,10 @@ public class PassagerDAO {
 		return em.createNamedQuery("findPassagerByArrivee").setParameter("idArretArrivee", arretId).getResultList();
 	}
 
+	public List<Passager> getAllPassagerByCorrespondance(int arretId) {
+		return em.createNamedQuery("findPassagerByCorrespondance").setParameter("arretId", arretId).getResultList();
+	}
+
 	public boolean isPassagerCreated(int passagerId) {
 
 		Passager p = em.find(Passager.class, passagerId);
@@ -78,16 +74,18 @@ public class PassagerDAO {
 		return p.isCreated();
 
 	}
-	
-	public List<Passager> findPassagerByCorrespondance(int arretId){
-		return em.createNamedQuery("findPassagerByCorrespondance").setParameter("arretId", arretId).getResultList();
+
+	public boolean isTrainTakeMeWhereIWant(int passagerId, int trainId) {
+		// TODO
+		return false;
 	}
+
 	
 	public List<Passager> getPassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
 		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("arretId", arretId).getResultList();
 	}
 	
-	
+
 	public Train findTrajet(int passagerId) {
 		
 		class Etat{
@@ -223,7 +221,6 @@ public class PassagerDAO {
 				while(((!listeEtatPossible.isEmpty()) && (!tousLesCheminsParcourus)) && (!dernierArret)) {
 					Etat etatEnCours = listeEtatPossible.pollFirst();
 					//récup les hdp des arrets parcouru par le train juste après le départ de l'arrêt en cours
-					//getReelArriveeTemps to getReelDepartTemps??
 					listeHdpAfterDepartArretEnCoursByTrain = hdpDAO.findHdpByTrainAfterDateAndSortedAndDesservi(etatEnCours.getActuel().getTrain().getId(),etatEnCours.getActuel().getReelDepartTemps());
 					HeureDePassage hdpSuivanteFromArretEnCours=null;
 					if(!listeHdpAfterDepartArretEnCoursByTrain.isEmpty()) {
@@ -319,119 +316,120 @@ public class PassagerDAO {
 		return null;
 	}
 }
-	
-////////////////////////////	
-		/*	boolean cheminFinalTrouve=false;
-		  if(!listeEtatsFinaux.isEmpty()) {
-			int taille=listeEtatsFinaux.size();
-			Etat meilleurEtatFinalCorrespondance = listeEtatsFinaux.pollFirst();
-			taille--;
 
-			int cpt=0;
-			while(taille!=0 && !cheminFinalTrouve) {
-				if(cpt>0) {
-					meilleurEtatFinalCorrespondance = listeEtatsFinaux.pollFirst();
-					taille--;
-				}
-				cpt++;
-		*/
-				// idee de creer une class Etat qui permet de recup heure de passage actuelle et precedente
-				
-				
-				//LocalDateTime dateDepartArretPrecedent = meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps();
-				//LocalDateTime dateArriveeArretActuelForTrainPrecedent = hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().getReelDepartTemps()).get(0).getReelArriveeTemps();
-				
-				//LocalDateTime dateArriveeArretActuelForTrainPrecedent = hdpDAO.getHdpFromTrainIdAndArretId(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId()).getReelArriveeTemps();
-				// VOIR SI ON A BIEN LES HDP SUPPRIME AU COURS DU TEMPS
-			/*	while(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=null && !hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().getReelDepartTemps()).isEmpty()) {//compareTo(dateArriveeArretActuelForTrainPrecedent)}//(dateDepartArretPrecedent+(dateArriveeArretActuel-dateDepartArretPrecedent)<)) {
-					meilleurEtatFinalCorrespondance = meilleurEtatFinalCorrespondance.getEtatPrecedent();
-				}
-				
-				if((!(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=null)) && !hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().getReelDepartTemps()).isEmpty()) {
-					cheminFinalTrouve=true;
-				}
-				//ICI SET CORRESPONDANCE
-				
-			}
-			if(cheminFinalTrouve) {
-				p.setCorrespondance(meilleurEtatFinalCorrespondance.getActuel().getArret());
-			}
-			return meilleurEtatFinalCorrespondance.getActuel().getTrain();
-		}*/
-		
+////////////////////////////	
+/*
+ * boolean cheminFinalTrouve=false; if(!listeEtatsFinaux.isEmpty()) { int
+ * taille=listeEtatsFinaux.size(); Etat meilleurEtatFinalCorrespondance =
+ * listeEtatsFinaux.pollFirst(); taille--;
+ * 
+ * int cpt=0; while(taille!=0 && !cheminFinalTrouve) { if(cpt>0) {
+ * meilleurEtatFinalCorrespondance = listeEtatsFinaux.pollFirst(); taille--; }
+ * cpt++;
+ */
+// idee de creer une class Etat qui permet de recup heure de passage actuelle et
+// precedente
+
+// LocalDateTime dateDepartArretPrecedent =
+// meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps();
+// LocalDateTime dateArriveeArretActuelForTrainPrecedent =
+// hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(),
+// meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().getReelDepartTemps()).get(0).getReelArriveeTemps();
+
+// LocalDateTime dateArriveeArretActuelForTrainPrecedent =
+// hdpDAO.getHdpFromTrainIdAndArretId(meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().getId(),
+// meilleurEtatFinalCorrespondance.getActuel().getArret().getId()).getReelArriveeTemps();
+// VOIR SI ON A BIEN LES HDP SUPPRIME AU COURS DU TEMPS
+/*
+ * while(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=
+ * null && !hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(
+ * meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().
+ * getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),
+ * meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().
+ * getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().
+ * getReelDepartTemps()).isEmpty())
+ * {//compareTo(dateArriveeArretActuelForTrainPrecedent)}//(
+ * dateDepartArretPrecedent+(dateArriveeArretActuel-dateDepartArretPrecedent)<))
+ * { meilleurEtatFinalCorrespondance =
+ * meilleurEtatFinalCorrespondance.getEtatPrecedent(); }
+ * 
+ * if((!(meilleurEtatFinalCorrespondance.getEtatPrecedent().getEtatPrecedent()!=
+ * null)) && !hdpDAO.getHdpFromTrainIdAndArretIdAndBetweenDate1AndDate2(
+ * meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().getTrain().
+ * getId(), meilleurEtatFinalCorrespondance.getActuel().getArret().getId(),
+ * meilleurEtatFinalCorrespondance.getEtatPrecedent().getActuel().
+ * getReelDepartTemps(),meilleurEtatFinalCorrespondance.getActuel().
+ * getReelDepartTemps()).isEmpty()) { cheminFinalTrouve=true; } //ICI SET
+ * CORRESPONDANCE
+ * 
+ * } if(cheminFinalTrouve) {
+ * p.setCorrespondance(meilleurEtatFinalCorrespondance.getActuel().getArret());
+ * } return meilleurEtatFinalCorrespondance.getActuel().getTrain(); }
+ */
+
 //		return null;
 //		
 //		
 //		
 //	}
 
-
-	
-	//
-	//listEtatPossibleDejaVisite
+//
+// listEtatPossibleDejaVisite
 //////////////////////////////////
-/*		boolean notDoneCalculatingEveryPath = true;
-	//(!listeEtatPossible.isEmpty()) || notDoneCalculatingEveryPath
-	while((!listeEtatPossible.isEmpty()) || notDoneCalculatingEveryPath) {
-		notDoneCalculatingEveryPath = true;
-		TreeSet<Etat> listeEtatPossibleCopy = new TreeSet<>(listeEtatPossible);
-		TreeSet<Etat> listeEtatDejaVisitePrecedente = new TreeSet<>(listeEtatDejaVisite);
-		int size = listeEtatPossible.size();
-		//direct use listeEtatPossible
-		//copy because can't poll() while iterating
-		for(Etat etat : listeEtatPossibleCopy) {
-			for(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage h:etat.getActuel().getArret().getListeHeureDePassage()) {
-				
-				System.out.println("ETAT EN COURS , arret: "+etat.getActuel().getArret().getNom() +" /  "+etat.getActuel().getArret().getId()+" //// Train: "+etat.getActuel().getTrain().getNom() +" /  "+etat.getActuel().getTrain().getId()+" //// HeureDePassage: "+etat.getActuel().getId()+" /  "+ etat.getActuel().getReelArriveeTemps());
-				System.out.println("Size LISTE hdp pour ETAT: "+etat.getActuel().getArret().getListeHeureDePassage().size());
-
-				//for
-				
-				// le pb peut etre que je set la meme hdp pour actuel et precedent
-				
-				Etat newEtat = new Etat(h,etat.getActuel(),etat);
-				
-				//verifie si deja dans la liste des deja visite
-				//check si pas meme actuel et precedent sinon pas creer
-				boolean contientEtat=false;
-				if(!listeEtatDejaVisite.isEmpty()) {
-					for(Etat e : listeEtatDejaVisite) { //listeEtatPossible
-						//a voir legalite
-						System.out.println("TEST contientEtat "+e.getActuel().getId() +" == "+ newEtat.getActuel().getId() +" //// "+e.getPrecedent().getId() +" == "+newEtat.getPrecedent().getId());
-						System.out.println("premiere condition: "+ e.getActuel().getId() == newEtat.getActuel().getId()+" ");
-						System.out.println("deuxieme condition: "+e.getPrecedent().getId() == newEtat.getPrecedent().getId()+" ");
-						System.out.println("boolean valeur: "+contientEtat);
-						if(e.getActuel().getId() == newEtat.getActuel().getId() && e.getPrecedent().getId() == newEtat.getPrecedent().getId()) {
-							contientEtat=true;
-						}
-					}
-				}
-				
-				if(!contientEtat) { //h.getId()!=hdp.getId() && 
-					listeEtatPossible.add(newEtat);
-					listeEtatDejaVisite.add(newEtat);
-					if(h.getArret().getId() == p.getArrive().getId()) {
-						listeEtatsFinaux.add(newEtat);
-					}
-				}
-				// ne pas faire remove qd contient deja letat
-				// je rajoute un if pour supprimer que qd contient pas
-				listeEtatPossible.remove(etat);
-			}
-		}
-		if(listeEtatPossible.size() == size && listeEtatDejaVisite.containsAll(listeEtatDejaVisitePrecedente)) {
-			notDoneCalculatingEveryPath=false;
-		}
-	//listeTrainPossiblePrecedente.clear();
-	}
-	
-	// on récupère les heures de passage quand on revient en arriere et on fait ordre decroissant en récupérant la liste des heures de passage pour un train avec un findHdpByTrain
-*/
+/*
+ * boolean notDoneCalculatingEveryPath = true; //(!listeEtatPossible.isEmpty())
+ * || notDoneCalculatingEveryPath while((!listeEtatPossible.isEmpty()) ||
+ * notDoneCalculatingEveryPath) { notDoneCalculatingEveryPath = true;
+ * TreeSet<Etat> listeEtatPossibleCopy = new TreeSet<>(listeEtatPossible);
+ * TreeSet<Etat> listeEtatDejaVisitePrecedente = new
+ * TreeSet<>(listeEtatDejaVisite); int size = listeEtatPossible.size(); //direct
+ * use listeEtatPossible //copy because can't poll() while iterating for(Etat
+ * etat : listeEtatPossibleCopy) {
+ * for(fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage
+ * h:etat.getActuel().getArret().getListeHeureDePassage()) {
+ * 
+ * System.out.println("ETAT EN COURS , arret: "+etat.getActuel().getArret().
+ * getNom()
+ * +" /  "+etat.getActuel().getArret().getId()+" //// Train: "+etat.getActuel().
+ * getTrain().getNom()
+ * +" /  "+etat.getActuel().getTrain().getId()+" //// HeureDePassage: "+etat.
+ * getActuel().getId()+" /  "+ etat.getActuel().getReelArriveeTemps());
+ * System.out.println("Size LISTE hdp pour ETAT: "+etat.getActuel().getArret().
+ * getListeHeureDePassage().size());
+ * 
+ * //for
+ * 
+ * // le pb peut etre que je set la meme hdp pour actuel et precedent
+ * 
+ * Etat newEtat = new Etat(h,etat.getActuel(),etat);
+ * 
+ * //verifie si deja dans la liste des deja visite //check si pas meme actuel et
+ * precedent sinon pas creer boolean contientEtat=false;
+ * if(!listeEtatDejaVisite.isEmpty()) { for(Etat e : listeEtatDejaVisite) {
+ * //listeEtatPossible //a voir legalite
+ * System.out.println("TEST contientEtat "+e.getActuel().getId() +" == "+
+ * newEtat.getActuel().getId() +" //// "+e.getPrecedent().getId()
+ * +" == "+newEtat.getPrecedent().getId());
+ * System.out.println("premiere condition: "+ e.getActuel().getId() ==
+ * newEtat.getActuel().getId()+" ");
+ * System.out.println("deuxieme condition: "+e.getPrecedent().getId() ==
+ * newEtat.getPrecedent().getId()+" ");
+ * System.out.println("boolean valeur: "+contientEtat); if(e.getActuel().getId()
+ * == newEtat.getActuel().getId() && e.getPrecedent().getId() ==
+ * newEtat.getPrecedent().getId()) { contientEtat=true; } } }
+ * 
+ * if(!contientEtat) { //h.getId()!=hdp.getId() &&
+ * listeEtatPossible.add(newEtat); listeEtatDejaVisite.add(newEtat);
+ * if(h.getArret().getId() == p.getArrive().getId()) {
+ * listeEtatsFinaux.add(newEtat); } } // ne pas faire remove qd contient deja
+ * letat // je rajoute un if pour supprimer que qd contient pas
+ * listeEtatPossible.remove(etat); } } if(listeEtatPossible.size() == size &&
+ * listeEtatDejaVisite.containsAll(listeEtatDejaVisitePrecedente)) {
+ * notDoneCalculatingEveryPath=false; } //listeTrainPossiblePrecedente.clear();
+ * }
+ * 
+ * // on récupère les heures de passage quand on revient en arriere et on fait
+ * ordre decroissant en récupérant la liste des heures de passage pour un train
+ * avec un findHdpByTrain
+ */
 ///////////////	
-	
-	
-	
-	
-	
-	
-
