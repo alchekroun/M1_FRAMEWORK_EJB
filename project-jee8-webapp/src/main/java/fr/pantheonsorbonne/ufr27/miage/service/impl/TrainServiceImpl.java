@@ -112,12 +112,6 @@ public class TrainServiceImpl implements TrainService {
 		if (train == null) {
 			throw new NoSuchTrainException();
 		}
-		/*
-		 * List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations =
-		 * perturbationDAO.getPerturbationByTrain(train);
-		 * for(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation pertu :
-		 * listePerturbations) { perturbationDAO.deletePerturbation(pertu); }
-		 */
 		dao.deleteTrain(train);
 
 		em.getTransaction().commit();
@@ -274,14 +268,13 @@ public class TrainServiceImpl implements TrainService {
 			}
 			// Le train n'a pas d'arrêt à desservir pour le moment.
 			HeureDePassage nextHdp = HeureDePassageMapper.heureDePassageDTOMapper(hdpDAO.findNextHdp(train.getId()));
-			if (nextHdp != null) {
-				arretExceptionnel(nextHdp);
-			} else {
+			if (nextHdp == null) {
 				// Le train n'a plus d'arrêt à desservir
 				changeStatut(train, "off");
 				return -1;
 			}
 
+			arretExceptionnel(nextHdp);
 			return 1;
 
 		}
