@@ -178,10 +178,11 @@ public class TrainEndPoint {
 						statut = service.enMarche(train);
 						Thread.sleep(60000); // 1mn
 					} catch (NoSuchTrainException e) {
+						e.printStackTrace();
 						break;
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						break;
 					}
 				}
 			}

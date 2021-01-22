@@ -89,11 +89,9 @@ class TestArretService {
 
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		idTrain = trainService.createTrain(train1);
 		train1.setId(idTrain);
 
