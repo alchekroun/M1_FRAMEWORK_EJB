@@ -54,7 +54,8 @@ public class InfoGareSubscriber implements Closeable {
 
 	public boolean isInterest(List<HeureDePassage> listHdp) {
 		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
+			if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()
+					&& hdp.getTrain().getStatut().equals("on")) {
 				return true;
 			}
 		}
@@ -63,8 +64,9 @@ public class InfoGareSubscriber implements Closeable {
 
 	// Cette fonction ne devrait pas être là
 	public HeureDePassage getTerminus(List<HeureDePassage> listHdp, Train t) {
+
 		for (HeureDePassage hdp : listHdp) {
-			// TODO Revoir la fonction .equals de tous les objets JPA
+
 			if (hdp.getTrain().getId() == t.getId() && hdp.isTerminus()) {
 				return hdp;
 			}

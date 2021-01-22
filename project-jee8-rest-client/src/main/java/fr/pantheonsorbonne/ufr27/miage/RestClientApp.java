@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
+import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
 /**
@@ -24,6 +25,8 @@ public class RestClientApp
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:8080");
 
+		int NB_TRAIN = 2;
+
 		ObjectFactory factory = new ObjectFactory();
 
 		System.out.println("--------------Launch periodic bulletin--------------");
@@ -34,6 +37,15 @@ public class RestClientApp
 				.post(Entity.json(trains));
 		if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 			System.out.println("--------------Periodic bulletin launched succesfully--------------");
+			System.out.println("--------------Lunch first train--------------");
+
+			for (int i = 1; i < NB_TRAIN + 1; i++) {
+				Response respTrain = target.path("train/" + i).request().get();
+				Train t = respTrain.readEntity(Train.class);
+				Response responseLunchFirstTrain = target.path("train/enmarche").request()
+						.accept(MediaType.APPLICATION_JSON).post(Entity.json(t));
+			}
+
 		} else {
 			throw new RuntimeException("failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
 		}

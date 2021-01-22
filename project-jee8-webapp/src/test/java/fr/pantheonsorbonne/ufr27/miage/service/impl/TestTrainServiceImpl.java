@@ -3,7 +3,6 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,31 +141,25 @@ class TestTrainServiceImpl {
 
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		idTrain1 = trainService.createTrain(train1);
 		train1.setId(idTrain1);
 
 		train2 = factory.createTrainAvecResa();
 		train2.setNom("Lens- Paris");
-		train2.setDirectionType("forward");
-		train2.setStatut("enmarche");
+		train2.setStatut("on");
 		train2.setNumeroTrain(1241);
 		train2.setReseau("SNCF");
-		train2.setStatut("en marche");
 		idTrain2 = trainService2.createTrain(train2);
 		train2.setId(idTrain2);
 
 		train3 = factory.createTrainAvecResa();
 		train3.setNom("Montpellier - Paris");
-		train3.setDirectionType("forward");
-		train3.setStatut("enmarche");
+		train3.setStatut("on");
 		train3.setNumeroTrain(41);
 		train3.setReseau("SNCF");
-		train3.setStatut("en marche");
 		idTrain3 = trainService2.createTrain(train3);
 		train3.setId(idTrain3);
 
@@ -431,6 +424,28 @@ class TestTrainServiceImpl {
 		assertEquals(hdp1.isDesservi(), true);
 		assertEquals(hdp2.isDesservi(), true);
 		assertEquals(hdp3.isDesservi(), false);
+	}
+
+	@Test
+	public void testChangeStatut() throws NoSuchTrainException {
+		String statut = "off";
+
+		Train t = trainService.getTrainFromId(train1.getId());
+
+		assertNotEquals(statut, t.getStatut());
+
+		trainService.changeStatut(train1, statut);
+
+		t = trainService.getTrainFromId(train1.getId());
+
+		assertEquals(statut, t.getStatut());
+
+		statut = "on";
+		trainService.changeStatut(train1, statut);
+
+		t = trainService.getTrainFromId(train1.getId());
+
+		assertEquals(statut, t.getStatut());
 	}
 
 }

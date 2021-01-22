@@ -29,16 +29,15 @@ public class AppSubscriber {
 				infoGare.setArret(nom);
 				mapIgs.put(nom, infoGare);
 			}
+
 			while (true) {
-				// check if arret is concerned by this message before printing it. Now
-				// everything is printed!
 				for (InfoGareSubscriber igS : mapIgs.values()) {
 					igS.consume();
 				}
-				// System.out.println(infoGareParis.getArret() + " :\t" +
-				// infoGareParis.consume());
 			}
-			// infoGareParis.close();
+			// for (InfoGareSubscriber igS : mapIgs.values()) {
+			// igS.close();
+			// }
 
 		}
 

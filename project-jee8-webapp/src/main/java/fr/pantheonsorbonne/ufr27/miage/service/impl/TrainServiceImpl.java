@@ -469,7 +469,7 @@ public class TrainServiceImpl implements TrainService {
 
 	protected void arretExceptionnel(HeureDePassage nextHdp) {
 		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard2h(nextHdp);
-		if (hdpAvecTrainEnRetard != null) {
+		if (hdpAvecTrainEnRetard != null && hdpAvecTrainEnRetard.getTrain() instanceof TrainAvecResa) {
 			hdpDAO.changeParameterDesservi(
 					hdpDAO.getHdpFromTrainIdAndArretId(nextHdp.getTrain().getId(), nextHdp.getArret().getId()), true);
 

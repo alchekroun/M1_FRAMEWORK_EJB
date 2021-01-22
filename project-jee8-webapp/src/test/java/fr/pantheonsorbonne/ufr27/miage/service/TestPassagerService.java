@@ -103,21 +103,22 @@ class TestPassagerService {
 	void setUp() throws Exception {
 		arretArrivee = factory.createArret();
 		arretArrivee.setNom("Marseille");
+		idArretA = arretService.createArret(arretArrivee);
+		arretArrivee.setId(idArretA);
+
 		arretDepart = factory.createArret();
 		arretDepart.setNom("Paris");
 		idArretD = arretService.createArret(arretDepart);
-		idArretA = arretService.createArret(arretArrivee);
-		arretArrivee.setId(idArretA);
 		arretDepart.setId(idArretD);
+
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		idTrain = trainService.createTrain(train1);
 		train1.setId(idTrain);
+
 		passager1 = factory.createPassager();
 		passager1.setNom("David Serruya");
 		passager1.setArrive(arretArrivee);
