@@ -24,10 +24,21 @@ public class PassagerDAO {
 	@Inject
 	HeureDePassageDAO hdpDAO;
 
+	/**
+	 * Méthode permettant de récupérer un passager à partir de son id
+	 * @param passagerId
+	 * @return Passager
+	 */
 	public Passager getPassagerFromId(int passagerId) {
 		return em.find(Passager.class, passagerId);
 	}
 
+	/**
+	 * Méthode permettant de modifier les caractéristiques d'un passager
+	 * @param passagerOriginal
+	 * @param passagerUpdate
+	 * @return Passager
+	 */
 	public Passager updatePassager(Passager passagerOriginal,
 			fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager passagerUpdate) {
 
@@ -38,6 +49,10 @@ public class PassagerDAO {
 		return passagerOriginal;
 	}
 
+	/**
+	 * Méthode permettant de supprimer un passager de la base de données
+	 * @param passager
+	 */
 	public void deletePassager(Passager passager) {
 		if (passager.getTrain() != null) {
 			trainDAO.removePassager(passager.getTrain(), passager);
@@ -45,26 +60,56 @@ public class PassagerDAO {
 		em.remove(passager);
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers de la base de données
+	 * @return 
+	 */
 	public List<Passager> getAllPassager() {
 		return em.createNamedQuery("getAllPassager").getResultList();
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers d'un train
+	 * @param trainId
+	 * @return
+	 */
 	public List<Passager> getAllPassagerByTrain(int trainId) {
 		return em.createNamedQuery("findAllPassagerByTrain").setParameter("trainId", trainId).getResultList();
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers au départ du train
+	 * @param arretId
+	 * @return List<Passager>
+	 */
 	public List<Passager> getAllPassagerByDepart(int arretId) {
 		return em.createNamedQuery("findPassagerByDepart").setParameter("idArretDepart", arretId).getResultList();
 	}
-
+	
+	/**
+	 * Méthode permettant de récupérer tous les passagers à l'arrivée du train
+	 * @param arretId
+	 * @return List<Passager>
+	 */
 	public List<Passager> getAllPassagerByArrivee(int arretId) {
 		return em.createNamedQuery("findPassagerByArrivee").setParameter("idArretArrivee", arretId).getResultList();
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers pour une correspondance
+	 * @param arretId
+	 * @return List<Passager>
+	 */
 	public List<Passager> getAllPassagerByCorrespondance(int arretId) {
 		return em.createNamedQuery("findPassagerByCorrespondance").setParameter("arretId", arretId).getResultList();
 	}
 
+	/**
+	 * Méthode permettant de savoir si un passager a bien été créé
+	 * 
+	 * @param passagerId
+	 * @return true si le passager a été correctement créé, false sinon
+	 */
 	public boolean isPassagerCreated(int passagerId) {
 
 		Passager p = em.find(Passager.class, passagerId);
@@ -80,12 +125,22 @@ public class PassagerDAO {
 		return false;
 	}
 
-	
+	/**
+	 * Méthode permettant de récupérer les passagers n'ayant pas l'arrêt arretId comme arrêt d'arrivée mais comme correspondance
+	 * @param trainId
+	 * @param arretId
+	 * @return List<Passager>
+	 */
 	public List<Passager> getPassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
 		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("arretId", arretId).getResultList();
 	}
 	
 
+	/**
+	 * Méthode permettant de savoir le trajet prévu pour un passager
+	 * @param passagerId
+	 * @return Train
+	 */
 	public Train findTrajet(int passagerId) {
 		
 		class Etat{

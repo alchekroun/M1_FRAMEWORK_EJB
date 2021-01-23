@@ -12,7 +12,7 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 public interface PassagerService {
 
 	/**
-	 * Méthode permettant de créer un passager dans la base de donnée.
+	 * Méthode permettant de créer un passager dans la base de données.
 	 * 
 	 * @param passagerDTO
 	 * @return id du passager
@@ -28,14 +28,14 @@ public interface PassagerService {
 	public Passager getPassagerFromId(int passagerId) throws NoSuchPassagerException;
 
 	/**
-	 * Méthode permettant de mettre à jour un passager de la base de donnée.
+	 * Méthode permettant de mettre à jour un passager de la base de données.
 	 * 
 	 * @param passagerUpdate
 	 */
 	public void updatePassager(Passager passagerUpdate) throws NoSuchPassagerException, CantUpdateException;
 
 	/**
-	 * Méthode permettant de supprimer un passager de la base de donnée.
+	 * Méthode permettant de supprimer un passager de la base de données.
 	 * 
 	 * @param passagerId
 	 */
