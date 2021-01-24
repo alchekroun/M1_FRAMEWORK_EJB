@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
 
-import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Train;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.TrainWrapper;
 
@@ -27,27 +26,45 @@ public class RestClientApp
 
 		int NB_TRAIN = 2;
 
-		ObjectFactory factory = new ObjectFactory();
+		// ObjectFactory factory = new ObjectFactory();
 
-		System.out.println("--------------Launch periodic bulletin--------------");
+		System.out.println("--------------Initialize passagers' trajet--------------");
 
-		TrainWrapper trains = new TrainWrapper();
+		Response respInitTrajet = target.path("passager/initAllTrajet").request().get();
 
-		Response responseSendBulletin = target.path("infoCentre/nhe").request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.json(trains));
-		if (responseSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
-			System.out.println("--------------Periodic bulletin launched succesfully--------------");
-			System.out.println("--------------Lunch first train--------------");
+		if (respInitTrajet.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
 
-			for (int i = 1; i < NB_TRAIN + 1; i++) {
-				Response respTrain = target.path("train/" + i).request().get();
-				Train t = respTrain.readEntity(Train.class);
-				Response responseLunchFirstTrain = target.path("train/enmarche").request()
-						.accept(MediaType.APPLICATION_JSON).post(Entity.json(t));
+			System.out.println("--------------Initialized passagers' trajet succesfully--------------");
+
+			System.out.println("--------------Launch periodic bulletin--------------");
+
+			TrainWrapper trains = new TrainWrapper();
+
+			Response respSendBulletin = target.path("infoCentre/nhe").request().accept(MediaType.APPLICATION_JSON)
+					.post(Entity.json(trains));
+			if (respSendBulletin.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+				System.out.println("--------------Periodic bulletin launched succesfully--------------");
+
+				System.out.println("--------------Launch trains--------------");
+
+				for (int i = 1; i < NB_TRAIN + 1; i++) {
+					Response respTrain = target.path("train/" + i).request().get();
+					Train t = respTrain.readEntity(Train.class);
+					Response respLaunchFirstTrain = target.path("train/enmarche").request()
+							.accept(MediaType.APPLICATION_JSON).post(Entity.json(t));
+					if (!respLaunchFirstTrain.getStatusInfo().getFamily().equals(Family.SUCCESSFUL)) {
+						throw new RuntimeException(
+								"failed to launch trains : " + respLaunchFirstTrain.getStatusInfo().toString());
+					}
+				}
+
+				System.out.println("--------------Launched trains succesfully--------------");
+
+			} else {
+				throw new RuntimeException("failed to send bulletin : " + respSendBulletin.getStatusInfo().toString());
 			}
-
 		} else {
-			throw new RuntimeException("failed to send bulletin : " + responseSendBulletin.getStatusInfo().toString());
+			throw new RuntimeException("failed to ini trajet : " + respInitTrajet.getStatusInfo().toString());
 		}
 	}
 

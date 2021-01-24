@@ -3,6 +3,8 @@ package fr.pantheonsorbonne.ufr27.miage.jms;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -54,8 +56,7 @@ public class InfoGareSubscriber implements Closeable {
 
 	public boolean isInterest(List<HeureDePassage> listHdp) {
 		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()
-					&& hdp.getTrain().getStatut().equals("on")) {
+			if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 				return true;
 			}
 		}
@@ -89,8 +90,7 @@ public class InfoGareSubscriber implements Closeable {
 			toShow.append("------------------------INFO TRAINS---------------------\n");
 			toShow.append("DEPARTS\n");
 			for (HeureDePassage hdp : listHdp) {
-				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()
-						&& hdp.getTrain().getStatut().equals("on")) {
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
 					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
@@ -98,9 +98,8 @@ public class InfoGareSubscriber implements Closeable {
 					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
-						// deux
-						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
+						toShow.append("Retardé de "
+								+ conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(), hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
@@ -108,8 +107,7 @@ public class InfoGareSubscriber implements Closeable {
 			toShow.append("ARRIVEES\n");
 			for (HeureDePassage hdp : listHdp) {
 
-				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()
-						&& hdp.getTrain().getStatut().equals("on")) {
+				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
 					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
@@ -117,9 +115,8 @@ public class InfoGareSubscriber implements Closeable {
 					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
-						// deux
-						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
+						toShow.append("Retardé de "
+								+ conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(), hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
@@ -130,6 +127,26 @@ public class InfoGareSubscriber implements Closeable {
 
 		}
 
+	}
+
+	public String conversionDiffBetweenTwoDates(LocalDateTime dateFrom, LocalDateTime dateTo) {
+		StringBuilder timeDisplay = new StringBuilder();
+		float timeDiff = (float) ChronoUnit.SECONDS.between(dateFrom, dateTo);
+
+		if (timeDiff >= 3600) {
+			int hours = (int) timeDiff / 3600;
+			timeDiff = timeDiff % 3600;
+			timeDisplay.append(hours + " h ");
+		}
+		if (timeDiff >= 60) {
+			int minutes = (int) timeDiff / 60;
+			timeDiff = timeDiff % 60;
+			timeDisplay.append(minutes + " min ");
+		}
+		int seconds = (int) timeDiff;
+		timeDisplay.append(seconds + " sec ");
+
+		return timeDisplay.toString();
 	}
 
 	public void consume() {

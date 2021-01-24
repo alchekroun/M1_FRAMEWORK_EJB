@@ -19,6 +19,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "findHeureByArretId", query = "SELECT h FROM HeureDePassage h WHERE h.arret.id = :arretId"),
 		@NamedQuery(name = "findHeureByDateNowAndTrain", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps < :temps AND h.reelDepartTemps >:temps"),
 		@NamedQuery(name = "findHdpByTrainAfterDateAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps > :temps ORDER BY h.reelArriveeTemps ASC"),
+		@NamedQuery(name = "findHdpByTrainByDateAndSortedAndDesservi", query ="SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND (h.reelArriveeTemps > :temps OR (h.reelArriveeTemps < :temps AND h.reelDepartTemps > :temps)) AND h.desservi = true ORDER BY h.reelArriveeTemps ASC"),
 		@NamedQuery(name = "findHdpByTrainAfterDateAndSortedAndDesservi", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.reelArriveeTemps > :temps AND h.desservi = true ORDER BY h.reelArriveeTemps ASC"),
 		@NamedQuery(name = "findHeureByDepartAfterDateAndTrainIdAndArretIdAndSorted", query = "SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelDepartTemps > :temps ORDER BY h.reelDepartTemps ASC"),
 		@NamedQuery(name = "findHeureByDepartAfterDateAndTrainIdAndArretIdAndSortedAndDesservi", query="SELECT h FROM HeureDePassage h WHERE h.train.id = :trainId AND h.arret.id = :arretId AND h.reelDepartTemps > :temps AND h.desservi = true ORDER BY h.reelDepartTemps ASC"),

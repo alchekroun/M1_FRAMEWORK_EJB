@@ -60,6 +60,7 @@ class TestPassagerDAO {
 	Passager passager4;
 	Passager passager5;
 	Passager passager6;
+	Passager passager7;
 	// Arret Bordeaux
 	Arret arretDepart;
 	// Arret Paris
@@ -186,6 +187,12 @@ class TestPassagerDAO {
 		passager6.setDepart(arretDepart);
 		em.persist(passager6);
 
+		passager7 = new Passager();
+		passager7.setNom("Paul");
+		passager7.setArrive(arretArrivee);
+		passager7.setDepart(arretLyon);
+		em.persist(passager7);
+
 		em.getTransaction().commit();
 
 		LocalDateTime date = LocalDateTime.now();
@@ -274,6 +281,8 @@ class TestPassagerDAO {
 		passager5 = null;
 		em.remove(passager6);
 		passager6 = null;
+		em.remove(passager7);
+		passager7 = null;
 
 		trainDao.removeArret(train1, arretDepart);
 		trainDao.removeArret(train1, arretArrivee);
@@ -380,7 +389,7 @@ class TestPassagerDAO {
 	void testGetAllPassager() {
 		List<Passager> passagers = dao.getAllPassager();
 
-		assertEquals(6, passagers.size());
+		assertEquals(7, passagers.size());
 
 		assertTrue(passagers.contains(passager1));
 		assertTrue(passagers.contains(passager2));
@@ -413,8 +422,8 @@ class TestPassagerDAO {
 	@Test
 	void testGetAllPassagerByArrivee() {
 		List<Passager> passagers = dao.getAllPassagerByArrivee(arretArrivee.getId());
-		assertEquals(1, passagers.size());
-		assertEquals(passager1, passagers.get(0));
+		assertEquals(2, passagers.size());
+		assertTrue(passagers.contains(passager1));
 
 	}
 
@@ -444,7 +453,11 @@ class TestPassagerDAO {
 		// renvoie null car la personne est déjà à son arrêt d'arrivée
 		assertNull(dao.findTrajet(passager6.getId()));
 
-		assertEquals(train4.getId(), dao.findTrajet(passager5.getId()).getId());
+		Train trainAttribueLyon = dao.findTrajet(passager5.getId());
+		assertEquals(train5.getId(), trainAttribueLyon.getId());
+
+		assertEquals(train5.getId(), dao.findTrajet(passager7.getId()).getId());
+
 		HeureDePassage newHdp = null;
 		for (HeureDePassage hdp : train5.getListeHeureDePassage()) {
 			if (hdp.getArret().getId() == arretLyon.getId()) {
@@ -454,6 +467,19 @@ class TestPassagerDAO {
 		hdpDao.changeParameterDesservi(newHdp, false);
 		// renvoie null car maintenant arret non desservi
 		assertNull(dao.findTrajet(passager5.getId()));
+
+		assertNull(dao.findTrajet(passager7.getId()));
+
+		newHdp = null;
+		for (HeureDePassage hdp : train1.getListeHeureDePassage()) {
+			if (hdp.getArret().getId() == arretBretagne.getId()) {
+				newHdp = hdp;
+			}
+		}
+		hdpDao.changeParameterDesservi(newHdp, false);
+		trainCorrespondance = dao.findTrajet(passager2.getId());
+		assertEquals(train1.getId(), trainCorrespondance.getId());
+		assertEquals(arretArrivee.getId(), passager2.getCorrespondance().getId());
 
 	}
 
