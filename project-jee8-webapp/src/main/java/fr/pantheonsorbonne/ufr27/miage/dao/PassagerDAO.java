@@ -133,6 +133,9 @@ public class PassagerDAO {
 		return false;
 	}
 
+	public List<Passager> getPassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
+		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("idArret", arretId).getResultList();
+    
 	/**
 	 * Méthode permettant de récupérer les passagers n'ayant pas l'arrêt arretId
 	 * comme arrêt d'arrivée mais comme correspondance

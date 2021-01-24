@@ -1,6 +1,7 @@
 package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -379,7 +380,7 @@ public class TrainServiceImpl implements TrainService {
 		return false;
 	}
 
-	public void retarderCorrespondance(Train train) {
+	public void retarderCorrespondance(Train train) throws NoSuchTrainException {
 
 		List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listHdpTrain = hdpDAO
 				.findHdpByTrainByDateAndSortedAndDesservi(train.getId(), LocalDateTime.now());
@@ -390,7 +391,7 @@ public class TrainServiceImpl implements TrainService {
 			HeureDePassage hdp = listHdp.get(0);
 
 			HeureDePassage hdpTrainEnRetard = verifIfNextArretHasTrainEnRetard(hdp);
-			if (train instanceof TrainAvecResa && hdpTrainEnRetard != null) {
+			if (dao.getTrainAvecResa(train.getId()) != null && hdpTrainEnRetard != null) {
 
 				List<Passager> listPassagerTrainPerturbeTakingCorrespondanceAtArret = PassagerMapper
 						.passagerAllDTOMapper(passagerDAO.getPassagerByTrainIdAndNotArrivalAtArretId(
@@ -403,11 +404,16 @@ public class TrainServiceImpl implements TrainService {
 							.findHdpByTrainIdAndArretIdAndHeureReel(hdpTrainEnRetard.getTrain().getId(),
 									hdpTrainEnRetard.getArret().getId(), hdpTrainEnRetard.getReelArriveeTemps(),
 									hdpTrainEnRetard.getReelDepartTemps());
-					hdpDAO.updateHeureDePassage(hdpTrainARetarder.getTrain(), hdpTrainARetarder.getArret(),
-							hdpTrainARetarder.getBaseDepartTemps(), hdpTrainARetarder.getBaseArriveeTemps(),
-							hdpTrainEnRetardJpa.getReelDepartTemps().plusMinutes(10),
-							hdpTrainEnRetardJpa.getReelArriveeTemps().plusMinutes(10), hdpTrainARetarder.isDesservi(),
-							hdpTrainARetarder.isTerminus());
+	
+					int diff = (int) ChronoUnit.MINUTES.between(hdpTrainARetarder.getBaseDepartTemps(), hdpTrainEnRetardJpa.getReelArriveeTemps().minusMinutes(10));
+					int diff2 = (int) ChronoUnit.MINUTES.between(LocalDateTime.now(), hdpTrainEnRetardJpa.getReelArriveeTemps());
+					Perturbation perturbation1 = new Perturbation();
+					perturbation1.setMotif("retard ligne");
+					perturbation1.setTrain(train);
+					perturbation1.setDureeEnPlus(diff+diff2);
+					createPerturbation(perturbation1);
+							
+						
 				}
 			}
 		}
@@ -415,7 +421,7 @@ public class TrainServiceImpl implements TrainService {
 
 	protected void arretExceptionnel(HeureDePassage nextHdp) {
 		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard2h(nextHdp);
-		if (hdpAvecTrainEnRetard != null && hdpAvecTrainEnRetard.getTrain() instanceof TrainAvecResa) {
+		if (hdpAvecTrainEnRetard != null && dao.getTrainAvecResa(hdpAvecTrainEnRetard.getTrain().getId()) != null) {
 			hdpDAO.changeParameterDesservi(
 					hdpDAO.getHdpFromTrainIdAndArretId(nextHdp.getTrain().getId(), nextHdp.getArret().getId()), true);
 

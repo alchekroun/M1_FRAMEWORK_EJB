@@ -10,6 +10,8 @@ import javax.persistence.EntityManager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainSansResa;
 
 public class TrainDAO {
 
@@ -197,6 +199,14 @@ public class TrainDAO {
 		}
 		return t.isCreated();
 
+	}
+	
+	public TrainAvecResa getTrainAvecResa(int trainId) {
+		return em.find(TrainAvecResa.class, trainId);
+	}
+	
+	public TrainSansResa getTrainSansResa(int trainId) {
+		return em.find(TrainSansResa.class, trainId);
 	}
 
 //	public int findNombrePassagerByTrain(int trainId) {
