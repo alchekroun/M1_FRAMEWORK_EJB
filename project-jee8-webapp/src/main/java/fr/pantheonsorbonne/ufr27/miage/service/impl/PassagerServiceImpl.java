@@ -44,6 +44,7 @@ public class PassagerServiceImpl implements PassagerService {
 			passager.setNom(passagerDTO.getNom());
 
 			em.persist(passager);
+			dao.findTrajet(passager.getId());
 			em.getTransaction().commit();
 
 			return passager.getId();
@@ -108,6 +109,15 @@ public class PassagerServiceImpl implements PassagerService {
 			throw new NoSuchTrainException();
 		}
 		return PassagerMapper.passagerAllDTOMapper(dao.getAllPassagerByTrain(trainId));
+	}
+
+	@Override
+	public void iniTrajetForAllPassager() {
+		em.getTransaction().begin();
+		for (Passager p : PassagerMapper.passagerAllDTOMapper(dao.getAllPassager())) {
+			dao.findTrajet(p.getId());
+		}
+		em.getTransaction().commit();
 	}
 
 }

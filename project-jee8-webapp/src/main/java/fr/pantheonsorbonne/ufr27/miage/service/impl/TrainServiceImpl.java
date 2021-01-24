@@ -97,6 +97,16 @@ public class TrainServiceImpl implements TrainService {
 			}
 
 			em.merge(dao.updateTrain(trainOriginal, trainUpdate));
+
+			// Nous avons remarqué que les train dans les hdp ne se mettaient pas à jour
+			// Nous avons essayé cela mais ça ne change rien. Les trains restent OFF dans
+			// les HPD alors qu'ils sont ON
+			for (fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp : hdpDAO
+					.findHdpByTrain(trainOriginal.getId())) {
+				em.merge(hdp);
+				em.merge(hdp.getTrain());
+			}
+
 			em.getTransaction().commit();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
 			em.getTransaction().rollback();
@@ -225,21 +235,16 @@ public class TrainServiceImpl implements TrainService {
 			changeStatut(train, "on");
 		}
 		if (hdpDAO.findHdpByTrain(trainJPA.getId()) != null) {
-			
-			//defini trajet de tous les passagers ici et pas une fois que le train est deja en gare
-			for(Passager p : PassagerMapper.passagerAllDTOMapper(passagerDAO.getAllPassager())) {
-				passagerDAO.findTrajet(p.getId());
-			}
-			
+
 			retarderCorrespondance(train);
-			
+
 			HeureDePassage hdpActuel = verifIfExistArretNow(trainJPA.getId());
 			if (hdpActuel != null && hdpActuel.isDesservi()) {
 
 				Arret arretActuel = hdpActuel.getArret();
-				
+
 				// Fait descendre les gens qui doivent descendre
-				
+
 				// Arrivee
 				descendreListPassager(
 						PassagerMapper.passagerAllDTOMapper(passagerDAO.getAllPassagerByArrivee(arretActuel.getId())),
@@ -407,7 +412,6 @@ public class TrainServiceImpl implements TrainService {
 			}
 		}
 	}
-
 
 	protected void arretExceptionnel(HeureDePassage nextHdp) {
 		HeureDePassage hdpAvecTrainEnRetard = verifIfNextArretHasTrainEnRetard2h(nextHdp);
