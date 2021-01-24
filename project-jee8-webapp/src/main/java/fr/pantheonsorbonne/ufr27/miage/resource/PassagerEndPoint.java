@@ -134,4 +134,11 @@ public class PassagerEndPoint {
 		}
 	}
 
+	@GET
+	@Path("/initAllTrajet")
+	public Response initAllTrajet() {
+		service.iniTrajetForAllPassager();
+		return Response.status(200, "all trajet initiated").build();
+	}
+
 }

@@ -18,7 +18,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassageWrapper;
@@ -78,7 +77,11 @@ public class InfoCentrePublisher implements Closeable {
 		HeureDePassageWrapper listHdp = new HeureDePassageWrapper();
 
 		for (HeureDePassage hdp : listHdpInput) {
+			// On aurait aimé aggrémenté notre système de pouvoir retirer les hdp comprenant
+			// des trains OFF mais les trains des hdp ne se mettent pas à jour.
+			// if (hdp.getTrain().getStatut().equals("on"))
 			listHdp.getHdps().add(HeureDePassageMapper.heureDePassageDTOMapper(hdp));
+
 		}
 
 		StringWriter writer = new StringWriter();

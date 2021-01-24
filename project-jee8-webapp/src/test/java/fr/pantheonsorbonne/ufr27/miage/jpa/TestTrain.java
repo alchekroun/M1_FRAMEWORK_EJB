@@ -111,4 +111,20 @@ class TestTrain extends Train {
 		train1.removePassager(passager1);
 		assertEquals(train1.getListePassagers(), listePassagers);
 	}
+
+	@Test
+	void testEquals() {
+		Train train2 = new TrainAvecResa();
+		train2.setId(train1.getId());
+		train2.setNom(train1.getNom());
+		train2.setStatut(train1.getStatut());
+		train2.setNumero(train1.getNumero());
+		train2.setReseau(train1.getReseau());
+
+		assertTrue(train1.equals(train2));
+		train2.setNom("Paris - Caen");
+		assertFalse(train1.equals(train2));
+		Object obj = new Object();
+		assertFalse(train1.equals(obj));
+	}
 }

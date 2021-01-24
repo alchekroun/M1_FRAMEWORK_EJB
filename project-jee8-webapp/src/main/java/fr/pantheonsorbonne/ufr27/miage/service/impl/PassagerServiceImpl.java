@@ -45,6 +45,7 @@ public class PassagerServiceImpl implements PassagerService {
 
 			em.persist(passager);
 			em.getTransaction().commit();
+			dao.findTrajet(passager.getId());
 
 			return passager.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
@@ -108,6 +109,15 @@ public class PassagerServiceImpl implements PassagerService {
 			throw new NoSuchTrainException();
 		}
 		return PassagerMapper.passagerAllDTOMapper(dao.getAllPassagerByTrain(trainId));
+	}
+
+	@Override
+	public void iniTrajetForAllPassager() {
+		em.getTransaction().begin();
+		for (Passager p : PassagerMapper.passagerAllDTOMapper(dao.getAllPassager())) {
+			dao.findTrajet(p.getId());
+		}
+		em.getTransaction().commit();
 	}
 
 }

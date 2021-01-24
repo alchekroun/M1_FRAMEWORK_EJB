@@ -1,6 +1,8 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +39,6 @@ class TestArret {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		System.out.println("\n== SetUp");
 
 		listeHeureDePassage2 = new ArrayList<HeureDePassage>();
 		trainsArrivants2 = new HashSet<Train>();
@@ -95,6 +96,19 @@ class TestArret {
 		listeHeureDePassage.remove(hdp);
 		arret1.removeArretHeureDePassage(hdp);
 		assertEquals(arret1.getListeHeureDePassage(), listeHeureDePassage);
+	}
+
+	@Test
+	void testEquals() {
+		Arret arret2 = new Arret();
+		arret2.setId(arret1.getId());
+		arret2.setNom(arret1.getNom());
+
+		assertTrue(arret1.equals(arret2));
+		arret2.setNom("Caen");
+		assertFalse(arret1.equals(arret2));
+		Object obj = new Object();
+		assertFalse(arret1.equals(obj));
 	}
 
 }

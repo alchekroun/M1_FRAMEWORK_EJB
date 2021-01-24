@@ -56,4 +56,10 @@ public interface PassagerService {
 	 */
 	public List<Passager> getAllPassagerByTrain(int trainId) throws NoSuchTrainException;
 
+	/**
+	 * Méthode permettant d'initialiser les trajets de tous les passager déjà
+	 * existant dans la base de données.
+	 */
+	void iniTrajetForAllPassager();
+
 }
