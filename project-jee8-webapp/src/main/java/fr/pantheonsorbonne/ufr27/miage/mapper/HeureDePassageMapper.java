@@ -7,6 +7,13 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassage;
 
 public class HeureDePassageMapper {
+
+	/**
+	 * Mappage d'une heure de passage
+	 * 
+	 * @param heureDePassage
+	 * @return HeureDePassage
+	 */
 	public static HeureDePassage heureDePassageDTOMapper(
 			fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage heureDePassage) {
 		HeureDePassage hdpDTO = new ObjectFactory().createHeureDePassage();
@@ -23,6 +30,12 @@ public class HeureDePassageMapper {
 		return hdpDTO;
 	}
 
+	/**
+	 * Mappage de toutes les heures de passage
+	 * 
+	 * @param listeHeureDePassages
+	 * @return List<HeureDePassage>
+	 */
 	public static List<HeureDePassage> heureDePassageAllDTOMapper(
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage> listeHeureDePassages) {
 		List<HeureDePassage> ListeHeureDePassages = new ArrayList<HeureDePassage>();

@@ -238,7 +238,8 @@ public class HeureDePassageDAO {
 	}
 
 	/**
-	 * même que retarderhdp
+	 * Méthode permettant de retarder les heures de départ et d'arrivée d'une heure
+	 * de passage
 	 * 
 	 * @param hdp
 	 * @param dureeEnPlus

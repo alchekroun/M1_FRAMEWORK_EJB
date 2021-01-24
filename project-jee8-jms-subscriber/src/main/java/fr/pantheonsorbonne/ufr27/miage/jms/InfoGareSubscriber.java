@@ -74,6 +74,11 @@ public class InfoGareSubscriber implements Closeable {
 		return null;
 	}
 
+	/**
+	 * Méthode permettant de recevoir le message de l'infoCentre
+	 * 
+	 * @param message
+	 */
 	public void receiveBulletin(TextMessage message) throws JAXBException, JMSException {
 		JAXBContext context = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		StringReader reader = new StringReader(message.getText());
@@ -132,6 +137,10 @@ public class InfoGareSubscriber implements Closeable {
 
 	}
 
+	/**
+	 * Méthode permettant aux infoGares de consommer le message des infoCentres
+	 * auxquels ils sont abonnés
+	 */
 	public void consume() {
 		try {
 			receiveBulletin((TextMessage) messageConsumer.receive());

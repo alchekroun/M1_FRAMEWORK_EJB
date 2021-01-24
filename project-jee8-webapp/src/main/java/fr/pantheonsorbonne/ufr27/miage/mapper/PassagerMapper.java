@@ -8,6 +8,13 @@ import java.util.List;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 
 public class PassagerMapper {
+
+	/**
+	 * Mappage d'un passager
+	 * 
+	 * @param passager
+	 * @return Passager
+	 */
 	public static Passager passagerDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Passager passager) {
 
 		Passager passagerDTO = new ObjectFactory().createPassager();
@@ -23,6 +30,12 @@ public class PassagerMapper {
 		return passagerDTO;
 	}
 
+	/**
+	 * Mappage de tous les passsagers
+	 * 
+	 * @param listePassagers
+	 * @return List<Passager>
+	 */
 	public static List<Passager> passagerAllDTOMapper(
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Passager> listePassagers) {
 		List<Passager> ListePassagers = new ArrayList<Passager>();
