@@ -238,19 +238,6 @@ public class HeureDePassageDAO {
 	}
 
 	/**
-	 * Méthode permettant de retarder les heures de départ et d'arrivée d'une heure
-	 * de passage
-	 * 
-	 * @param hdp
-	 * @param dureeEnPlus
-	 */
-	public void retarderHdpArriveeAndDepart(HeureDePassage hdp, int dureeEnPlus) {
-		updateHeureDePassage(hdp.getTrain(), hdp.getArret(), hdp.getBaseDepartTemps(), hdp.getBaseArriveeTemps(),
-				hdp.getReelDepartTemps().plusMinutes(dureeEnPlus), hdp.getReelArriveeTemps().plusMinutes(dureeEnPlus),
-				hdp.isDesservi(), hdp.isTerminus());
-	}
-
-	/**
 	 * Méthode permettant de vérifier si une heure de passage est correctement créé
 	 * dans la base de données
 	 * 
