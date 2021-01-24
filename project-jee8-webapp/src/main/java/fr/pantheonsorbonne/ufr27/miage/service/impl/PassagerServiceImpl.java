@@ -44,8 +44,8 @@ public class PassagerServiceImpl implements PassagerService {
 			passager.setNom(passagerDTO.getNom());
 
 			em.persist(passager);
-			dao.findTrajet(passager.getId());
 			em.getTransaction().commit();
+			dao.findTrajet(passager.getId());
 
 			return passager.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
