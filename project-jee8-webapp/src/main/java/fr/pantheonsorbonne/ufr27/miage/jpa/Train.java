@@ -96,10 +96,18 @@ public abstract class Train {
 		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter une heure de passage à un train
+	 * @param hdp
+	 */
 	public void addArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.add(hdp);
 	}
 
+	/**
+	 * Méthode permettant de supprimer une heure de passage à un train
+	 * @param hdp
+	 */
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}
@@ -112,6 +120,10 @@ public abstract class Train {
 		this.listePassagers = listePassagers;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter un passager à un train
+	 * @param p
+	 */
 	public void addPassager(Passager p) {
 		if (this.listePassagers == null) {
 			this.listePassagers = new ArrayList<Passager>();
@@ -119,6 +131,10 @@ public abstract class Train {
 		this.listePassagers.add(p);
 	}
 
+	/**
+	 * Méthode permettant de supprimer un passager à un train
+	 * @param p
+	 */
 	public void removePassager(Passager p) {
 		this.listePassagers.remove(p);
 	}

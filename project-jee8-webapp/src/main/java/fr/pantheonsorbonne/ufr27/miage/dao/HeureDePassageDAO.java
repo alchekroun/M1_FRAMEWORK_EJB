@@ -58,7 +58,7 @@ public class HeureDePassageDAO {
 	}
 
 	/**
-	 * Méthode permettant de modifier une heure de passage avec un nouvel
+	 * Méthode permettant de modifier  une heure de passage avec un nouvel
 	 * horaire
 	 * 
 	 * @param train

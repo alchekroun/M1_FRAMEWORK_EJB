@@ -55,10 +55,20 @@ public class Arret {
 		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter une heure de passage à un arrêt
+	 * 
+	 * @param hdp
+	 */
 	public void addArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.add(hdp);
 	}
 
+	/**
+	 * Méthode permettant de supprimer une heure de passage à un arrêt
+	 * 
+	 * @param hdp
+	 */
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}

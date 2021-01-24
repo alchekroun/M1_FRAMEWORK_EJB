@@ -21,6 +21,10 @@ public class InfoCentreEndPoint {
 	@Inject
 	InfoCentreService service;
 
+	/**
+	 * Méthode permettant à l'infoCentre d'envoyer les informations d'un train 
+	 * @param train
+	 */
 	@POST
 	@Path("/sendInfo")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -33,6 +37,10 @@ public class InfoCentreEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant à l'infoCentre d'envoyer un bulletin periodique d'un train
+	 * @param trains
+	 */
 	@POST
 	@Path("/periodicBulletin")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -45,6 +53,9 @@ public class InfoCentreEndPoint {
 		// }
 	}
 
+	/**
+	 * Méthode permettant à l'infoCentre d'envoyer un bulletin periodique d'un train chaque minute 
+	 */
 	@POST
 	@Path("/nhe")
 	public Response launchPeriodicBulletin() {

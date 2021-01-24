@@ -29,13 +29,18 @@ import fr.pantheonsorbonne.ufr27.miage.service.ArretService;
 
 @Path("/arret/")
 public class ArretEndPoint {
-	
+
 	@Inject
 	EntityManager em;
-	
+
 	@Inject
 	ArretService service;
 
+	/**
+	 * Méthode permettant de créer un arrêt
+	 * 
+	 * @param arret
+	 */
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createArret(Arret arret) throws URISyntaxException {
@@ -48,6 +53,11 @@ public class ArretEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de récupérer un arrêt via son id
+	 * 
+	 * @param arretId
+	 */
 	@GET
 	@Path("{arretId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -65,6 +75,12 @@ public class ArretEndPoint {
 	 * vérifier qu'il ne soit pas une liste HeureDePassage d'un train ! Si oui le
 	 * supprimer de la liste
 	 */
+
+	/**
+	 * Méthode permettant de supprimer un arrêt via son id
+	 * 
+	 * @param arretId
+	 */
 	@DELETE
 	@Path("delete/{arretId}")
 	public Response delete(@PathParam("arretId") int arretId) throws URISyntaxException {
@@ -78,6 +94,11 @@ public class ArretEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de modifier un arrêt
+	 * 
+	 * @param arret
+	 */
 	@PUT
 	@Path("update/{arretId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -92,6 +113,9 @@ public class ArretEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les arrêts
+	 */
 	@GET
 	@Path("all")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -104,6 +128,11 @@ public class ArretEndPoint {
 
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les arrêts d'un train
+	 * 
+	 * @param trainId
+	 */
 	@GET
 	@Path("/byTrain/{trainId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -114,6 +143,5 @@ public class ArretEndPoint {
 			throw new WebApplicationException("No such train", 404);
 		}
 	}
-	
 
 }
