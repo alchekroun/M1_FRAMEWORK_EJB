@@ -20,7 +20,11 @@ import javax.persistence.OneToMany;
 @NamedQueries({ @NamedQuery(name = "getAllTrain", query = "SELECT t FROM Train t"),
 		@NamedQuery(name = "findTrainByArret", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId"),
 		@NamedQuery(name = "findTrainByHdp", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.id = :hdp"),
-		@NamedQuery(name = "findTrainByArretAndDepartAfterDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps")})
+		@NamedQuery(name = "findTrainByArretAndDepartAfterDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps"),
+		@NamedQuery(name = "findTrainByArretAndDepartAfterDateAndDesservi", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelDepartTemps > :temps AND h.desservi = true"),
+		@NamedQuery(name = "findTrainByArretAndArriveeBeforeDate", query = "SELECT t FROM Train t LEFT JOIN t.listeHeureDePassage h WHERE h.arret.id = :arretId AND h.reelArriveeTemps < :temps ORDER BY h.reelArriveeTemps ASC")})
+		//@NamedQuery(name="findNombrePassagerByTrain", query= "SELECT SIZE(t.listePassagers) FROM Train t WHERE t.id= :trainId")
+
 
 public abstract class Train {
 
@@ -29,8 +33,6 @@ public abstract class Train {
 	int id;
 
 	protected String nom;
-
-	protected String directionType;
 
 	protected int numero;
 
@@ -45,14 +47,6 @@ public abstract class Train {
 	protected List<Passager> listePassagers;
 
 	boolean isCreated;
-
-	public String getDirectionType() {
-		return directionType;
-	}
-
-	public void setDirectionType(String directionType) {
-		this.directionType = directionType;
-	}
 
 	public String getReseau() {
 		return reseau;
@@ -102,10 +96,18 @@ public abstract class Train {
 		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter une heure de passage à un train
+	 * @param hdp
+	 */
 	public void addArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.add(hdp);
 	}
 
+	/**
+	 * Méthode permettant de supprimer une heure de passage à un train
+	 * @param hdp
+	 */
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}
@@ -118,13 +120,21 @@ public abstract class Train {
 		this.listePassagers = listePassagers;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter un passager à un train
+	 * @param p
+	 */
 	public void addPassager(Passager p) {
-		if (this.listePassagers==null) {
-			this.listePassagers= new ArrayList<Passager>();
+		if (this.listePassagers == null) {
+			this.listePassagers = new ArrayList<Passager>();
 		}
 		this.listePassagers.add(p);
 	}
 
+	/**
+	 * Méthode permettant de supprimer un passager à un train
+	 * @param p
+	 */
 	public void removePassager(Passager p) {
 		this.listePassagers.remove(p);
 	}
@@ -135,6 +145,19 @@ public abstract class Train {
 
 	public void setCreated(boolean isCreated) {
 		this.isCreated = isCreated;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Train) {
+			Train t = (Train) obj;
+			if (this.id == t.getId() && this.nom.equals(t.getNom()) && this.numero == t.getNumero()
+					&& this.reseau.equals(t.getReseau()) && this.statut.equals(t.getStatut())) {
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 
 }

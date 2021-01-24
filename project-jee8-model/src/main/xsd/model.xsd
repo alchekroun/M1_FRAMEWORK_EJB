@@ -1,12 +1,6 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
 
-
-	<xsd:element name="user" type="user"></xsd:element>
-	<xsd:element name="address" type="address"></xsd:element>
-	<xsd:element name="ccinfo" type="ccinfo"></xsd:element>
-	<xsd:element name="invoice" type="invoice"></xsd:element>
-	<xsd:element name="invoiceWrapper" type="invoiceWrapper"></xsd:element>
 	<xsd:element name="arret" type="arret"></xsd:element>
 	<xsd:element name="train" type="train"></xsd:element>
 	<xsd:element name="trainAvecResa" type="trainAvecResa"></xsd:element>
@@ -34,65 +28,10 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-
-	<xsd:complexType name="user">
-		<xsd:sequence>
-			<xsd:element name="id" type="xsd:int"></xsd:element>
-			<xsd:element name="fname" type="xsd:string"></xsd:element>
-			<xsd:element name="lname" type="xsd:string"></xsd:element>
-			<xsd:element name="membershipId" type="xsd:int"
-				minOccurs="0"></xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-
-	<xsd:complexType name="address">
-		<xsd:sequence>
-			<xsd:element name="streetName" type="xsd:string"></xsd:element>
-			<xsd:element name="streetNumber" type="xsd:int"></xsd:element>
-			<xsd:element name="zipCode" type="xsd:string"></xsd:element>
-			<xsd:element name="Country" type="xsd:string"></xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-
-	<xsd:element name="freeTrialPlan">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="user" type="user"></xsd:element>
-				<xsd:element name="address" type="address"></xsd:element>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
-
-	<xsd:complexType name="ccinfo">
-		<xsd:sequence>
-			<xsd:element name="number" type="xsd:string" />
-			<xsd:element name="validityDate" type="xsd:string" />
-			<xsd:element name="ccv" type="xsd:int" />
-		</xsd:sequence>
-	</xsd:complexType>
-
-
-	<xsd:complexType name="invoiceWrapper">
-		<xsd:sequence>
-			<xsd:element name="invoices" type="invoice"
-				maxOccurs="unbounded"></xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-
-	<xsd:complexType name="invoice">
-		<xsd:sequence>
-			<xsd:element name="date" type="SimpleDate">
-			</xsd:element>
-			<xsd:element name="contractId" type="xsd:int"></xsd:element>
-			<xsd:element name="paid" type="xsd:boolean"></xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
-
 	<xsd:complexType name="train">
 		<xsd:sequence>
 			<xsd:element name="id" type="xsd:int"></xsd:element>
 			<xsd:element name="nom" type="xsd:string"></xsd:element>
-			<xsd:element name="direction_type" type="xsd:string"></xsd:element>
 			<xsd:element name="numeroTrain" type="xsd:int"></xsd:element>
 			<xsd:element name="reseau" type="xsd:string"></xsd:element>
 			<xsd:element name="statut" type="xsd:string"></xsd:element>
@@ -135,6 +74,7 @@
 			<xsd:element name="depart" type="arret"></xsd:element>
 			<xsd:element name="arrive" type="arret"></xsd:element>
 			<xsd:element name="correspondance" type="arret"></xsd:element>
+			<xsd:element name="arrived" type="xsd:boolean"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 

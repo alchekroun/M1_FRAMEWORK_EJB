@@ -3,6 +3,8 @@ package fr.pantheonsorbonne.ufr27.miage.jms;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -63,14 +65,21 @@ public class InfoGareSubscriber implements Closeable {
 
 	// Cette fonction ne devrait pas être là
 	public HeureDePassage getTerminus(List<HeureDePassage> listHdp, Train t) {
+
 		for (HeureDePassage hdp : listHdp) {
-			if (hdp.getTrain().equals(t) && hdp.isTerminus()) {
+
+			if (hdp.getTrain().getId() == t.getId() && hdp.isTerminus()) {
 				return hdp;
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Méthode permettant de recevoir le message de l'infoCentre
+	 * 
+	 * @param message
+	 */
 	public void receiveBulletin(TextMessage message) throws JAXBException, JMSException {
 		JAXBContext context = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		StringReader reader = new StringReader(message.getText());
@@ -89,30 +98,34 @@ public class InfoGareSubscriber implements Closeable {
 				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi() && !hdp.isTerminus()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
-					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
+					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
 					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
-					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
+					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
+						toShow.append("Retardé de "
+								+ conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(), hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
 			}
 			toShow.append("ARRIVEES\n");
 			for (HeureDePassage hdp : listHdp) {
+
 				if (hdp.getArret().getNom().equals(this.arret) && hdp.isDesservi()) {
 					Train t = hdp.getTrain();
 					toShow.append("##\n" + t.getReseau() + " - " + t.getNumeroTrain() + "\t| ");
-					toShow.append(hdp.getReelDepartTemps().toString() + "\t| ");
+					toShow.append(hdp.getReelArriveeTemps().toString() + "\t| ");
 					toShow.append(getTerminus(listHdp, t).getArret().getNom() + "\t| ");
-					if (hdp.getBaseDepartTemps().equals(hdp.getReelDepartTemps())) {
+					if (hdp.getBaseArriveeTemps().equals(hdp.getReelArriveeTemps())) {
 						toShow.append("A l'heure");
 					} else {
-						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
+						toShow.append("Retardé de "
+								+ conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(), hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
+
 			}
 			toShow.append("------------------------FIN INFO TRAINS---------------------");
 			System.out.println(toShow);
@@ -121,6 +134,30 @@ public class InfoGareSubscriber implements Closeable {
 
 	}
 
+	public String conversionDiffBetweenTwoDates(LocalDateTime dateFrom, LocalDateTime dateTo) {
+		StringBuilder timeDisplay = new StringBuilder();
+		float timeDiff = (float) ChronoUnit.SECONDS.between(dateFrom, dateTo);
+
+		if (timeDiff >= 3600) {
+			int hours = (int) timeDiff / 3600;
+			timeDiff = timeDiff % 3600;
+			timeDisplay.append(hours + " h ");
+		}
+		if (timeDiff >= 60) {
+			int minutes = (int) timeDiff / 60;
+			timeDiff = timeDiff % 60;
+			timeDisplay.append(minutes + " min ");
+		}
+		int seconds = (int) timeDiff;
+		timeDisplay.append(seconds + " sec ");
+
+		return timeDisplay.toString();
+	}
+  
+  /**
+	 * Méthode permettant aux infoGares de consommer le message des infoCentres
+	 * auxquels ils sont abonnés
+	 */
 	public void consume() {
 		try {
 			receiveBulletin((TextMessage) messageConsumer.receive());

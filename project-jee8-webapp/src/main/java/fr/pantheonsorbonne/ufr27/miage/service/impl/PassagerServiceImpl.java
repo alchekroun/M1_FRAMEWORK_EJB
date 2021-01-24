@@ -2,6 +2,7 @@ package fr.pantheonsorbonne.ufr27.miage.service.impl;
 
 import java.util.List;
 
+import javax.annotation.ManagedBean;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -16,6 +17,7 @@ import fr.pantheonsorbonne.ufr27.miage.mapper.PassagerMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.Passager;
 import fr.pantheonsorbonne.ufr27.miage.service.PassagerService;
 
+@ManagedBean
 public class PassagerServiceImpl implements PassagerService {
 
 	@Inject
@@ -43,6 +45,7 @@ public class PassagerServiceImpl implements PassagerService {
 
 			em.persist(passager);
 			em.getTransaction().commit();
+			dao.findTrajet(passager.getId());
 
 			return passager.getId();
 		} catch (org.eclipse.persistence.exceptions.DatabaseException e) {
@@ -106,6 +109,15 @@ public class PassagerServiceImpl implements PassagerService {
 			throw new NoSuchTrainException();
 		}
 		return PassagerMapper.passagerAllDTOMapper(dao.getAllPassagerByTrain(trainId));
+	}
+
+	@Override
+	public void iniTrajetForAllPassager() {
+		em.getTransaction().begin();
+		for (Passager p : PassagerMapper.passagerAllDTOMapper(dao.getAllPassager())) {
+			dao.findTrajet(p.getId());
+		}
+		em.getTransaction().commit();
 	}
 
 }

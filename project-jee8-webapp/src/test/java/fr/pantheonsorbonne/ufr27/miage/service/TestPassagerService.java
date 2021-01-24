@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.dao.ArretDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.HeureDePassageDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.PassagerDAO;
+import fr.pantheonsorbonne.ufr27.miage.dao.PerturbationDAO;
 import fr.pantheonsorbonne.ufr27.miage.dao.TrainDAO;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantCreateException;
 import fr.pantheonsorbonne.ufr27.miage.exception.CantUpdateException;
@@ -50,7 +51,7 @@ class TestPassagerService {
 			.from(ArretMapper.class, PassagerMapper.class, PassagerService.class, PassagerServiceImpl.class,
 					PassagerEndPoint.class, TrainService.class, TrainEndPoint.class, TrainServiceImpl.class,
 					ArretService.class, ArretEndPoint.class, ArretServiceImpl.class, TrainDAO.class, ArretDAO.class,
-					HeureDePassageDAO.class, PassagerDAO.class, TestPersistenceProducer.class)
+					HeureDePassageDAO.class, PassagerDAO.class, PerturbationDAO.class, TestPersistenceProducer.class)
 			.activate(RequestScoped.class).build();
 
 	@Inject
@@ -102,21 +103,22 @@ class TestPassagerService {
 	void setUp() throws Exception {
 		arretArrivee = factory.createArret();
 		arretArrivee.setNom("Marseille");
+		idArretA = arretService.createArret(arretArrivee);
+		arretArrivee.setId(idArretA);
+
 		arretDepart = factory.createArret();
 		arretDepart.setNom("Paris");
 		idArretD = arretService.createArret(arretDepart);
-		idArretA = arretService.createArret(arretArrivee);
-		arretArrivee.setId(idArretA);
 		arretDepart.setId(idArretD);
+
 		train1 = factory.createTrainAvecResa();
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumeroTrain(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		idTrain = trainService.createTrain(train1);
 		train1.setId(idTrain);
+
 		passager1 = factory.createPassager();
 		passager1.setNom("David Serruya");
 		passager1.setArrive(arretArrivee);
@@ -136,7 +138,11 @@ class TestPassagerService {
 	void testCreatePassager() {
 		try {
 			int idPassager = passagerService.createPassager(passager1);
-			assertEquals(dao.getPassagerFromId(idPassager).getNom(), passager1.getNom());
+			fr.pantheonsorbonne.ufr27.miage.jpa.Passager pJPA = dao.getPassagerFromId(idPassager);
+			assertEquals(pJPA.getNom(), passager1.getNom());
+			assertEquals(pJPA.getArrive().getNom(), passager1.getArrive().getNom());
+			assertEquals(pJPA.getDepart().getNom(), passager1.getDepart().getNom());
+			assertEquals(pJPA.getCorrespondance(), passager1.getCorrespondance()); // Null
 			passagerService.deletePassager(idPassager);
 		} catch (CantCreateException e) {
 			// TODO Auto-generated catch block

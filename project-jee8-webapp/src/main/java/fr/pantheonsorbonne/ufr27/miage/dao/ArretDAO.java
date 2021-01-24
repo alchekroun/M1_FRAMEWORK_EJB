@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
-import fr.pantheonsorbonne.ufr27.miage.jpa.InfoGare;
 
 public class ArretDAO {
 	@Inject
@@ -16,33 +15,63 @@ public class ArretDAO {
 	@Inject
 	HeureDePassageDAO hdpDAO;
 
+	/**
+	 * Méthode permettant de récupérer un arrêt avec son id
+	 * 
+	 * @param arretId
+	 * @return arret
+	 */
 	public Arret getArretFromId(int arretId) {
 		return em.find(Arret.class, arretId);
 	}
 
+	/**
+	 * Méthode permettant de modifier un arrêt
+	 * 
+	 * @param arretOriginal
+	 * @param arretUpdate
+	 * @return arret
+	 */
 	public Arret updateArret(Arret arretOriginal, fr.pantheonsorbonne.ufr27.miage.model.jaxb.Arret arretUpdate) {
 		arretOriginal.setNom(arretUpdate.getNom());
 		return arretOriginal;
 	}
 
+	/**
+	 * Methode permettant de supprimer un arrêt
+	 * 
+	 * @param arret
+	 */
 	public void deleteArret(Arret arret) {
 		if (!arret.getListeHeureDePassage().isEmpty()) {
 			hdpDAO.deleteHeureDePassageByArret(arret);
 		}
-		// On supprime l'infoGare associé car un infoGare n'existe qu'au travers de
-		// l'arret
-		em.remove(em.find(InfoGare.class, arret.getId()));
 		em.remove(arret);
 	}
 
+	/**
+	 * Méthode permettant de récuperer tous les arrêts
+	 */
 	public List<Arret> getAllArret() {
 		return em.createNamedQuery("getAllArret").getResultList();
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les arrêts d'un train
+	 * 
+	 * @param trainId
+	 * @return
+	 */
 	public List<Arret> getAllArretByTrain(int trainId) {
 		return em.createNamedQuery("findArretByTrain").setParameter("id", trainId).getResultList();
 	}
 
+	/**
+	 * Méthode permettant de savoir si un arrêt a bien été créé
+	 * 
+	 * @param ArretId
+	 * @return true si l'arrêt a été correctement créé, false sinon
+	 */
 	public boolean isArretCreated(int ArretId) {
 
 		Arret a = em.find(Arret.class, ArretId);

@@ -18,6 +18,12 @@ public class PerturbationDAO {
 	@Inject
 	HeureDePassageDAO hdpDAO;
 
+	/**
+	 * Méthode permettant de créer un passager dans la base de données
+	 * 
+	 * @param perturbationDTO
+	 * @return Perturbation
+	 */
 	public Perturbation createPerturbation(fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationDTO) {
 		Perturbation perturbation = new Perturbation();
 
@@ -30,10 +36,23 @@ public class PerturbationDAO {
 		return perturbation;
 	}
 
+	/**
+	 * Méthode permettant de récupérer une perturbation à partir de son id
+	 * 
+	 * @param perturbationId
+	 * @return Perturbation
+	 */
 	public Perturbation getPerturbationFromId(int perturbationId) {
 		return em.find(Perturbation.class, perturbationId);
 	}
 
+	/**
+	 * Méthode permettant de modifier une perturbation
+	 * 
+	 * @param perturbationOriginal
+	 * @param perturbationUpdate
+	 * @return Perturbation
+	 */
 	public Perturbation updatePerturbation(Perturbation perturbationOriginal,
 			fr.pantheonsorbonne.ufr27.miage.model.jaxb.Perturbation perturbationUpdate) {
 		perturbationOriginal.setMotif(perturbationUpdate.getMotif());
@@ -43,6 +62,12 @@ public class PerturbationDAO {
 		return perturbationOriginal;
 	}
 
+	/**
+	 * Méthode permettant de retarder une heure de passage d'un train si une
+	 * perturbation impacte le trafic
+	 * 
+	 * @param perturbation
+	 */
 	public void impacterTrafic(Perturbation perturbation) {
 		List<HeureDePassage> listHdp = hdpDAO.findHdpByTrain(perturbation.getTrain().getId());
 		for (HeureDePassage hdp : listHdp) {
@@ -53,15 +78,34 @@ public class PerturbationDAO {
 		}
 
 	}
+	
+	
 
+	/**
+	 * Méthode permettant de récupérer toutes les perturbations dans la base de
+	 * données
+	 * 
+	 * @return List<Perturbation>
+	 */
 	public List<Perturbation> getAllPerturbation() {
 		return em.createNamedQuery("getAllPerturbation").getResultList();
 	}
-	
-	public List<Perturbation> getPerturbationByTrain(Train t){
+
+	/**
+	 * Méthode permettant de récupérer toutes les perturbations d'un train
+	 * 
+	 * @param t
+	 * @return List<Perturbation>
+	 */
+	public List<Perturbation> getPerturbationByTrain(Train t) {
 		return em.createNamedQuery("getPerturbationByTrain").setParameter("idTrain", t.getId()).getResultList();
 	}
-	
+
+	/**
+	 * Méthode permettant de supprimer une perturbation
+	 * 
+	 * @param perturbation
+	 */
 	public void deletePerturbation(Perturbation perturbation) {
 		em.remove(perturbation);
 	}

@@ -1,8 +1,6 @@
 package fr.pantheonsorbonne.ufr27.miage.jpa;
 
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 
@@ -32,10 +28,6 @@ public class Arret {
 	// ce sont les heures de passages des trains qui ont cet arret sur leur parcours
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "arret")
 	protected List<HeureDePassage> listeHeureDePassage;
-
-	@OneToOne(mappedBy = "localisation", cascade = CascadeType.ALL)
-	@PrimaryKeyJoinColumn
-	protected InfoGare infoGare;
 
 	boolean isCreated;
 
@@ -63,10 +55,20 @@ public class Arret {
 		this.listeHeureDePassage = listeHeureDePassage;
 	}
 
+	/**
+	 * Méthode permettant d'ajouter une heure de passage à un arrêt
+	 * 
+	 * @param hdp
+	 */
 	public void addArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.add(hdp);
 	}
 
+	/**
+	 * Méthode permettant de supprimer une heure de passage à un arrêt
+	 * 
+	 * @param hdp
+	 */
 	public void removeArretHeureDePassage(HeureDePassage hdp) {
 		this.listeHeureDePassage.remove(hdp);
 	}
@@ -77,6 +79,18 @@ public class Arret {
 
 	public void setCreated(boolean isCreated) {
 		this.isCreated = isCreated;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Arret) {
+			Arret a = (Arret) obj;
+			if (this.id == a.getId() && this.nom.equals(a.getNom())) {
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 
 }

@@ -1,6 +1,9 @@
 package fr.pantheonsorbonne.ufr27.miage;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.se.SeContainerInitializer;
 import javax.jms.JMSException;
@@ -17,28 +20,24 @@ public class AppSubscriber {
 		try (SeContainer container = initializer.disableDiscovery().addPackages(true, AppSubscriber.class)
 				.initialize()) {
 
-			final InfoGareSubscriber infoGareParis = container.select(InfoGareSubscriber.class).get();
-			infoGareParis.setArret("Paris");
+			String[] nomArrets = { "Lyon Part Dieu", "Valence", "Avignon", "Aix-en-Provence", "Marseille", "Toulon",
+					"Draguinan", "Saint-Raphael", "Cannes", "Antibes", "Nice-Ville", "Paris Gare de Lyon" };
 
-			final InfoGareSubscriber infoGareLille = container.select(InfoGareSubscriber.class).get();
-			infoGareLille.setArret("Lille");
-
-			final InfoGareSubscriber infoGareChantilly = container.select(InfoGareSubscriber.class).get();
-			infoGareLille.setArret("Chantilly");
-
-			final InfoGareSubscriber infoGareArras = container.select(InfoGareSubscriber.class).get();
-			infoGareLille.setArret("Arras");
-			while (true) {
-				// check if arret is concerned by this message before printing it. Now
-				// everything is printed!
-				infoGareParis.consume();
-				infoGareLille.consume();
-				infoGareChantilly.consume();
-				infoGareArras.consume();
-				// System.out.println(infoGareParis.getArret() + " :\t" +
-				// infoGareParis.consume());
+			Map<String, InfoGareSubscriber> mapIgs = new HashMap<String, InfoGareSubscriber>();
+			for (String nom : nomArrets) {
+				final InfoGareSubscriber infoGare = container.select(InfoGareSubscriber.class).get();
+				infoGare.setArret(nom);
+				mapIgs.put(nom, infoGare);
 			}
-			// infoGareParis.close();
+
+			while (true) {
+				for (InfoGareSubscriber igS : mapIgs.values()) {
+					igS.consume();
+				}
+			}
+			// for (InfoGareSubscriber igS : mapIgs.values()) {
+			// igS.close();
+			// }
 
 		}
 

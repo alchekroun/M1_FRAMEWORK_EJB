@@ -50,11 +50,9 @@ class TestTrain extends Train {
 		train1 = new TrainAvecResa();
 		train1.setId(indexTrain++);
 		train1.setNom("Bordeaux - Paris");
-		train1.setDirectionType("forward");
-		train1.setStatut("enmarche");
+		train1.setStatut("on");
 		train1.setNumero(8541);
 		train1.setReseau("SNCF");
-		train1.setStatut("en marche");
 		train1.setListeHeureDePassage(listeHeureDePassage2);
 		train1.setListePassagers(listePassagers2);
 
@@ -112,5 +110,21 @@ class TestTrain extends Train {
 		listePassagers.remove(passager1);
 		train1.removePassager(passager1);
 		assertEquals(train1.getListePassagers(), listePassagers);
+	}
+
+	@Test
+	void testEquals() {
+		Train train2 = new TrainAvecResa();
+		train2.setId(train1.getId());
+		train2.setNom(train1.getNom());
+		train2.setStatut(train1.getStatut());
+		train2.setNumero(train1.getNumero());
+		train2.setReseau(train1.getReseau());
+
+		assertTrue(train1.equals(train2));
+		train2.setNom("Paris - Caen");
+		assertFalse(train1.equals(train2));
+		Object obj = new Object();
+		assertFalse(train1.equals(obj));
 	}
 }

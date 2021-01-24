@@ -18,7 +18,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.mapper.HeureDePassageMapper;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.HeureDePassageWrapper;
@@ -50,16 +49,27 @@ public class InfoCentrePublisher implements Closeable {
 
 	}
 
+	/**
+	 * Méthode permettant aux infoCentre d'envoyer un message à travers le topic bulletin
+	 * 
+	 * @param message
+	 */
 	public String publish(String message) {
 		try {
 			this.messagePublisher.send(this.session.createTextMessage(message));
 			return message;
 		} catch (JMSException e) {
-			System.out.println("Failed to send message to queue");
+			System.out.println("Failed to send message to topic");
 			return "Nothing sent";
 		}
 	}
 
+	/**
+	 * Méthode permettant de définir le message envoyé
+	 * 
+	 * @param listHdpInput
+	 * @return
+	 */
 	public String publishBulletinByArret(List<HeureDePassage> listHdpInput) throws JAXBException, JMSException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -67,7 +77,11 @@ public class InfoCentrePublisher implements Closeable {
 		HeureDePassageWrapper listHdp = new HeureDePassageWrapper();
 
 		for (HeureDePassage hdp : listHdpInput) {
+			// On aurait aimé aggrémenté notre système de pouvoir retirer les hdp comprenant
+			// des trains OFF mais les trains des hdp ne se mettent pas à jour.
+			// if (hdp.getTrain().getStatut().equals("on"))
 			listHdp.getHdps().add(HeureDePassageMapper.heureDePassageDTOMapper(hdp));
+
 		}
 
 		StringWriter writer = new StringWriter();

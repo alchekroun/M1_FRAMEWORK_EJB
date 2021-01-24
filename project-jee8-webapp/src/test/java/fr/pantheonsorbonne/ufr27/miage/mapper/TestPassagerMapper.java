@@ -32,6 +32,7 @@ class TestPassagerMapper {
 	// JPA
 	Arret arretJPA1;
 	Arret arretJPA2;
+	Arret arretJPA3;
 	Passager passagerJPA1;
 	List<Passager> listPassager = new ArrayList<Passager>();
 
@@ -47,10 +48,15 @@ class TestPassagerMapper {
 		arretJPA2.setNom("Rouen");
 		em.persist(arretJPA2);
 
+		arretJPA3 = new Arret();
+		arretJPA3.setNom("Defense");
+		em.persist(arretJPA3);
+
 		passagerJPA1 = new Passager();
 		passagerJPA1.setNom("Alex");
 		passagerJPA1.setDepart(arretJPA1);
 		passagerJPA1.setArrive(arretJPA2);
+		passagerJPA1.setCorrespondance(arretJPA3);
 		em.persist(passagerJPA1);
 
 		listPassager.add(passagerJPA1);
@@ -64,6 +70,7 @@ class TestPassagerMapper {
 		em.remove(passagerJPA1);
 		em.remove(arretJPA1);
 		em.remove(arretJPA2);
+		em.remove(arretJPA3);
 		em.getTransaction().commit();
 	}
 
@@ -76,6 +83,8 @@ class TestPassagerMapper {
 		assertEquals(passagerJAXBtest.getNom(), passagerJPA1.getNom());
 		assertEquals(passagerJAXBtest.getDepart().getNom(), passagerJPA1.getDepart().getNom());
 		assertEquals(passagerJAXBtest.getArrive().getNom(), passagerJPA1.getArrive().getNom());
+		assertEquals(passagerJAXBtest.getCorrespondance().getNom(), passagerJPA1.getCorrespondance().getNom());
+		assertEquals(passagerJAXBtest.isArrived(), passagerJPA1.isArrived());
 
 	}
 
@@ -89,6 +98,9 @@ class TestPassagerMapper {
 			assertEquals(listPassagerJAXBtest.get(i).getNom(), listPassager.get(i).getNom());
 			assertEquals(listPassagerJAXBtest.get(i).getDepart().getNom(), listPassager.get(i).getDepart().getNom());
 			assertEquals(listPassagerJAXBtest.get(i).getArrive().getNom(), listPassager.get(i).getArrive().getNom());
+			assertEquals(listPassagerJAXBtest.get(i).getCorrespondance().getNom(),
+					listPassager.get(i).getCorrespondance().getNom());
+			assertEquals(listPassagerJAXBtest.get(i).isArrived(), listPassager.get(i).isArrived());
 		}
 	}
 
