@@ -477,12 +477,6 @@ class TestTrainServiceImpl {
 			p.setId(idPassagerP);
 			listPassager.add(p);
 		}
-
-//		List<Integer> listIdPassager = new ArrayList<Integer>();
-//
-//		for (Passager p : listPassager) {
-//			listIdPassager.add(passagerService.createPassager(p));
-//		}
 		assertTrue(!listPassager.isEmpty());
 		trainService.monterListPassager(listPassager, dao.getTrainFromId(idTrainS));
 
@@ -493,24 +487,24 @@ class TestTrainServiceImpl {
 		String passage5 = dt1.plusMinutes(240).toString() + " " + dt2.plusMinutes(200).toString();
 		trainService.addArret(train1.getId(), arret1.getId(), passage, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
-		arret1.getId());
+				arret1.getId());
 		trainService.addArret(train1.getId(), arret2.getId(), passage2, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
-		arret2.getId());
+				arret2.getId());
 		trainService.addArret(train1.getId(), arretM.getId(), passage5, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp5 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(),
-		arretM.getId());
-		
+				arretM.getId());
+
 		LocalDateTime dt3 = dt2.plusMinutes(10);
 		LocalDateTime dt4 = dt2.plusMinutes(15);
 		String passage3 = dt4.toString() + " " + dt3.toString();
 		String passage4 = dt4.plusMinutes(80).toString() + " " + dt4.plusMinutes(30).toString();
 		trainService.addArret(trainS.getId(), arret1.getId(), passage3, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp3 = hdpDao.getHdpFromTrainIdAndArretId(trainS.getId(),
-		arret1.getId());
+				arret1.getId());
 		trainService.addArret(trainS.getId(), arret2.getId(), passage4, true, false);
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdp4 = hdpDao.getHdpFromTrainIdAndArretId(trainS.getId(),
-		arret2.getId());
+				arret2.getId());
 
 		assertTrue(hdp2.getReelArriveeTemps().compareTo(hdp4.getReelArriveeTemps()) < 0);
 		assertTrue(hdp2.getReelDepartTemps().compareTo(hdp4.getReelDepartTemps()) < 0);
@@ -521,18 +515,17 @@ class TestTrainServiceImpl {
 		perturbation1.setTrain(trainS);
 		perturbation1.setDureeEnPlus(100);
 		trainService.createPerturbation(perturbation1);
-		
-		
+
 		trainService.retarderCorrespondance(train1);
 
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrain1 = hdpDao
-		.getHdpFromTrainIdAndArretId(train1.getId(), arret2.getId());
+				.getHdpFromTrainIdAndArretId(train1.getId(), arret2.getId());
 
 		fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage hdpTrain2 = hdpDao
-		.getHdpFromTrainIdAndArretId(trainS.getId(), arret2.getId());
+				.getHdpFromTrainIdAndArretId(trainS.getId(), arret2.getId());
 
-		assertTrue(hdpTrain1.getReelArriveeTemps() != hdpTrain2.getReelArriveeTemps().plusMinutes(10));
-		assertTrue(hdpTrain1.getReelDepartTemps() != hdpTrain2.getReelDepartTemps().plusMinutes(10));
+		assertNotEquals(hdpTrain1.getReelArriveeTemps(), hdpTrain2.getReelArriveeTemps().plusMinutes(10));
+		assertNotEquals(hdpTrain1.getReelDepartTemps(), hdpTrain2.getReelDepartTemps().plusMinutes(10));
 
 		for (int i = 31; i <= 60; i++) {
 			Passager p = factory.createPassager();
@@ -543,18 +536,19 @@ class TestTrainServiceImpl {
 			p.setId(idPassagerP);
 			listPassager.add(p);
 		}
-		
-		trainService.retarderCorrespondance(train1);
-		
-		hdpTrain1 = hdpDao
-				.getHdpFromTrainIdAndArretId(train1.getId(), arret2.getId());
 
-		hdpTrain2 = hdpDao
-				.getHdpFromTrainIdAndArretId(trainS.getId(), arret2.getId());
-		
-		//retarderCorrespondance() bloque sur la condition isWorthRetardTrain() avec les + 50 passagers
-		//assertEquals(hdpTrain2.getReelArriveeTemps(), hdpTrain1.getReelArriveeTemps().plusMinutes(10));
-		//assertEquals(hdpTrain2.getReelArriveeTemps(), hdpTrain1.getReelDepartTemps().plusMinutes(10));
+		trainService.retarderCorrespondance(train1);
+
+		hdpTrain1 = hdpDao.getHdpFromTrainIdAndArretId(train1.getId(), arret2.getId());
+
+		hdpTrain2 = hdpDao.getHdpFromTrainIdAndArretId(trainS.getId(), arret2.getId());
+
+		// retarderCorrespondance() bloque sur la condition isWorthRetardTrain() avec
+		// les + 50 passagers
+		// assertEquals(hdpTrain2.getReelArriveeTemps(),
+		// hdpTrain1.getReelArriveeTemps().plusMinutes(10));
+		// assertEquals(hdpTrain2.getReelArriveeTemps(),
+		// hdpTrain1.getReelDepartTemps().plusMinutes(10));
 
 		for (int i = 0; i < listPassager.size(); i++) {
 			passagerService.deletePassager(listPassager.get(i).getId());
@@ -563,6 +557,5 @@ class TestTrainServiceImpl {
 		arretService.deleteArret(idArretM);
 		trainService.deleteTrain(idTrainS);
 	}
-	
 
 }
