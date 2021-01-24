@@ -30,6 +30,10 @@ public class PassagerEndPoint {
 	@Inject
 	PassagerService service;
 
+	/**
+	 * Méthode permettant de créer un passager
+	 * @param passager
+	 */
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createPassager(Passager passager) throws URISyntaxException {
@@ -42,6 +46,10 @@ public class PassagerEndPoint {
 
 	}
 
+	/**
+	 * Méthode permettant de récupérer un passager
+	 * @param passagerId
+	 */
 	@GET
 	@Path("{passagerId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.TEXT_HTML })
@@ -58,6 +66,11 @@ public class PassagerEndPoint {
 	 * TODO Revoir la suppresion Pour supprimer un passager il faut vérifier qu'il
 	 * ne soit pas inclu dans un train, si oui le retirer de la liste
 	 */
+	
+	/**
+	 * Méthode permettant de supprimer un passager
+	 * @param passagerId
+	 */
 	@DELETE
 	@Path("delete/{passagerId}")
 	public Response delete(@PathParam("passagerId") int passagerId) throws URISyntaxException {
@@ -73,6 +86,11 @@ public class PassagerEndPoint {
 	 * TODO Agrémenter l'update d'un passager
 	 * 
 	 */
+	
+	/**
+	 * Méthode permettant de modifier les caractéristiques d'un passager
+	 * @param passager
+	 */
 	@PUT
 	@Path("update/{passagerId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -87,6 +105,9 @@ public class PassagerEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers
+	 */
 	@GET
 	@Path("all")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -98,6 +119,10 @@ public class PassagerEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les passagers d'un train via son id
+	 * @param trainId
+	 */
 	@GET
 	@Path("/byTrain/{trainId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

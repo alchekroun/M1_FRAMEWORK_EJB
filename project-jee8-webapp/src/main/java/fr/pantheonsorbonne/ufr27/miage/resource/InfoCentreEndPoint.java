@@ -13,6 +13,9 @@ public class InfoCentreEndPoint {
 	@Inject
 	InfoCentreService service;
 
+	/**
+	 * Méthode permettant à l'infoCentre d'envoyer un bulletin periodique d'un train chaque minute 
+	 */
 	@POST
 	@Path("/nhe")
 	public Response launchPeriodicBulletin() {

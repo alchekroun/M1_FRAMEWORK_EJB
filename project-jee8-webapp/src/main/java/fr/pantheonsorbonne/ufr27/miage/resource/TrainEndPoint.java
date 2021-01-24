@@ -32,6 +32,11 @@ public class TrainEndPoint {
 	@Inject
 	TrainService service;
 
+	/**
+	 * Méthode permettant de créer un train
+	 * 
+	 * @param train
+	 */
 	@POST
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response createTrain(Train train) throws URISyntaxException {
@@ -44,6 +49,11 @@ public class TrainEndPoint {
 
 	}
 
+	/**
+	 * Méthode permettant de récupérer un train via son id
+	 * 
+	 * @param trainId
+	 */
 	@GET
 	@Path("{trainId}")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -64,6 +74,11 @@ public class TrainEndPoint {
 	 * 
 	 * De plus s'il possède des passagers il faut les supprimer avec.
 	 */
+	/**
+	 * Méthode permettant de supprimer un train via son id
+	 * 
+	 * @param trainId
+	 */
 	@DELETE
 	@Path("delete/{trainId}")
 	public Response delete(@PathParam("trainId") int trainId) throws URISyntaxException {
@@ -75,6 +90,11 @@ public class TrainEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de mettre à jour un train
+	 * 
+	 * @param train
+	 */
 	@PUT
 	@Path("update/{trainId}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -89,6 +109,15 @@ public class TrainEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant d'ajouter un arrêt à un train
+	 * 
+	 * @param trainId
+	 * @param arretId
+	 * @param desservi
+	 * @param terminus
+	 * @param passage
+	 */
 	@PUT
 	@Path("{trainId}/addarret/{arretId}/{desservi}/{terminus}")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -106,6 +135,14 @@ public class TrainEndPoint {
 
 	}
 
+	/**
+	 * Méthode permettant de supprimer un arrêt à un train
+	 * 
+	 * @param trainId
+	 * @param arretId
+	 * @return
+	 * @throws URISyntaxException
+	 */
 	@DELETE
 	@Path("{trainId}/removearret/{arretId}")
 	public Response removeArret(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId)
@@ -120,6 +157,11 @@ public class TrainEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de récupérer tous les trains
+	 * 
+	 * @return
+	 */
 	@GET
 	@Path("all")
 	@Produces(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -132,6 +174,13 @@ public class TrainEndPoint {
 
 	}
 
+	/**
+	 * Méthode permettant de changer le paramètre desservi d'un train
+	 * 
+	 * @param trainId
+	 * @param arretId
+	 * @param newDesservi
+	 */
 	@PUT
 	@Path("/changeParameterDesservi/{traindId}/{arretId}/{newDesservi}")
 	public Response changeParamaterDesservi(@PathParam("trainId") int trainId, @PathParam("arretId") int arretId,
@@ -148,6 +197,11 @@ public class TrainEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de créer une perturbation
+	 * 
+	 * @param perturbation
+	 */
 	@POST
 	@Path("/createPerturbation")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -160,6 +214,11 @@ public class TrainEndPoint {
 		}
 	}
 
+	/**
+	 * Méthode permettant de savoir si un train est en marche
+	 * 
+	 * @param train
+	 */
 	@POST
 	@Path("/enmarche")
 	@Consumes(value = { MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

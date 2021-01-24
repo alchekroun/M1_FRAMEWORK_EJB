@@ -8,6 +8,12 @@ import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 
 public class PerturbationMapper {
 
+	/**
+	 * Mappage d'une perturbation
+	 * 
+	 * @param perturbation
+	 * @return Perturbation
+	 */
 	public static Perturbation perturbationDTOMapper(fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation perturbation) {
 		Perturbation perturbationDTO = new ObjectFactory().createPerturbation();
 
@@ -20,6 +26,12 @@ public class PerturbationMapper {
 
 	}
 
+	/**
+	 * Mappage de toutes les perturbations
+	 * 
+	 * @param listePerturbations
+	 * @return List<Perturbation>
+	 */
 	public static List<Perturbation> perturbationAllDTOMapper(
 			List<fr.pantheonsorbonne.ufr27.miage.jpa.Perturbation> listePerturbations) {
 		List<Perturbation> ListePerturbations = new ArrayList<Perturbation>();
