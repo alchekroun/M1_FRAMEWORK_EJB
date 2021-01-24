@@ -14,6 +14,7 @@ import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassageKey;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainSansResa;
 import fr.pantheonsorbonne.ufr27.miage.service.DataInitializerService;
 
 @ApplicationScoped
@@ -61,6 +62,7 @@ public class DataInitializerServiceImpl implements DataInitializerService {
 		train2.setReseau("SNCF");
 		train2.setStatut("off");
 		em.persist(train2);
+		
 
 		em.getTransaction().commit();
 

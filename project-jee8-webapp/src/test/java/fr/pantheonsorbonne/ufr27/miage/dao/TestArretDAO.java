@@ -102,7 +102,6 @@ public class TestArretDAO {
 	@Test
 	public void testGetAllArret() {
 		List<Arret> arrets = dao.getAllArret();
-
 		assertEquals(2, arrets.size());
 		assertTrue(arrets.contains(arret1));
 		assertTrue(arrets.contains(arretDirection));

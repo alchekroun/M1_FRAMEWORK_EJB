@@ -151,7 +151,7 @@ class TestArretService {
 			arrets = arretService.getAllArret();
 			assertFalse(arrets.isEmpty());
 			assertEquals(arrets.size(), initialSize + 1);
-			assertTrue(arrets.contains(arretService.getArretFromId(idArret)));
+			assertEquals(arrets.get(arrets.size()-1).getId(),idArret);
 			arretService.deleteArret(idArret);
 		} catch (CantCreateException e) {
 			// TODO Auto-generated catch block

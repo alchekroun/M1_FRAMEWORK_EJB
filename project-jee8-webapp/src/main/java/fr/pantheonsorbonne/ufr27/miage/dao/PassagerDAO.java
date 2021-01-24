@@ -82,7 +82,7 @@ public class PassagerDAO {
 
 	
 	public List<Passager> getPassagerByTrainIdAndNotArrivalAtArretId(int trainId, int arretId){
-		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("arretId", arretId).getResultList();
+		return em.createNamedQuery("getPassagerByTrainIdAndNotArrivalAtArretId").setParameter("trainId", trainId).setParameter("idArret", arretId).getResultList();
 	}
 	
 

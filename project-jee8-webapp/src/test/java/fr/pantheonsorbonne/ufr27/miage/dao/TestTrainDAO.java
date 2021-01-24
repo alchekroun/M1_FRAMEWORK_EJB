@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Arret;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Train;
 import fr.pantheonsorbonne.ufr27.miage.jpa.TrainAvecResa;
+import fr.pantheonsorbonne.ufr27.miage.jpa.TrainSansResa;
 import fr.pantheonsorbonne.ufr27.miage.model.jaxb.ObjectFactory;
 import fr.pantheonsorbonne.ufr27.miage.jpa.HeureDePassage;
 import fr.pantheonsorbonne.ufr27.miage.jpa.Passager;
