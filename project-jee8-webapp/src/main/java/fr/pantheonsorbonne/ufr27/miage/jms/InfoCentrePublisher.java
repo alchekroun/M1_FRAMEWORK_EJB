@@ -49,16 +49,27 @@ public class InfoCentrePublisher implements Closeable {
 
 	}
 
+	/**
+	 * Méthode permettant aux infoCentre d'envoyer un message à travers le topic bulletin
+	 * 
+	 * @param message
+	 */
 	public String publish(String message) {
 		try {
 			this.messagePublisher.send(this.session.createTextMessage(message));
 			return message;
 		} catch (JMSException e) {
-			System.out.println("Failed to send message to queue");
+			System.out.println("Failed to send message to topic");
 			return "Nothing sent";
 		}
 	}
 
+	/**
+	 * Méthode permettant de définir le message envoyé
+	 * 
+	 * @param listHdpInput
+	 * @return
+	 */
 	public String publishBulletinByArret(List<HeureDePassage> listHdpInput) throws JAXBException, JMSException {
 		JAXBContext jaxbContext = JAXBContext.newInstance(HeureDePassageWrapper.class);
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
