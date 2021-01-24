@@ -3,6 +3,8 @@ package fr.pantheonsorbonne.ufr27.miage.jms;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -100,7 +102,7 @@ public class InfoGareSubscriber implements Closeable {
 					} else {
 						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
 						// deux
-						toShow.append("Retardé de " + hdp.getReelDepartTemps().compareTo(hdp.getBaseDepartTemps()));
+						toShow.append("Retardé de " + conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(),hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
@@ -119,7 +121,7 @@ public class InfoGareSubscriber implements Closeable {
 					} else {
 						// TODO A modifier ! CompareTo ne donne pas la différence de temps entre les
 						// deux
-						toShow.append("Retardé de " + hdp.getReelArriveeTemps().compareTo(hdp.getBaseArriveeTemps()));
+						toShow.append("Retardé de " + conversionDiffBetweenTwoDates(hdp.getBaseDepartTemps(),hdp.getReelDepartTemps()));
 					}
 					toShow.append("\n##\n");
 				}
@@ -131,7 +133,27 @@ public class InfoGareSubscriber implements Closeable {
 		}
 
 	}
-
+	
+	public String conversionDiffBetweenTwoDates(LocalDateTime dateFrom , LocalDateTime dateTo) {
+		StringBuilder timeDisplay = new StringBuilder();
+		float timeDiff = (float) ChronoUnit.SECONDS.between(dateFrom,dateTo);
+		
+		if(timeDiff>=3600) {
+			int hours = (int) timeDiff / 3600;
+			timeDiff = timeDiff % 3600;
+			timeDisplay.append(hours+" h ");
+		}	
+		if(timeDiff>=60) {
+			int minutes = (int) timeDiff / 60;
+			timeDiff = timeDiff % 60;
+			timeDisplay.append(minutes+" min ");
+		}
+		int seconds = (int) timeDiff;
+		timeDisplay.append(seconds+" sec ");
+		
+		return timeDisplay.toString();
+	}
+	
 	public void consume() {
 		try {
 			receiveBulletin((TextMessage) messageConsumer.receive());

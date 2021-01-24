@@ -422,7 +422,7 @@ class TestTrainServiceImpl {
 		hdp2 = hdpDao.getHdpFromTrainIdAndArretId(train2.getId(), arret1.getId());
 		hdp3 = hdpDao.getHdpFromTrainIdAndArretId(train3.getId(), arret1.getId());
 
-		assertEquals(hdp1.isDesservi(), true);
+		assertEquals(hdp1.isDesservi(), false);
 		assertEquals(hdp2.isDesservi(), true);
 		assertEquals(hdp3.isDesservi(), false);
 	}
@@ -471,7 +471,7 @@ class TestTrainServiceImpl {
 		}
 
 		List<Integer> listIdPassager = new ArrayList<Integer>();
-		;
+		
 		for (Passager p : listPassager) {
 			listIdPassager.add(passagerService.createPassager(p));
 		}
@@ -521,7 +521,8 @@ class TestTrainServiceImpl {
 				arret2.getId());
 
 		for (Passager p : listPassager) {
-			passagerDao.findTrajet(p.getId());
+			//passagerDao.findTrajet(p.getId());
+			p.setCorrespondance(arret2);
 		}
 
 		assertTrue(hdp2.getReelArriveeTemps().compareTo(hdp4.getReelArriveeTemps()) < 0);
@@ -531,7 +532,7 @@ class TestTrainServiceImpl {
 
 		perturbation1.setMotif("chevreuil");
 		perturbation1.setTrain(train2);
-		perturbation1.setDureeEnPlus(100);
+		perturbation1.setDureeEnPlus(400);
 		trainService.createPerturbation(perturbation1);
 
 		trainService.retarderCorrespondance(train1);
@@ -552,7 +553,8 @@ class TestTrainServiceImpl {
 		listIdPassager.add(passagerService.createPassager(p));
 		listPassager.get(51).setId(listIdPassager.get(51));
 
-		passagerDao.findTrajet(p.getId());
+		//passagerDao.findTrajet(p.getId());
+		p.setCorrespondance(arret2);
 
 		trainService.retarderCorrespondance(train1);
 		assertEquals(hdpTrain1.getReelArriveeTemps().plusMinutes(10), hdpTrain1.getReelArriveeTemps());
